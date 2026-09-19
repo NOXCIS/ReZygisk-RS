@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/common",
+    "crates/ipc",
+    "crates/rezygiskd",
+    "crates/ptracer",
+    "crates/elf",
+    "crates/csoloader",
+    "crates/plti",
+    "crates/loader",
+    "truman_ref",
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+license = "AGPL-3.0"
+
+[workspace.dependencies]
+libc = "0.2"
+goblin = { version = "0.10", default-features = false, features = ["elf64", "elf32", "endian_fd", "std"] }
+bitflags = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+jni = "0.21"
+static_assertions = "1"
+rz-common = { path = "crates/common" }
+rz-ipc = { path = "crates/ipc" }
+rz-elf = { path = "crates/elf" }
+rz-csoloader = { path = "crates/csoloader" }
+rz-plti = { path = "crates/plti" }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = "symbols"
+panic = "abort"

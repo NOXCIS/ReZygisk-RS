@@ -1,0 +1,11 @@
+[package]
+name = "rz-csoloader"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+libc.workspace = true
+thiserror.workspace = true
+rz-common.workspace = true
+rz-elf.workspace = true

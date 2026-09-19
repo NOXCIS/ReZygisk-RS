@@ -1,0 +1,15 @@
+[package]
+name = "rezygiskd"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+libc.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+rz-common.workspace = true
+rz-ipc.workspace = true
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "warn"

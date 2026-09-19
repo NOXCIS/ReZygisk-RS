@@ -1,0 +1,10 @@
+[package]
+name = "rz-ipc"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+libc.workspace = true
+bitflags.workspace = true
+rz-common.workspace = true

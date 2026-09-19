@@ -1,0 +1,18 @@
+# NDK r29 toolchain, matching out/ReZygisk/common.mk
+# (NDK_VERSION 29.0.13113456, API_LEVEL 25). Absolute paths keep plain
+# `cargo build --target <triple>` working without cargo-ndk.
+
+[target.aarch64-linux-android]
+linker = "/home/nemo/Android/Sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android25-clang"
+
+[target.armv7-linux-androideabi]
+linker = "/home/nemo/Android/Sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi25-clang"
+
+[target.x86_64-linux-android]
+linker = "/home/nemo/Android/Sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android25-clang"
+
+[target.i686-linux-android]
+linker = "/home/nemo/Android/Sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android25-clang"
+
+[target.'cfg(target_os = "android")']
+rustflags = ["-C", "panic=abort"]

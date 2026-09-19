@@ -1,0 +1,23 @@
+[package]
+name = "rz-loader"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "zygisk"
+crate-type = ["cdylib"]
+
+[dependencies]
+libc.workspace = true
+bitflags.workspace = true
+jni.workspace = true
+static_assertions.workspace = true
+rz-common.workspace = true
+rz-ipc.workspace = true
+rz-elf.workspace = true
+rz-csoloader.workspace = true
+rz-plti.workspace = true
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(no_lto_daemon)'] }

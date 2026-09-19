@@ -1,0 +1,12 @@
+[package]
+name = "truman_ref"
+version = "0.1.0"
+edition = "2021"
+description = "Truman Phase 7 reflection-spoof Zygisk sub-module (seed crate of ReZygisk-RS)"
+
+[lib]
+name = "truman_ref"
+crate-type = ["cdylib"]
+
+[dependencies]
+jni = "0.21"

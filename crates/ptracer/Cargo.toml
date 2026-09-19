@@ -1,0 +1,18 @@
+[package]
+name = "rz-ptracer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "zygisk-ptrace"
+path = "src/main.rs"
+
+[dependencies]
+libc.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+rz-common.workspace = true
+rz-ipc.workspace = true
+rz-elf.workspace = true
