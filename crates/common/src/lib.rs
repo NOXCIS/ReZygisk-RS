@@ -78,6 +78,8 @@ pub const ANDROID_LOG_INFO: i32 = 4;
 pub const ANDROID_LOG_WARN: i32 = 5;
 pub const ANDROID_LOG_ERROR: i32 = 6;
 pub const ANDROID_LOG_FATAL: i32 = 7;
+/// Not a liblog level: a floor above FATAL, so `log_write` drops every line.
+pub const ANDROID_LOG_SILENT: i32 = 8;
 
 /// Central runtime log floor. Defaults to DEBUG (historical behavior); the
 /// daemons raise it to WARN when `$TMP_PATH/.quiet` exists (stealth: fewer
@@ -86,6 +88,11 @@ static MAX_LOG_LEVEL: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI3
 
 /// Apply the `.quiet` / `.verbose` flag files in `$TMP_PATH`, once at daemon
 /// startup. Fail-soft: absence of both keeps the default level.
+///
+/// Deliberately *not* used by the injected loader: `$TMP_PATH` sits in
+/// `/data/adb`, which neither the zygote nor an app process may stat — the
+/// attempt itself would leave an `avc: denied` trail that is a root-tool
+/// fingerprint. The loader's floor is build-time (see `init_app_log_level`).
 pub fn init_log_level_from_flags() {
     use std::sync::atomic::Ordering;
 
@@ -96,6 +103,31 @@ pub fn init_log_level_from_flags() {
     } else if verbose.exists() {
         MAX_LOG_LEVEL.store(ANDROID_LOG_VERBOSE, Ordering::Relaxed);
     }
+}
+
+/// Log floor for the injected loader (`libzygisk.so`), which ends up running
+/// inside app processes.
+///
+/// logd hands an app only the entries its own uid wrote, so every line the
+/// loader prints while running as an app is readable by that app — and by any
+/// integrity scanner that greps its own logcat for framework tags (the Duck
+/// Detector LSPosed slice flags the `zygisk` tag prefix exactly this way).
+/// `MAX_LOG_LEVEL` is one static per process and every `fork` copies it, so
+/// this single call in the zygote-side `entry` is what the whole boot's app
+/// processes inherit.
+///
+/// Default ERROR: real failures stay visible, running commentary does not.
+/// `loud-loader` (build-time, same mechanism as `stealth-tag`) restores the
+/// full trace for bring-up work.
+pub fn init_app_log_level() {
+    use std::sync::atomic::Ordering;
+
+    let level = if cfg!(feature = "loud-loader") {
+        ANDROID_LOG_VERBOSE
+    } else {
+        ANDROID_LOG_ERROR
+    };
+    MAX_LOG_LEVEL.store(level, Ordering::Relaxed);
 }
 
 #[cfg(target_os = "android")]

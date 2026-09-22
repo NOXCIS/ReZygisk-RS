@@ -27,7 +27,16 @@ pub unsafe extern "C" fn entry(addr: *mut c_void, size: usize, tango_flag: i32) 
     // still on record. No manifest cross-check here — the loader runs inside
     // app_process, and its /proc/self/exe is not the module's bin/, so the
     // host script's `assert` is what validates this line.
+    //
+    // Stays at INFO by design: it is the one line verify_deploy.sh greps for,
+    // and it is emitted in the *zygote* (root uid) — invisible to app-side
+    // logcat readers.
     rz_common::log_generation(TAG, "loader");
+
+    // Everything from here on is inherited by every app process this zygote
+    // forks: drop the floor so the loader cannot fingerprint itself through
+    // the app's own logcat buffer (see rz_common::init_app_log_level).
+    rz_common::init_app_log_level();
 
     rz_common::logd!(
         TAG,

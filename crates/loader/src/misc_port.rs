@@ -127,7 +127,28 @@ pub fn update_mnt_ns(mns_state: rz_ipc::MountNamespaceState, dry_run: bool) -> b
 
     let updated_ns = unsafe { libc::open(ns_cstr.as_ptr(), libc::O_RDONLY) };
     if updated_ns == -1 {
-        plog!(TAG, "Failed to open mount namespace [{}]", ns_path_str);
+        // C parity here is PLOGE (ERROR), but the failure is routine in this
+        // deployment, not exceptional: an app process cannot open the
+        // daemon's `/proc/<pid>/fd/<n>` link, because ptrace access to a
+        // different-uid process is denied (EACCES) — so this fires in every
+        // app process that asks for the clean namespace and says nothing
+        // about the app itself.
+        //
+        // It must not stay at ERROR: logd shows an app only the entries its
+        // own uid wrote, so an `E/zygisk` line is a framework fingerprint in
+        // exactly the buffer an integrity scanner greps (the Duck Detector
+        // LSPosed slice flags the `zygisk` tag prefix). Debug level keeps it
+        // visible in a `loud-loader` build without leaking in a deployment
+        // one. Functional follow-up: have the daemon hand this namespace fd
+        // over SCM_RIGHTS like the module-dir fd already is — that needs no
+        // proc access and would make the clean-namespace switch actually
+        // succeed.
+        logd!(
+            TAG,
+            "Failed to open mount namespace [{}]: {}",
+            ns_path_str,
+            std::io::Error::last_os_error()
+        );
 
         return false;
     }

@@ -13,6 +13,9 @@ crate-type = ["cdylib"]
 # RZ_FEATURES carries) has nothing to bind to in this crate and the build is
 # rejected, leaving tags identifying even when the deploy asked for stealth.
 stealth-tag = ["rz-common/stealth-tag"]
+# Forwarded bring-up verbosity: the loader logs its full trace instead of the
+# deployment default ERROR floor (see rz_common::init_app_log_level).
+loud-loader = ["rz-common/loud-loader"]
 
 [dependencies]
 libc.workspace = true

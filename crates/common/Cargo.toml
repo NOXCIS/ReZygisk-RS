@@ -9,6 +9,9 @@ license.workspace = true
 # (zygisk / zygiskd64 / zygisk-ptrace64) with neutral ones across every
 # crate that logs through rz-common::LOG_TAG*.
 stealth-tag = []
+# Bring-up build: the injected loader keeps its full logcat trace instead of
+# the deployment default (ERROR floor in app processes, see init_app_log_level).
+loud-loader = []
 
 [dependencies]
 libc.workspace = true
