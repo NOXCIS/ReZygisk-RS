@@ -63,6 +63,7 @@
         "description": "Opsi ini akan mengaktifkan font sistem pada WebUI saat ini. (Mungkin tidak kompatibel dengan FlipFont)"
       },
       "moduleDevelopers": "Pengembang Modul",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "Pengembang WebUI",
       "orginalDevelopers": "Pengembang Modul Asli",
       "moduleLicense": "Lisensi Modul"

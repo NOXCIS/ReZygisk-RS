@@ -8,6 +8,10 @@ license.workspace = true
 name = "zygisk-ptrace"
 path = "src/main.rs"
 
+[features]
+# Forwarded build-time stealth; see the note in rz-loader's manifest.
+stealth-tag = ["rz-common/stealth-tag"]
+
 [dependencies]
 libc.workspace = true
 nix = { workspace = true, features = ["process", "signal", "poll", "fs"] }

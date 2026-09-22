@@ -8,6 +8,12 @@ license.workspace = true
 name = "zygisk"
 crate-type = ["cdylib"]
 
+[features]
+# Forwarded build-time stealth. Without this, `--features stealth-tag` (what
+# RZ_FEATURES carries) has nothing to bind to in this crate and the build is
+# rejected, leaving tags identifying even when the deploy asked for stealth.
+stealth-tag = ["rz-common/stealth-tag"]
+
 [dependencies]
 libc.workspace = true
 bitflags.workspace = true

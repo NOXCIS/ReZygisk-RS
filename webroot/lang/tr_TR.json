@@ -63,6 +63,7 @@
         "description": "Bu seçenek, mevcut WebUI sistem yazı tipini etkinleştirecektir.\nNOT: FlipFont ile uyumlu olmayabilir"
       },
       "moduleDevelopers": "Modül Geliştirici(leri)",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "WebUI Geliştirici(leri)",
       "orginalDevelopers": "Orijinal Modül Geliştirici(leri)",
       "moduleLicense": "Modül Lisansı"

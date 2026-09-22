@@ -63,6 +63,7 @@
         "description": "Esta opción habilitará la fuente del sistema en el WebUI actual. NOTA: Puede no ser compatible con FlipFont"
       },
       "moduleDevelopers": "Desarrollador(es) del módulo",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "Desarrollador(es) del WebUI",
       "orginalDevelopers": "Desarrollador(es) del Modulo Original",
       "moduleLicense": "Licencia del Modulo"

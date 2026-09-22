@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+# Forwarded build-time stealth; see the note in rz-loader's manifest.
+stealth-tag = ["rz-common/stealth-tag"]
+
 [dependencies]
 libc.workspace = true
 serde_json.workspace = true

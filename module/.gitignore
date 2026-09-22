@@ -1,2 +1,5 @@
+# Local Ed25519 signing material for machikado/misaki (scripts/sign.py).
+# private_key must never be committed. public_key is also kept local by
+# default; publish its fingerprint in release notes if you distribute builds.
 public_key
 private_key

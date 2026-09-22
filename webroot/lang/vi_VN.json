@@ -63,6 +63,7 @@
         "description": "Tuỳ chọn này sẽ cho phép người dùng sử dụng phông chữ của hệ thống. LƯU Ý: Có thể sẽ không tương thích với FlipFont"
       },
       "moduleDevelopers": "Những nhà phát triển mô-đun",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "Những nhà phát triển WebUI",
       "orginalDevelopers": "Những nhà phát triển mô-đun gốc",
       "moduleLicense": "Giấy phép bản quyền mô-đun"

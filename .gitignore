@@ -3,6 +3,11 @@
 truman_ref/target
 Cargo.lock.bak
 
+# Module signing secrets (Ed25519 raw keys used by scripts/sign.py)
+# NEVER commit private_key — required to sign GitHub releases.
+module/private_key
+**/private_key
+
 # Bulky, regenerable diag artifacts: soak/repro raw logcat and app dumps plus
 # the bisect ladder's build scratch. The small evidence files (SUMMARY.txt,
 # samples.tsv, app_starts.tsv, state.json, verbose.log) stay tracked.

@@ -63,6 +63,7 @@
         "description": "Эта опция включит системный шрифт в текущем WebUI. ПРИМЕЧАНИЕ: Может быть несовместимо с FlipFont"
       },
       "moduleDevelopers": "Разработчик(и) модуля",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "Разработчик(и) WebUI",
       "orginalDevelopers": "Разработчик(и) оригинального модуля",
       "moduleLicense": "Лицензия модуля"

@@ -63,6 +63,7 @@
         "description": "This option will enable system font in current WebUI. NOTE: May not be compatible with FlipFont"
       },
       "moduleDevelopers": "Module Developer(s)",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "WebUI Developer(s)",
       "orginalDevelopers": "Original Module Developer(s)",
       "moduleLicense": "Module License"

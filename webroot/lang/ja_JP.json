@@ -63,6 +63,7 @@
         "description": "現在の WebUI でシステムフォントの使用を有効化します。注意: FlipFont との互換性がない場合があります"
       },
       "moduleDevelopers": "モジュールの開発者",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "WebUI の開発者",
       "orginalDevelopers": "オリジナルのモジュールの開発者",
       "moduleLicense": "モジュールのライセンス"

@@ -63,6 +63,7 @@
         "description": "此选项会在Web界面启用系统字体。可能与FlipFont不兼容。"
       },
       "moduleDevelopers": "模块开发者",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "WebUI 开发者",
       "orginalDevelopers": "原始模块开发者",
       "moduleLicense": "模块许可证"

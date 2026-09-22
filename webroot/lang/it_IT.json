@@ -63,6 +63,7 @@
         "description": "Questa opzione abiliterà il font di sistema nell'interfaccia Web attuale. NOTA: Potrebbe non essere compatibile con FlipFont"
       },
       "moduleDevelopers": "Sviluppatore(i) moduli",
+      "originalRezygiskDevelopers": "Original ReZygisk Developer(s)",
       "WebUIDevelopers": "Sviluppatore(i) WebUI",
       "orginalDevelopers": "Sviluppatore(i) originale del modulo",
       "moduleLicense": "Licenza del Modulo"
