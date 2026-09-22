@@ -1,0 +1,26 @@
+=== unknown sigchld_status lines in verbose.log ===
+4
+process 1796 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1985 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1989 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 4041 (program=<unreadable>, cmdline="") received unknown sigchld_status 0x7f00 exited with 127
+
+=== status updates ===
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ⚠️
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+
+=== tracer / inject lines ===
+handoff tracer: pid=1085 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 1085 --restart
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 1085
+handoff tracer: pid=1086 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 1086 --restart
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 1086
+Received Zygote64 injected command
+inject done, continuing process
+trace complete, zygote 1085 released
+Received Zygote32 injected command
+inject done, continuing process
+trace complete, zygote 1086 released

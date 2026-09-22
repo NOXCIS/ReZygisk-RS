@@ -6,8 +6,11 @@ use std::io;
 use std::mem::size_of;
 use std::time::{Duration, Instant};
 
+use nix::sys::signal::{kill, Signal};
+// Note: waitpid, WaitPidFlag, WaitStatus may be used in a future full nix refactor
+use nix::unistd::{fork, ForkResult, Pid};
+
 use rz_common::{plog, CONTROLLER_SOCKET, MODULE_PROP, PATH_MODULES_DIR, TMP_PATH};
-use rz_ipc::{read_exact, read_u32};
 
 use crate::utils::{self, dlogd, dloge, dlogi, dlogw, dlogv, fork_dont_care, parse_status, TAG};
 
@@ -322,7 +325,7 @@ impl Monitor {
     // -----------------------------------------------------------------------
 
     fn events_init(&mut self) -> bool {
-        self.epfd = unsafe { libc::epoll_create(1) };
+        self.epfd = unsafe { libc::epoll_create1(libc::EPOLL_CLOEXEC) };
         if self.epfd == -1 {
             plog!(TAG, "epoll_create");
             return false;
@@ -347,8 +350,26 @@ impl Monitor {
 
     fn events_loop(&mut self) {
         let mut events: [libc::epoll_event; 2] = unsafe { std::mem::zeroed() };
+        let mut idle_ticks: u32 = 0;
         while self.events_running {
-            let nfds = unsafe { libc::epoll_wait(self.epfd, events.as_mut_ptr(), 2, -1) };
+            let nfds = unsafe { libc::epoll_wait(self.epfd, events.as_mut_ptr(), 2, 2000) };
+            if nfds == 0 {
+                idle_ticks = idle_ticks.saturating_add(1);
+                if idle_ticks % 15 == 0 {
+                    // Liveness heartbeat: a wedged monitor produces silence;
+                    // this line proves the loop is turning (and how much is
+                    // pending) when nothing else logs.
+                    dlogi!(
+                        "idle: {:?}, tracked pids: {}",
+                        self.tracing_state,
+                        self.tracked.iter().filter(|&&p| p > 0).count()
+                    );
+                }
+                self.watchdog_check_init();
+                continue;
+            }
+            idle_ticks = 0;
+
             if nfds == -1 {
                 let err = io::Error::last_os_error();
                 if err.raw_os_error() == Some(libc::EINTR) {
@@ -442,8 +463,9 @@ impl Monitor {
                     break;
                 }
 
+                // A persistent error must not turn this loop into a spin.
                 plog!(TAG, "read socket");
-                continue;
+                break;
             }
             if nread == 0 {
                 break;
@@ -514,83 +536,61 @@ impl Monitor {
     }
 
     fn handle_set_info(&mut self, cmd: u8) {
-        dlogd!("Received ReZygiskd{} info", if cmd == 6 { "64" } else { "32" });
+        let which = if cmd == 6 { "64" } else { "32" };
+        dlogd!("Received ReZygiskd{which} info");
 
-        let Ok(root_impl_len) = read_u32(self.sock_fd) else {
-            dloge!("read ReZygiskd{} root impl len", if cmd == 6 { "64" } else { "32" });
+        // One field per datagram (C zygiskd.c `zygiskd_start`). Any framing
+        // violation aborts the message and drains the queue: the old
+        // stream-style reads busy-spun on EAGAIN forever inside the epoll
+        // callback, wedging the whole monitor (boot-killing).
+        let Some(root_impl_buf) = recv_bytes_field(self.sock_fd) else {
+            dloge!("malformed DaemonSetInfo{which} (root impl), draining controller socket");
+            drain_controller_socket(self.sock_fd);
             return;
         };
-
-        let mut root_impl_buf = vec![0u8; root_impl_len as usize];
-        match read_exact(self.sock_fd, &mut root_impl_buf) {
-            Ok(n) if n == root_impl_len as usize => {}
-            _ => {
-                dloge!("read ReZygiskd{} root impl", if cmd == 6 { "64" } else { "32" });
-                return;
-            }
-        }
         let root_impl = String::from_utf8_lossy(&root_impl_buf).into_owned();
-        dlogd!("ReZygiskd{} root impl: {root_impl}", if cmd == 6 { "64" } else { "32" });
+        dlogd!("ReZygiskd{which} root impl: {root_impl}");
 
-        let env = if cmd == 6 { &mut self.env64 } else { &mut self.env32 };
-        env.root_impl = Some(root_impl);
-
-        let Ok(modules_len) = read_u32(self.sock_fd) else {
-            dloge!("read ReZygiskd{} modules len", if cmd == 6 { "64" } else { "32" });
-            env.root_impl = None;
+        let Some(modules_len) = recv_u32_field(self.sock_fd) else {
+            dloge!("malformed DaemonSetInfo{which} (modules len), draining controller socket");
+            drain_controller_socket(self.sock_fd);
             return;
         };
+        if modules_len > MAX_MODULES {
+            dloge!("DaemonSetInfo{which}: implausible module count {modules_len}, draining");
+            drain_controller_socket(self.sock_fd);
+            return;
+        }
 
         let mut modules = Vec::with_capacity(modules_len as usize);
-        for _ in 0..modules_len {
-            let Ok(name_len) = read_u32(self.sock_fd) else {
-                dloge!("read ReZygiskd{} module name len", if cmd == 6 { "64" } else { "32" });
-                env.root_impl = None;
+        for i in 0..modules_len {
+            let Some(name_buf) = recv_bytes_field(self.sock_fd) else {
+                dloge!("malformed DaemonSetInfo{which} (module {i} name), draining controller socket");
+                drain_controller_socket(self.sock_fd);
                 return;
             };
-
-            let mut name_buf = vec![0u8; name_len as usize];
-            match read_exact(self.sock_fd, &mut name_buf) {
-                Ok(n) if n == name_len as usize => {}
-                _ => {
-                    dloge!("read ReZygiskd{} module name", if cmd == 6 { "64" } else { "32" });
-                    env.root_impl = None;
-                    return;
-                }
-            }
-
             modules.push(String::from_utf8_lossy(&name_buf).into_owned());
         }
 
+        let env = if cmd == 6 { &mut self.env64 } else { &mut self.env32 };
+        env.root_impl = Some(root_impl);
         env.modules = modules;
 
         self.update_status(None);
     }
 
     fn handle_set_error_info(&mut self, cmd: u8) {
-        dlogd!("Received ReZygiskd{} error info", if cmd == 8 { "64" } else { "32" });
+        let which = if cmd == 8 { "64" } else { "32" };
+        dlogd!("Received ReZygiskd{which} error info");
 
-        let Ok(error_info_len) = read_u32(self.sock_fd) else {
-            dloge!("read ReZygiskd{} error info len", if cmd == 8 { "64" } else { "32" });
+        let Some(buf) = recv_bytes_field(self.sock_fd) else {
+            dloge!("malformed DaemonSetErrorInfo{which}, draining controller socket");
+            drain_controller_socket(self.sock_fd);
             return;
         };
 
-        let mut buf = vec![0u8; error_info_len as usize];
-        match read_exact(self.sock_fd, &mut buf) {
-            Ok(n) if n == error_info_len as usize => {}
-            _ => {
-                dloge!("read ReZygiskd{} error info", if cmd == 8 { "64" } else { "32" });
-                return;
-            }
-        }
-
         let status = if cmd == 8 { &mut self.status64 } else { &mut self.status32 };
         status.daemon_error_info = Some(String::from_utf8_lossy(&buf).into_owned());
-        dlogd!(
-            "ReZygiskd{} error info: {}",
-            if cmd == 8 { "64" } else { "32" },
-            status.daemon_error_info.as_deref().unwrap_or("")
-        );
 
         self.update_status(None);
     }
@@ -608,16 +608,19 @@ impl Monitor {
             }
         }
 
-        let pid = unsafe { libc::fork() };
-        if pid < 0 {
-            plog!(TAG, "create ReZygiskd{}", if is_64bit { "64" } else { "32" });
-            return false;
-        }
-
-        if pid == 0 {
-            let daemon_name = if is_64bit { "./bin/zygiskd64" } else { "./bin/zygiskd32" };
-            execv_or_die(daemon_name, &[daemon_name]);
-        }
+        let pid = match unsafe { fork() } {
+            Ok(ForkResult::Child) => {
+                let daemon_name = if is_64bit { "./bin/zygiskd64" } else { "./bin/zygiskd32" };
+                execv_or_die(daemon_name, &[daemon_name], None);
+                // execv_or_die doesn't return, but make the type checker happy
+                unreachable!()
+            }
+            Ok(ForkResult::Parent { child }) => child.as_raw(),
+            Err(_) => {
+                plog!(TAG, "create ReZygiskd{}", if is_64bit { "64" } else { "32" });
+                return false;
+            }
+        };
 
         let status = if is_64bit { &mut self.status64 } else { &mut self.status32 };
         status.supported = true;
@@ -636,19 +639,67 @@ impl Monitor {
                 continue;
             }
 
+            // Only an actual termination is a daemon exit. A stop report for
+            // this pid (kernel pid reuse after the daemon died) must fall
+            // through to normal attach handling, or the victim is frozen in
+            // ptrace-stop forever.
+            if !(utils::wifexited(status) || utils::wifsignaled(status)) {
+                continue;
+            }
+
             let status_str = parse_status(status);
             dlogw!("daemon{} pid {pid} exited: {status_str}", if is_64 { "64" } else { "32" });
 
             let status_slot = if is_64 { &mut self.status64 } else { &mut self.status32 };
             status_slot.daemon_running = false;
+            // Clear the pid so `ensure_daemon_created` can re-fork instead of
+            // reporting a stale "not running" forever after.
+            status_slot.daemon_pid = -1;
             if status_slot.daemon_error_info.is_none() {
                 status_slot.daemon_error_info = Some(status_str);
             }
 
+            self.update_status(None);
             return true;
         }
 
         false
+    }
+
+    // -----------------------------------------------------------------------
+    // Boot watchdog: init must never stay frozen, whatever happens elsewhere.
+    // -----------------------------------------------------------------------
+
+    /// True when pid 1 is currently in a stop state ('T' job-control stop or
+    /// 't' ptrace-stop) according to /proc/1/stat.
+    fn init_stopped() -> bool {
+        let Ok(stat) = std::fs::read_to_string("/proc/1/stat") else {
+            return false;
+        };
+
+        // comm can contain spaces/parens; the state char follows the last ')'.
+        let Some(close) = stat.rfind(')') else {
+            return false;
+        };
+
+        match stat[close + 1..].split_whitespace().next() {
+            Some("T") | Some("t") => true,
+            _ => false,
+        }
+    }
+
+    /// Fires on every idle epoll tick. If init was seized by us and left in a
+    /// stop for a full tick, resume it. A buggy handler can then only stall
+    /// boot by at most one tick instead of forever.
+    fn watchdog_check_init(&mut self) {
+        if self.tracing_state != TracingState::Tracing || !Self::init_stopped() {
+            return;
+        }
+
+        dloge!("WATCHDOG: init is stopped with no pending event, resuming it");
+        if unsafe { libc::ptrace(libc::PTRACE_CONT, 1, 0, 0) } == -1 {
+            plog!(TAG, "WATCHDOG: PTRACE_CONT init");
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -721,6 +772,9 @@ impl Monitor {
                         break;
                     }
                     plog!(TAG, "waitpid");
+                    // Never dispatch a waitpid error sentinel as a child
+                    // report: it used to poison `tracked` with -1.
+                    continue;
                 }
 
                 self.handle_sigchld_child(pid, status);
@@ -745,6 +799,11 @@ impl Monitor {
 
                 self.tracing_state = TracingState::Stopped;
                 dlogi!("stop tracing init");
+
+                // monitor.c:624-632: after detaching init, C `continue`s the
+                // SIGCHLD loop — the generic stopped-handling below must not
+                // PTRACE_CONT an already-detached tracee.
+                return;
             }
 
             if utils::wifstopped(status) {
@@ -787,17 +846,24 @@ impl Monitor {
         let tracked_index = self.tracked.iter().position(|&p| p == pid);
         match tracked_index {
             None => {
-                dlogv!("new process {pid} attached");
+                // Only a stop report introduces a new tracee. Exit reports of
+                // monitor children reaped elsewhere (and error sentinels,
+                // gated above) must not enter `tracked`: a stale slot later
+                // misroutes a pid-reused init child into the "unknown
+                // sigchld_status" blind-detach path.
+                if pid > 0 && utils::wifstopped(status) {
+                    dlogv!("new process {pid} attached");
 
-                if let Some(slot) = self.tracked.iter_mut().find(|p| **p == 0) {
-                    *slot = pid;
-                } else {
-                    self.tracked.push(pid);
-                }
+                    if let Some(slot) = self.tracked.iter_mut().find(|p| **p == 0) {
+                        *slot = pid;
+                    } else {
+                        self.tracked.push(pid);
+                    }
 
-                unsafe {
-                    libc::ptrace(libc::PTRACE_SETOPTIONS, pid, 0, libc::PTRACE_O_TRACEEXEC);
-                    libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
+                    unsafe {
+                        libc::ptrace(libc::PTRACE_SETOPTIONS, pid, 0, libc::PTRACE_O_TRACEEXEC);
+                        libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
+                    }
                 }
             }
             Some(_) => {
@@ -812,7 +878,12 @@ impl Monitor {
 
                     self.consider_handoff(pid, &program, &mut status);
                 } else {
-                    dlogw!("process {pid} received unknown sigchld_status {}", parse_status(status));
+                    let program = utils::get_program(pid).unwrap_or_else(|_| "<unreadable>".to_string());
+                    let cmdline = utils::get_cmdline(pid);
+                    dlogw!(
+                        "process {pid} (program={program}, cmdline=\"{cmdline}\") received unknown sigchld_status {}",
+                        parse_status(status)
+                    );
                 }
 
                 self.clear_tracked(pid);
@@ -845,6 +916,26 @@ impl Monitor {
         } else {
             return;
         };
+
+        // Next-gen hardening: an app_process exec only wins a handoff if it is
+        // genuinely a zygote. Other app_process users (TEE simulators, cmd
+        // wrappers, translation runtimes racing a zygote restart) must never
+        // receive libzygisk. Fail-open when /proc is unreadable so a blocked
+        // read can never wedge the boot — the positive matches below still
+        // filter every normally-readable process.
+        if !is_tango {
+            let cmdline = utils::get_cmdline(pid);
+            if !cmdline.is_empty() && !cmdline.split(' ').any(|arg| arg == "--zygote") {
+                dlogw!("not handing off {pid}: app_process exec without --zygote (cmdline: \"{cmdline}\")");
+                return;
+            }
+            if let Some(ppid) = utils::get_ppid(pid) {
+                if ppid != 1 {
+                    dlogw!("not handing off {pid}: parent is {ppid}, not init (program={program})");
+                    return;
+                }
+            }
+        }
 
         if self.tracing_state != TracingState::Tracing {
             dlogw!("stop injecting {pid} because not tracing");
@@ -903,14 +994,36 @@ impl Monitor {
         } else {
             dlogd!("stopping {pid}");
 
+            let _ = kill(Pid::from_raw(pid), Signal::SIGSTOP);
             unsafe {
-                libc::kill(pid, libc::SIGSTOP);
                 libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
-                libc::waitpid(pid, status, libc::__WALL);
             }
 
-            if !utils::stopped_with(*status, libc::SIGSTOP, 0) {
-                dlogw!("handoff: pid {pid} did not stop as expected");
+            // Bounded wait for the group-stop: blocking forever here would
+            // hold init (seized by us) stopped on every event queued behind
+            // it, wedging the whole boot.
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let mut handoff_status = 0;
+            let stopped_ok = loop {
+                let r = unsafe { libc::waitpid(pid, &mut handoff_status, libc::__WALL | libc::WNOHANG) };
+                if r == pid {
+                    break utils::stopped_with(handoff_status, libc::SIGSTOP, 0);
+                }
+                if r == -1 || Instant::now() > deadline {
+                    break false;
+                }
+                std::thread::sleep(Duration::from_millis(20));
+            };
+
+            if !stopped_ok {
+                dloge!("handoff: pid {pid} did not group-stop as expected ({}), aborting handoff", parse_status(handoff_status));
+
+                unsafe {
+                    libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGCONT);
+                }
+                let _ = kill(Pid::from_raw(pid), Signal::SIGCONT);
+
+                self.clear_tracked(pid);
                 return;
             }
 
@@ -919,6 +1032,11 @@ impl Monitor {
                 libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGSTOP);
             }
         }
+
+        // monitor.c:745 `sigchld_status = 0`: the handoff above already
+        // detached the process; clearing the status keeps the outer SIGCHLD
+        // handler from PTRACE_DETACH-ing it a second time.
+        *status = 0;
 
         // Only restart companions if it's not the first time.
         let do_restart = if is_tango {
@@ -946,18 +1064,18 @@ impl Monitor {
                 args.push("--tango");
             }
 
-            execv_or_die(tracer, &args);
+            execv_or_die(tracer, &args, Some(pid));
         } else if p == -1 {
             plog!(TAG, "failed to fork, kill");
-            unsafe {
-                libc::kill(pid, libc::SIGKILL);
-            }
+            let _ = kill(Pid::from_raw(pid), Signal::SIGKILL);
         }
     }
 }
 
 /// exec helper for the forked children: mirrors `execl(...)` + PLOGE/exit(1).
-fn execv_or_die(path: &str, args: &[&str]) -> ! {
+/// When `kill_target` is set (tracer handoff), the C monitor kills the parked
+/// zygote on exec failure — otherwise it stays group-stopped forever.
+fn execv_or_die(path: &str, args: &[&str], kill_target: Option<i32>) -> ! {
     let cpath = std::ffi::CString::new(path).unwrap();
     let argp: Vec<std::ffi::CString> = args.iter().map(|a| std::ffi::CString::new(*a).unwrap()).collect();
     let mut argp: Vec<*const libc::c_char> = argp.iter().map(|a| a.as_ptr()).collect();
@@ -968,7 +1086,81 @@ fn execv_or_die(path: &str, args: &[&str]) -> ! {
     }
 
     plog!(TAG, "failed to exec, kill");
-    unsafe { libc::exit(1) }
+    if let Some(target) = kill_target {
+        let _ = kill(Pid::from_raw(target), Signal::SIGKILL);
+    }
+    std::process::exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// Controller-socket datagram discipline
+// ---------------------------------------------------------------------------
+
+/// Sanity bound for a controller string field (root impl name, module name,
+/// error message). A garbled length must never become a giant allocation.
+const MAX_FIELD_LEN: u32 = 1 << 20;
+
+/// Sanity bound for the module count in DaemonSetInfo.
+const MAX_MODULES: u32 = 4096;
+
+/// Read one controller field: the daemon (C and Rust) sends each field as its
+/// own `SOCK_DGRAM` datagram. A datagram shorter than the field, an oversized
+/// datagram (MSG_TRUNC reports the true length), or an empty queue
+/// mid-message (EWOULDBLOCK — sender died or sequences interleaved) is a
+/// framing violation: return false so the caller logs, drains and resyncs.
+/// This must never loop on EAGAIN like `read_exact` did — that spin wedged
+/// the monitor's only thread inside the epoll callback and killed boots.
+fn recv_field(fd: i32, buf: &mut [u8]) -> bool {
+    loop {
+        let n = unsafe {
+            libc::recv(fd, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), libc::MSG_DONTWAIT | libc::MSG_TRUNC)
+        };
+        if n == -1 {
+            let err = io::Error::last_os_error();
+            if err.raw_os_error() == Some(libc::EINTR) {
+                continue;
+            }
+            return false;
+        }
+        return n as usize == buf.len();
+    }
+}
+
+/// A `u32` field datagram.
+fn recv_u32_field(fd: i32) -> Option<u32> {
+    let mut bytes = [0u8; 4];
+    if !recv_field(fd, &mut bytes) {
+        return None;
+    }
+    Some(u32::from_ne_bytes(bytes))
+}
+
+/// A length-prefixed string field: `[u32 len]` datagram followed by a
+/// `len`-byte datagram, both bounds-checked.
+fn recv_bytes_field(fd: i32) -> Option<Vec<u8>> {
+    let len = recv_u32_field(fd)?;
+    if len > MAX_FIELD_LEN {
+        return None;
+    }
+    let mut buf = vec![0u8; len as usize];
+    if !recv_field(fd, &mut buf) {
+        return None;
+    }
+    Some(buf)
+}
+
+/// After a framing violation, discard everything currently queued so the
+/// next command byte starts a fresh message.
+fn drain_controller_socket(fd: i32) {
+    let mut scratch = [0u8; 4096];
+    loop {
+        let n = unsafe {
+            libc::recv(fd, scratch.as_mut_ptr() as *mut libc::c_void, scratch.len(), libc::MSG_DONTWAIT)
+        };
+        if n <= 0 {
+            break;
+        }
+    }
 }
 
 /// C fopen(..., "w") equivalent: create/truncate, returning the raw fd.
@@ -1005,6 +1197,13 @@ fn write_file_finish(fd: i32, payload: &str) -> io::Result<()> {
 /// monitor.c `prepare_environment` line splitting: everything up to and
 /// including the `description=` prefix goes to `pre`; the description value and
 /// everything after goes to `post`.
+///
+/// `update_status` formats as `pre + "[status] " + post`, so any status
+/// bracket already present in the stored description would be preserved
+/// forever as stale history (a prop in the wild can carry several fossilized
+/// "[Monitor: … ⚠️]" groups). Leading status brackets are therefore stripped
+/// here — but only genuine ones ("Monitor:" prefix), since a description may
+/// legitimately begin with its own bracketed text.
 pub(crate) fn split_module_prop(orig: &str) -> (String, String) {
     let mut pre = String::new();
     let mut post = String::new();
@@ -1013,7 +1212,7 @@ pub(crate) fn split_module_prop(orig: &str) -> (String, String) {
     for line in orig.split_inclusive('\n') {
         if let Some(value) = line.strip_prefix("description=") {
             pre.push_str("description=");
-            post.push_str(value);
+            post.push_str(strip_status_brackets(value));
             after_description = true;
             continue;
         }
@@ -1028,14 +1227,32 @@ pub(crate) fn split_module_prop(orig: &str) -> (String, String) {
     (pre, post)
 }
 
+fn strip_status_brackets(mut value: &str) -> &str {
+    loop {
+        let trimmed = value.trim_start();
+        let Some(rest) = trimmed.strip_prefix("[Monitor: ") else {
+            break;
+        };
+        let Some(end) = rest.find(']') else {
+            break;
+        };
+        value = rest[end + 1..].trim_start();
+    }
+    value
+}
+
 /// monitor.c `claim_init_tracer`.
-fn claim_init_tracer() -> bool {
+fn claim_init_tracer(monitor: &mut Monitor) -> bool {
     if unsafe { libc::ptrace(utils::PTRACE_SEIZE, 1, 0, libc::PTRACE_O_TRACEFORK) } == -1 {
         // A second ReZygisk cannot seize init (single-tracer limitation): exit
         // quietly instead of fighting over it.
         let err = io::Error::last_os_error();
         if err.raw_os_error() == Some(libc::EPERM) {
             dlogw!("Another process is already tracing init");
+
+            // monitor.c:553: a second Zygisk instance was started — surface
+            // it in module.prop so the user can see why injection stopped.
+            monitor.update_status(Some("❌ Multiple Zygisks functioning"));
         } else {
             plog!(TAG, "failed to seize init");
         }
@@ -1056,7 +1273,7 @@ pub fn init_monitor() {
         std::process::exit(1);
     }
 
-    if !claim_init_tracer() {
+    if !claim_init_tracer(&mut monitor) {
         std::process::exit(1);
     }
 
@@ -1091,14 +1308,9 @@ pub fn init_monitor() {
 
 /// monitor.c `send_control_command`.
 pub fn send_control_command(cmd: RezygiskdCommand) -> io::Result<()> {
-    let sockfd = unsafe { libc::socket(libc::PF_UNIX, libc::SOCK_DGRAM | libc::SOCK_CLOEXEC, 0) };
-    if sockfd == -1 {
-        return Err(io::Error::last_os_error());
-    }
-
-    let result = rz_ipc::datagram_sendto(CONTROLLER_SOCKET, &[cmd as u8]);
-    unsafe { libc::close(sockfd) };
-
-    result
+    // datagram_sendto opens its own socket; the C code's manual socket here
+    // exists only to copy a string into the message payload, which a single
+    // byte command does not need.
+    rz_ipc::datagram_sendto(CONTROLLER_SOCKET, &[cmd as u8])
 }
 

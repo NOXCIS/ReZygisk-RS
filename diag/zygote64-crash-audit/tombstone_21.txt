@@ -1,0 +1,792 @@
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+crDroid Version: '12.11'
+Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+Revision: '0'
+ABI: 'arm64'
+Timestamp: 2026-09-21 17:28:00.855373372-0400
+Process uptime: 0s
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10805, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+Abort message: 'aidl::android::hardware::biometrics::fingerprint::Fingerprint::Fingerprint(std::shared_ptr<FingerprintConfig>) unimplemented unrecognized or unimplemented fingerprint behavior: UNDER_DISPLAY_OPTICAL'
+    x0  0000000000000000  x1  0000000000002a35  x2  0000000000000006  x3  0000007fcaf9d430
+    x4  7173646c6e686139  x5  7173646c6e686139  x6  7173646c6e686139  x7  7f7f7f7f7f7f7f7f
+    x8  00000000000000f0  x9  ea82312f22ef0e82  x10 000000ff00000020  x11 000000003b9ac9ff
+    x12 00000002ad548774  x13 0000000034155555  x14 0000000000000018  x15 00000002ad535869
+    x16 0000007585395250  x17 000000758537cc80  x18 000000758c3f4000  x19 0000000000002a35
+    x20 0000000000002a35  x21 00000000ffffffff  x22 b4000074951322b0  x23 00000000000000c8
+    x24 000000758b9a6f80  x25 000000626a07547b  x26 0000000000000028  x27 0000007fcaf9d5d1
+    x28 b4000074a513d970  x29 0000007fcaf9d4b0
+    lr  000000758530d498  sp  0000007fcaf9d430  pc  000000758530d4bc  pst 0000000000001000
+    esr 0000000000000000
+
+6 total frames
+backtrace:
+      #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 000000000000967c  /system/lib64/liblog.so (__android_log_default_aborter+12) (BuildId: 741f74f0c2be5568355e82125207d7ec)
+      #02 pc 0000000000014614  /vendor/lib64/libbase.so (android::base::LogMessage::~LogMessage()+532) (BuildId: d280b13c261a59dbc01bf534339be7bc)
+      #03 pc 000000000000ad64  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (aidl::android::hardware::biometrics::fingerprint::Fingerprint::Fingerprint(std::__1::shared_ptr<aidl::android::hardware::biometrics::fingerprint::FingerprintConfig>)+2244) (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+      #04 pc 000000000001bfdc  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (main+156) (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+      #05 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+
+memory near x3 ([stack]):
+    0000007fcaf9d410 b4000074951322b0 b400007345139770  ."..t...p..Es...
+    0000007fcaf9d420 0000007fcaf9d4f9 0000007fcaf9d5d0  ................
+    0000007fcaf9d430 0000000000000000 00000000ffffffff  ................
+    0000007fcaf9d440 000003e800002a35 0000000000000000  5*..............
+    0000007fcaf9d450 0000000000000000 0000000000000000  ................
+    0000007fcaf9d460 0000000000000000 0000000000000000  ................
+    0000007fcaf9d470 0000000000000000 0000000000000000  ................
+    0000007fcaf9d480 0000000000000000 0000000000000000  ................
+    0000007fcaf9d490 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4a0 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4b0 0000007fcaf9d4e0 000000758522d680  ..........".u...
+    0000007fcaf9d4c0 b400007345139770 0000000000000020  p..Es... .......
+    0000007fcaf9d4d0 0000007fcaf9d4f9 0000007fcaf9d5d0  ................
+    0000007fcaf9d4e0 0000007fcaf9d520 000000758b695618   ........Vi.u...
+    0000007fcaf9d4f0 0000000000000001 00000000000000c9  ................
+    0000007fcaf9d500 00000000000000c6 b4000074951322b0  ........."..t...
+
+memory near x16 (/apex/com.android.runtime/lib64/bionic/libc.so):
+    0000007585395230 0000007585323da0 0000007585320b20  .=2.u... .2.u...
+    0000007585395240 0000007585330a50 0000007585322de0  P.3.u....-2.u...
+    0000007585395250 000000758537cc80 000000758533cb20  ..7.u... .3.u...
+    0000007585395260 000000758533c480 0000000000000000  ..3.u...........
+    0000007585395270 0000007585301380 000000758532b060  ..0.u...`.2.u...
+    0000007585395280 000000758537e5c0 000000758537d980  ..7.u.....7.u...
+    0000007585395290 000000758537da40 0000007585330bd0  @.7.u.....3.u...
+    00000075853952a0 0000007585327ba0 0000007585327ac0  .{2.u....z2.u...
+    00000075853952b0 0000007585315c30 0000007585355d90  0\1.u....]5.u...
+    00000075853952c0 0000007585356880 000000758530d740  .h5.u...@.0.u...
+    00000075853952d0 0000007585356a80 000000758537c0c0  .j5.u.....7.u...
+    00000075853952e0 00000075853390f0 0000007585330cc0  ..3.u.....3.u...
+    00000075853952f0 000000758532d060 00000075853228d0  `.2.u....(2.u...
+    0000007585395300 000000758cbe8eb0 0000007585313450  ....u...P41.u...
+    0000007585395310 000000758532a4d0 0000007585356260  ..2.u...`b5.u...
+    0000007585395320 000000758530dd60 0000007585356220  `.0.u... b5.u...
+
+memory near x17 (/apex/com.android.runtime/lib64/bionic/libc.so):
+    000000758537cc60 b900001394004c38 f9400bf392800000  8L............@.
+    000000758537cc70 d65f03c0a8c27bfd 0000000000000000  .{...._.........
+    000000758537cc80 d4000001d28015c8 da809400b140041f  ..........@.....
+    000000758537cc90 d65f03c054fffe08 d503201fd503201f  ...T.._.. ... ..
+    000000758537cca0 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537ccb0 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537ccc0 d4000001d2801608 da809400b140041f  ..........@.....
+    000000758537ccd0 d65f03c054fffc08 d503201fd503201f  ...T.._.. ... ..
+    000000758537cce0 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537ccf0 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537cd00 d4000001d28015e8 da809400b140041f  ..........@.....
+    000000758537cd10 d65f03c054fffa08 d503201fd503201f  ...T.._.. ... ..
+    000000758537cd20 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537cd30 d503201fd503201f d503201fd503201f  . ... ... ... ..
+    000000758537cd40 d4000001d2801628 da809400b140041f  (.........@.....
+    000000758537cd50 d65f03c054fff808 d503201fd503201f  ...T.._.. ... ..
+
+memory near x18:
+    000000758c3f4000 0000000000000000 0000000000000000  ................
+    000000758c3f4010 0000000000000000 0000000000000000  ................
+    000000758c3f4020 0000000000000000 0000000000000000  ................
+    000000758c3f4030 0000000000000000 0000000000000000  ................
+    000000758c3f4040 0000000000000000 0000000000000000  ................
+    000000758c3f4050 0000000000000000 0000000000000000  ................
+    000000758c3f4060 0000000000000000 0000000000000000  ................
+    000000758c3f4070 0000000000000000 0000000000000000  ................
+    000000758c3f4080 0000000000000000 0000000000000000  ................
+    000000758c3f4090 0000000000000000 0000000000000000  ................
+    000000758c3f40a0 0000000000000000 0000000000000000  ................
+    000000758c3f40b0 0000000000000000 0000000000000000  ................
+    000000758c3f40c0 0000000000000000 0000000000000000  ................
+    000000758c3f40d0 0000000000000000 0000000000000000  ................
+    000000758c3f40e0 0000000000000000 0000000000000000  ................
+    000000758c3f40f0 0000000000000000 0000000000000000  ................
+
+memory near x22 ([anon:scudo:primary]):
+    0000007495132290 0000000000000000 0000000000000000  ................
+    00000074951322a0 0e030000000c810a 0000000000000000  ................
+    00000074951322b0 6e613a3a6c646961 683a3a64696f7264  aidl::android::h
+    00000074951322c0 3a65726177647261 7274656d6f69623a  ardware::biometr
+    00000074951322d0 6e69663a3a736369 746e697270726567  ics::fingerprint
+    00000074951322e0 7265676e69463a3a 463a3a746e697270  ::Fingerprint::F
+    00000074951322f0 6972707265676e69 3a3a64747328746e  ingerprint(std::
+    0000007495132300 705f646572616873 65676e69463c7274  shared_ptr<Finge
+    0000007495132310 6f43746e69727072 7520293e6769666e  rprintConfig>) u
+    0000007495132320 656d656c706d696e 726e75206465746e  nimplemented unr
+    0000007495132330 657a696e676f6365 696e7520726f2064  ecognized or uni
+    0000007495132340 746e656d656c706d 65676e6966206465  mplemented finge
+    0000007495132350 6220746e69727072 3a726f6976616865  rprint behavior:
+    0000007495132360 445f5245444e5520 4f5f59414c505349   UNDER_DISPLAY_O
+    0000007495132370 00004c4143495450 0000000000000000  PTICAL..........
+    0000007495132380 0000000000000000 0000000000000000  ................
+
+memory near x24 ([anon:stack_and_tls:main]):
+    000000758b9a6f60 0000000000000000 0000000000000000  ................
+    000000758b9a6f70 0000000000000000 000000758b9a6fc0  .........o..u...
+    000000758b9a6f80 000000758cb6f328 000000758cd2b080  (...u.......u...
+    000000758b9a6f90 0000000000000000 0000000000000000  ................
+    000000758b9a6fa0 0000000000000000 ea82312f22ef0e82  ..........."/1..
+    000000758b9a6fb0 000000758539e680 0000000000000000  ..9.u...........
+    000000758b9a6fc0 0000000000000000 0000000000000000  ................
+    000000758b9a6fd0 0000000000000000 0000000000000000  ................
+    000000758b9a6fe0 0000000000000001 b40000740513a600  ............t...
+    000000758b9a6ff0 0000000000000000 0000000000000000  ................
+    000000758b9a7000 0000000000000000 0000000000000000  ................
+    000000758b9a7010 0000000000000000 0000000000000000  ................
+    000000758b9a7020 0000000000000000 0000000000000000  ................
+    000000758b9a7030 0000000000000000 0000000000000000  ................
+    000000758b9a7040 0000000000000000 0000000000000000  ................
+    000000758b9a7050 0000000000000000 0000000000000000  ................
+
+memory near x25 (/vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi):
+    000000626a075450 61206e6920676e69 636974616d6f7475  ing in automatic
+    000000626a075460 6e656d7567726120 7265626d756e2074   argument number
+    000000626a075470 65646f6d20676e69 6973726570003000  ing mode.0.persi
+    000000626a075480 6f646e65762e7473 70662e7379732e72  st.vendor.sys.fp
+    000000626a075490 00726f646e65762e 706f2074276e6143  .vendor.Can't op
+    000000626a0754a0 65676e6966206e65 4820746e69727072  en fingerprint H
+    000000626a0754b0 656c75646f4d2057 7461676976616e00  W Module.navigat
+    000000626a0754c0 747365675f6e6f69 776f6e2000657275  ion_gesture. now
+    000000626a0754d0 6e67697300203d20 3635343332313000   = .sign.0123456
+    000000626a0754e0 6564636261393837 6d6c6b6a69686766  789abcdefghijklm
+    000000626a0754f0 7574737271706f6e 6162007a79787776  nopqrstuvwxyz.ba
+    000000626a075500 697274735f636973 5245444e5500676e  sic_string.UNDER
+    000000626a075510 59414c505349445f 4c41434954504f5f  _DISPLAY_OPTICAL
+    000000626a075520 55425f454d4f4800 456e6f004e4f5454  .HOME_BUTTON.onE
+    000000626a075530 7365526c6c6f726e 3d64696628746c75  nrollResult(fid=
+    000000626a075540 3d646967202c6425 3d6d6572202c6425  %d, gid=%d, rem=
+
+memory near x27 ([stack]):
+    0000007fcaf9d5b0 b4000074851307c0 b4000074851307f0  ....t.......t...
+    0000007fcaf9d5c0 b4000074851307f0 b400007485130808  ....t.......t...
+    0000007fcaf9d5d0 b400007345139770 00000000746e6972  p..Es...rint....
+    0000007fcaf9d5e0 0000000000000000 00000075852f68f8  .........h/.u...
+    0000007fcaf9d5f0 445f5245444e552a 4f5f59414c505349  *UNDER_DISPLAY_O
+    0000007fcaf9d600 00004c4143495450 0000000000000000  PTICAL..........
+    0000007fcaf9d610 ea82312f22ef0e82 000000758b9a6f80  ..."/1...o..u...
+    0000007fcaf9d620 0000007fcaf9d6f0 000000626a08cfe0  ...........jb...
+    0000007fcaf9d630 0000000000000000 0000000000000000  ................
+    0000007fcaf9d640 0000000000000000 0000000000000000  ................
+    0000007fcaf9d650 b4000074751328d8 000000758b9a6f80  .(.ut....o..u...
+    0000007fcaf9d660 0000007fcaf9d7b8 b4000074751328e8  .........(.ut...
+    0000007fcaf9d670 b4000073c512d0d0 b4000074751328d0  ....s....(.ut...
+    0000007fcaf9d680 0000000000000000 0000000000000000  ................
+    0000007fcaf9d690 0000000000000000 0000007fcaf9d690  ................
+    0000007fcaf9d6a0 0000000000000000 0000000000000000  ................
+
+memory near x28 ([anon:scudo:primary]):
+    00000074a513d950 0000000000000000 0000000000000000  ................
+    00000074a513d960 82d20000000f010b 0000000000000000  ................
+    00000074a513d970 0000020148574454 00000072f2bd1330  TDWH....0...r...
+    00000074a513d980 0000000000000000 0000000000000000  ................
+    00000074a513d990 0000000000000000 0000000000000000  ................
+    00000074a513d9a0 0000000000000000 0000000000000000  ................
+    00000074a513d9b0 0000000000000000 0000000000000000  ................
+    00000074a513d9c0 0000000000000000 0000000000000000  ................
+    00000074a513d9d0 0000000000000000 0000000000000000  ................
+    00000074a513d9e0 00000072f2bcf1e4 000000626a07c220  ....r... ..jb...
+    00000074a513d9f0 00000072f2bcf5e4 00000072f2bcf290  ....r.......r...
+    00000074a513da00 00000072f2bcf2c8 00000072f2bcf3a0  ....r.......r...
+    00000074a513da10 00000072f2bcf3d4 00000072f2bcf408  ....r.......r...
+    00000074a513da20 00000072f2bcfa04 00000072f2bcf460  ....r...`...r...
+    00000074a513da30 00000072f2bcf4bc 00000072f2bcf518  ....r.......r...
+    00000074a513da40 00000072f2bcf60c 0000000000000000  ....r...........
+
+memory near x29 ([stack]):
+    0000007fcaf9d490 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4a0 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4b0 0000007fcaf9d4e0 000000758522d680  ..........".u...
+    0000007fcaf9d4c0 b400007345139770 0000000000000020  p..Es... .......
+    0000007fcaf9d4d0 0000007fcaf9d4f9 0000007fcaf9d5d0  ................
+    0000007fcaf9d4e0 0000007fcaf9d520 000000758b695618   ........Vi.u...
+    0000007fcaf9d4f0 0000000000000001 00000000000000c9  ................
+    0000007fcaf9d500 00000000000000c6 b4000074951322b0  ........."..t...
+    0000007fcaf9d510 0000007fcaf9d620 ea82312f22ef0e82   .........."/1..
+    0000007fcaf9d520 0000007fcaf9d620 000000626a07bd68   .......h..jb...
+    0000007fcaf9d530 000000000000000a b4000074851307f0  ............t...
+    0000007fcaf9d540 b4000074851307f0 000000758b9a6f80  ....t....o..u...
+    0000007fcaf9d550 0000000000000000 000000758cd2b388  ............u...
+    0000007fcaf9d560 000000758b9a6f80 0000007fcaf9d5a1  .o..u...........
+    0000007fcaf9d570 0000000000000021 000000000000001c  !...............
+    0000007fcaf9d580 0000000000000013 b4000074a513d970  ........p...t...
+
+memory near lr (/apex/com.android.runtime/lib64/bionic/libc.so):
+    000000758530d470 6f00e400aa0003f4 ad0303e0ad0003e0  .......o........
+    000000758530d480 12800015ad0203e0 b90013f3b9000bf5  ................
+    000000758530d490 94020af7ad0103e0 b90017e093407e68  ........h~@.....
+    000000758530d4a0 f9000fff93407e81 aa0803e0910003e3  .~@.............
+    000000758530d4b0 52801e08528000c2 b6f80080d4000001  ...R...R........
+    000000758530d4c0 94020a1f4b0003f3 528000c0b9000013  ...K...........R
+    000000758530d4d0 94020aa3aa1f03e1 94020aed52801580  ...........R....
+    000000758530d4e0 52801640aa0003f3 aa0003f494020aea  ....@..R........
+    000000758530d4f0 ad0003e06f00e400 ad0203e0ad0303e0  ...o............
+    000000758530d500 b90013f3b9000bf5 94020ad9ad0103e0  ................
+    000000758530d510 b90017e093407e68 f9000fff93407e81  h~@......~@.....
+    000000758530d520 aa0803e0910003e3 52801e08528000c2  ...........R...R
+    000000758530d530 b6f80080d4000001 94020a014b0003f3  ...........K....
+    000000758530d540 52800fe0b9000013 0000000094020bda  .......R........
+    000000758530d550 14020ba72a1f03e3 0000000000000000  ...*............
+    000000758530d560 aa0003e12a0103e2 2a1f03e312800c60  ...*....`......*
+
+memory near sp ([stack]):
+    0000007fcaf9d410 b4000074951322b0 b400007345139770  ."..t...p..Es...
+    0000007fcaf9d420 0000007fcaf9d4f9 0000007fcaf9d5d0  ................
+    0000007fcaf9d430 0000000000000000 00000000ffffffff  ................
+    0000007fcaf9d440 000003e800002a35 0000000000000000  5*..............
+    0000007fcaf9d450 0000000000000000 0000000000000000  ................
+    0000007fcaf9d460 0000000000000000 0000000000000000  ................
+    0000007fcaf9d470 0000000000000000 0000000000000000  ................
+    0000007fcaf9d480 0000000000000000 0000000000000000  ................
+    0000007fcaf9d490 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4a0 0000000000000000 0000000000000000  ................
+    0000007fcaf9d4b0 0000007fcaf9d4e0 000000758522d680  ..........".u...
+    0000007fcaf9d4c0 b400007345139770 0000000000000020  p..Es... .......
+    0000007fcaf9d4d0 0000007fcaf9d4f9 0000007fcaf9d5d0  ................
+    0000007fcaf9d4e0 0000007fcaf9d520 000000758b695618   ........Vi.u...
+    0000007fcaf9d4f0 0000000000000001 00000000000000c9  ................
+    0000007fcaf9d500 00000000000000c6 b4000074951322b0  ........."..t...
+
+memory near pc (/apex/com.android.runtime/lib64/bionic/libc.so):
+    000000758530d490 94020af7ad0103e0 b90017e093407e68  ........h~@.....
+    000000758530d4a0 f9000fff93407e81 aa0803e0910003e3  .~@.............
+    000000758530d4b0 52801e08528000c2 b6f80080d4000001  ...R...R........
+    000000758530d4c0 94020a1f4b0003f3 528000c0b9000013  ...K...........R
+    000000758530d4d0 94020aa3aa1f03e1 94020aed52801580  ...........R....
+    000000758530d4e0 52801640aa0003f3 aa0003f494020aea  ....@..R........
+    000000758530d4f0 ad0003e06f00e400 ad0203e0ad0303e0  ...o............
+    000000758530d500 b90013f3b9000bf5 94020ad9ad0103e0  ................
+    000000758530d510 b90017e093407e68 f9000fff93407e81  h~@......~@.....
+    000000758530d520 aa0803e0910003e3 52801e08528000c2  ...........R...R
+    000000758530d530 b6f80080d4000001 94020a014b0003f3  ...........K....
+    000000758530d540 52800fe0b9000013 0000000094020bda  .......R........
+    000000758530d550 14020ba72a1f03e3 0000000000000000  ...*............
+    000000758530d560 aa0003e12a0103e2 2a1f03e312800c60  ...*....`......*
+    000000758530d570 0000000014020bd4 0000000000000000  ................
+    000000758530d580 f9000bf9a9bb7bfd a90357f6a9025ff8  .{......._...W..
+
+memory map (348 entries):
+    00000062'6a071000-00000062'6a07afff r--         0      a000  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+    00000062'6a07b000-00000062'6a08efff r-x      a000     14000  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+    00000062'6a08f000-00000062'6a08ffff r--     1e000      1000  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+    00000062'6a090000-00000062'6a090fff rw-     1f000      1000  /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi (BuildId: b2ff75557a1bd65a835b497fa83a7d9c)
+    00000072'ebe18000-00000072'ebe18fff r--         0      1000  /vendor/lib64/libqti-perfd-client.so (BuildId: b4350671d900d359fc0059f047e97c43)
+    00000072'ebe19000-00000072'ebe19fff r-x      1000      1000  /vendor/lib64/libqti-perfd-client.so (BuildId: b4350671d900d359fc0059f047e97c43)
+    00000072'ebe1a000-00000072'ebe1afff r--      2000      1000  /vendor/lib64/libqti-perfd-client.so (BuildId: b4350671d900d359fc0059f047e97c43)
+    00000072'ebe50000-00000072'ec2dbfff ---         0    48c000
+    00000072'ec2dc000-00000072'ec2dffff rw-         0      4000
+    00000072'ec2e0000-00000072'ece4ffff ---         0    b70000
+    00000072'ece50000-00000072'ece50fff ---         0      1000
+    00000072'ece51000-00000072'ecf4cfff rw-         0     fc000  [anon:stack_and_tls:10826]
+    00000072'ecf4d000-00000072'ecf4dfff ---         0      1000
+    00000072'ecf4e000-00000072'eddfffff ---         0    eb2000
+    00000072'ede00000-00000072'ede03fff rw-         0      4000
+    00000072'ede04000-00000072'edf4dfff ---         0    14a000
+    00000072'ee04c000-00000072'ee04cfff ---         0      1000
+    00000072'ee04d000-00000072'ee148fff rw-         0     fc000  [anon:stack_and_tls:10824]
+    00000072'ee149000-00000072'ee149fff ---         0      1000
+    00000072'ee14a000-00000072'ee14afff r-x         0      1000  /vendor/lib64/libarm_proxy_skel.so
+    00000072'ee14b000-00000072'ee159fff ---         0      f000
+    00000072'ee15a000-00000072'ee15afff r--         0      1000  /vendor/lib64/libarm_proxy_skel.so
+    00000072'ee15b000-00000072'ee15bfff rw-      1000      1000  /vendor/lib64/libarm_proxy_skel.so
+    00000072'ee194000-00000072'ee8e3fff ---         0    750000
+    00000072'ee8e4000-00000072'ee8e7fff rw-         0      4000
+    00000072'ee8e8000-00000072'ef193fff ---         0    8ac000
+    00000072'ef194000-00000072'ef194fff ---         0      1000
+    00000072'ef195000-00000072'ef290fff rw-         0     fc000  [anon:stack_and_tls:10810]
+    00000072'ef291000-00000072'ef291fff ---         0      1000
+    00000072'ef292000-00000072'ef8b7fff ---         0    626000
+    00000072'ef8b8000-00000072'ef8bbfff rw-         0      4000
+    00000072'ef8bc000-00000072'f0291fff ---         0    9d6000
+    00000072'f0292000-00000072'f0292fff ---         0      1000
+    00000072'f0293000-00000072'f038efff rw-         0     fc000  [anon:stack_and_tls:10809]
+    00000072'f038f000-00000072'f038ffff ---         0      1000
+    00000072'f0390000-00000072'f03a4fff r--         0     15000  /vendor/lib64/libcdsprpc.so (BuildId: 65789a45b8a89fa7602580d9f538099d)
+    00000072'f03a5000-00000072'f03ccfff r-x     15000     28000  /vendor/lib64/libcdsprpc.so (BuildId: 65789a45b8a89fa7602580d9f538099d)
+    00000072'f03cd000-00000072'f03cdfff r--     3d000      1000  /vendor/lib64/libcdsprpc.so (BuildId: 65789a45b8a89fa7602580d9f538099d)
+    00000072'f03ce000-00000072'f03cefff rw-     3d000      1000  /vendor/lib64/libcdsprpc.so (BuildId: 65789a45b8a89fa7602580d9f538099d)
+    00000072'f03cf000-00000072'f03d4fff rw-         0      6000  [anon:.bss]
+    00000072'f0413000-00000072'f0415fff r-x         0      3000  /vendor/lib64/libhvx_proxy_stub.so
+    00000072'f0416000-00000072'f0424fff ---         0      f000
+    00000072'f0425000-00000072'f0425fff r--      2000      1000  /vendor/lib64/libhvx_proxy_stub.so
+    00000072'f0426000-00000072'f0426fff rw-      3000      1000  /vendor/lib64/libhvx_proxy_stub.so
+    00000072'f0446000-00000072'f0452fff r--         0      d000  /vendor/lib64/vendor.qti.hardware.dsp@1.0.so (BuildId: 939096a5d929c12742237c6daf7d4762)
+    00000072'f0453000-00000072'f045efff r-x      d000      c000  /vendor/lib64/vendor.qti.hardware.dsp@1.0.so (BuildId: 939096a5d929c12742237c6daf7d4762)
+    00000072'f045f000-00000072'f0461fff r--     19000      3000  /vendor/lib64/vendor.qti.hardware.dsp@1.0.so (BuildId: 939096a5d929c12742237c6daf7d4762)
+    00000072'f0462000-00000072'f0462fff rw-     1b000      1000  /vendor/lib64/vendor.qti.hardware.dsp@1.0.so (BuildId: 939096a5d929c12742237c6daf7d4762)
+    00000072'f04a8000-00000072'f11effff ---         0    d48000
+    00000072'f11f0000-00000072'f11f3fff rw-         0      4000
+    00000072'f11f4000-00000072'f14a7fff ---         0    2b4000
+    00000072'f14a8000-00000072'f14a8fff ---         0      1000
+    00000072'f14a9000-00000072'f15a4fff rw-         0     fc000  [anon:stack_and_tls:10808]
+    00000072'f15a5000-00000072'f15a5fff ---         0      1000
+    00000072'f15a6000-00000072'f162ffff ---         0     8a000
+    00000072'f1630000-00000072'f1633fff rw-         0      4000
+    00000072'f1634000-00000072'f25a5fff ---         0    f72000
+    00000072'f25a6000-00000072'f25a6fff ---         0      1000
+    00000072'f25a7000-00000072'f26a2fff rw-         0     fc000  [anon:stack_and_tls:10807]
+    00000072'f26a3000-00000072'f26a3fff ---         0      1000
+    00000072'f26a4000-00000072'f28a3fff rw-         0    200000  /dmabuf:
+    00000072'f28a4000-00000072'f28a4fff r--         0      1000  /vendor/lib64/libhidltransport.so (BuildId: a90cc9423ab727cb233587248d0f7e9e)
+    00000072'f28a5000-00000072'f28a5fff r-x      1000      1000  /vendor/lib64/libhidltransport.so (BuildId: a90cc9423ab727cb233587248d0f7e9e)
+    00000072'f28a6000-00000072'f28a6fff r--      2000      1000  /vendor/lib64/libhidltransport.so (BuildId: a90cc9423ab727cb233587248d0f7e9e)
+    00000072'f28d5000-00000072'f28e1fff r--         0      d000  /vendor/lib64/vendor.xiaomi.hardware.fx.tunnel@1.0.so (BuildId: 91c2005b41c0f83b9fa4f40143ffce3e)
+    00000072'f28e2000-00000072'f28eefff r-x      d000      d000  /vendor/lib64/vendor.xiaomi.hardware.fx.tunnel@1.0.so (BuildId: 91c2005b41c0f83b9fa4f40143ffce3e)
+    00000072'f28ef000-00000072'f28f1fff r--     1a000      3000  /vendor/lib64/vendor.xiaomi.hardware.fx.tunnel@1.0.so (BuildId: 91c2005b41c0f83b9fa4f40143ffce3e)
+    00000072'f28f2000-00000072'f28f2fff rw-     1d000      1000  /vendor/lib64/vendor.xiaomi.hardware.fx.tunnel@1.0.so (BuildId: 91c2005b41c0f83b9fa4f40143ffce3e)
+    00000072'f2932000-00000072'f2932fff r--         0      1000  /vendor/lib64/libion.so (BuildId: d36a87925b66bda1c8911d12397d6f81)
+    00000072'f2933000-00000072'f2934fff r-x      1000      2000  /vendor/lib64/libion.so (BuildId: d36a87925b66bda1c8911d12397d6f81)
+    00000072'f2935000-00000072'f2935fff r--      3000      1000  /vendor/lib64/libion.so (BuildId: d36a87925b66bda1c8911d12397d6f81)
+    00000072'f2936000-00000072'f2936fff rw-         0      1000  [anon:.bss]
+    00000072'f2952000-00000072'f2990fff r--         0     3f000  /vendor/lib64/libhidlbase.so (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+    00000072'f2991000-00000072'f29e8fff r-x     3f000     58000  /vendor/lib64/libhidlbase.so (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+    00000072'f29e9000-00000072'f29f3fff r--     97000      b000  /vendor/lib64/libhidlbase.so (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+    00000072'f29f4000-00000072'f29f4fff rw-     a2000      1000  /vendor/lib64/libhidlbase.so (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+    00000072'f2a3a000-00000072'f2a6efff r--         0     35000  /vendor/lib64/libgf_hal.so (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+    00000072'f2a6f000-00000072'f2accfff r-x     35000     5e000  /vendor/lib64/libgf_hal.so (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+    00000072'f2acd000-00000072'f2ad0fff r--     93000      4000  /vendor/lib64/libgf_hal.so (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+    00000072'f2ad1000-00000072'f2ad2fff rw-     96000      2000  /vendor/lib64/libgf_hal.so (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+    00000072'f2ad3000-00000072'f2ad7fff rw-         0      5000  [anon:.bss]
+    00000072'f2b45000-00000072'f2b52fff r--         0      e000  /vendor/lib64/libutils.so (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+    00000072'f2b53000-00000072'f2b64fff r-x      e000     12000  /vendor/lib64/libutils.so (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+    00000072'f2b65000-00000072'f2b65fff r--     20000      1000  /vendor/lib64/libutils.so (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+    00000072'f2b66000-00000072'f2b66fff rw-     21000      1000  /vendor/lib64/libutils.so (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+    00000072'f2bb1000-00000072'f2bb5fff r--         0      5000  /vendor/lib64/libQSEEComAPI.so (BuildId: b623a75eb94125726f7a1910f108a84a)
+    00000072'f2bb6000-00000072'f2bbafff r-x      5000      5000  /vendor/lib64/libQSEEComAPI.so (BuildId: b623a75eb94125726f7a1910f108a84a)
+    00000072'f2bbb000-00000072'f2bbbfff r--      a000      1000  /vendor/lib64/libQSEEComAPI.so (BuildId: b623a75eb94125726f7a1910f108a84a)
+    00000072'f2bbc000-00000072'f2bbcfff rw-      a000      1000  /vendor/lib64/libQSEEComAPI.so (BuildId: b623a75eb94125726f7a1910f108a84a)
+    00000072'f2bcd000-00000072'f2bcefff r--         0      2000  /vendor/lib64/hw/fingerprint.goodix_fod.lahaina.so (BuildId: 81b8560e89d45125d3c6a7616e747a52)
+    00000072'f2bcf000-00000072'f2bcffff r-x      2000      1000  /vendor/lib64/hw/fingerprint.goodix_fod.lahaina.so (BuildId: 81b8560e89d45125d3c6a7616e747a52)
+    00000072'f2bd0000-00000072'f2bd0fff r--      3000      1000  /vendor/lib64/hw/fingerprint.goodix_fod.lahaina.so (BuildId: 81b8560e89d45125d3c6a7616e747a52)
+    00000072'f2bd1000-00000072'f2bd1fff rw-      3000      1000  /vendor/lib64/hw/fingerprint.goodix_fod.lahaina.so (BuildId: 81b8560e89d45125d3c6a7616e747a52)
+    00000072'f2bd2000-00000072'f2bdcfff ---         0      b000
+    00000072'f2bdd000-00000072'f2bddfff rw-     10000      1000  /vendor/lib64/hw/fingerprint.goodix_fod.lahaina.so (BuildId: 81b8560e89d45125d3c6a7616e747a52)
+    00000072'f2c00000-00000072'f4bfffff ---         0   2000000
+    00000072'f4c53000-00000072'f4c53fff r--         0      1000  /vendor/lib64/libhwbinder.so (BuildId: fc563e9d66bf922ae0d0c6c0489f2ee3)
+    00000072'f4c54000-00000072'f4c54fff r-x      1000      1000  /vendor/lib64/libhwbinder.so (BuildId: fc563e9d66bf922ae0d0c6c0489f2ee3)
+    00000072'f4c55000-00000072'f4c55fff r--      2000      1000  /vendor/lib64/libhwbinder.so (BuildId: fc563e9d66bf922ae0d0c6c0489f2ee3)
+    00000072'f50f1000-00000072'f50f3fff r--         0      3000  /system/lib64/libnetd_client.so (BuildId: 2a7cb34c8369cd8aedd764f8d2e75a67)
+    00000072'f50f4000-00000072'f50f8fff r-x      3000      5000  /system/lib64/libnetd_client.so (BuildId: 2a7cb34c8369cd8aedd764f8d2e75a67)
+    00000072'f50f9000-00000072'f50f9fff r--      8000      1000  /system/lib64/libnetd_client.so (BuildId: 2a7cb34c8369cd8aedd764f8d2e75a67)
+    00000072'f50fa000-00000072'f50fafff rw-      9000      1000  /system/lib64/libnetd_client.so (BuildId: 2a7cb34c8369cd8aedd764f8d2e75a67)
+    00000072'f512c000-00000072'f5138fff ---         0      d000  [anon:scudo:primary_reserve]
+    00000072'f5139000-00000072'f5178fff rw-         0     40000  [anon:scudo:primary]
+    00000072'f5179000-00000073'15134fff ---         0  1ffbc000  [anon:scudo:primary_reserve]
+    00000073'15135000-00000073'15174fff rw-         0     40000  [anon:scudo:primary]
+    00000073'15175000-00000073'2512dfff ---         0   ffb9000  [anon:scudo:primary_reserve]
+    00000073'2512e000-00000073'2516dfff rw-         0     40000  [anon:scudo:primary]
+    00000073'2516e000-00000073'3513afff ---         0   ffcd000  [anon:scudo:primary_reserve]
+    00000073'3513b000-00000073'3517afff rw-         0     40000  [anon:scudo:primary]
+    00000073'3517b000-00000073'45137fff ---         0   ffbd000  [anon:scudo:primary_reserve]
+    00000073'45138000-00000073'45177fff rw-         0     40000  [anon:scudo:primary]
+    00000073'45178000-00000073'65132fff ---         0  1ffbb000  [anon:scudo:primary_reserve]
+    00000073'65133000-00000073'65172fff rw-         0     40000  [anon:scudo:primary]
+    00000073'65173000-00000073'85137fff ---         0  1ffc5000  [anon:scudo:primary_reserve]
+    00000073'85138000-00000073'85177fff rw-         0     40000  [anon:scudo:primary]
+    00000073'85178000-00000073'95139fff ---         0   ffc2000  [anon:scudo:primary_reserve]
+    00000073'9513a000-00000073'95179fff rw-         0     40000  [anon:scudo:primary]
+    00000073'9517a000-00000073'a5130fff ---         0   ffb7000  [anon:scudo:primary_reserve]
+    00000073'a5131000-00000073'a5170fff rw-         0     40000  [anon:scudo:primary]
+    00000073'a5171000-00000073'b5139fff ---         0   ffc9000  [anon:scudo:primary_reserve]
+    00000073'b513a000-00000073'b5179fff rw-         0     40000  [anon:scudo:primary]
+    00000073'b517a000-00000073'c512cfff ---         0   ffb3000  [anon:scudo:primary_reserve]
+    00000073'c512d000-00000073'c516cfff rw-         0     40000  [anon:scudo:primary]
+    00000073'c516d000-00000073'd5135fff ---         0   ffc9000  [anon:scudo:primary_reserve]
+    00000073'd5136000-00000073'd5175fff rw-         0     40000  [anon:scudo:primary]
+    00000073'd5176000-00000073'f5135fff ---         0  1ffc0000  [anon:scudo:primary_reserve]
+    00000073'f5136000-00000073'f5175fff rw-         0     40000  [anon:scudo:primary]
+    00000073'f5176000-00000074'05132fff ---         0   ffbd000  [anon:scudo:primary_reserve]
+    00000074'05133000-00000074'05172fff rw-         0     40000  [anon:scudo:primary]
+    00000074'05173000-00000074'25137fff ---         0  1ffc5000  [anon:scudo:primary_reserve]
+    00000074'25138000-00000074'25177fff rw-         0     40000  [anon:scudo:primary]
+    00000074'25178000-00000074'3513afff ---         0   ffc3000  [anon:scudo:primary_reserve]
+    00000074'3513b000-00000074'3517afff rw-         0     40000  [anon:scudo:primary]
+    00000074'3517b000-00000074'75131fff ---         0  3ffb7000  [anon:scudo:primary_reserve]
+    00000074'75132000-00000074'75171fff rw-         0     40000  [anon:scudo:primary]
+    00000074'75172000-00000074'8512ffff ---         0   ffbe000  [anon:scudo:primary_reserve]
+    00000074'85130000-00000074'8516ffff rw-         0     40000  [anon:scudo:primary]
+    00000074'85170000-00000074'95131fff ---         0   ffc2000  [anon:scudo:primary_reserve]
+    00000074'95132000-00000074'95171fff rw-         0     40000  [anon:scudo:primary]
+    00000074'95172000-00000074'a5139fff ---         0   ffc8000  [anon:scudo:primary_reserve]
+    00000074'a513a000-00000074'a5179fff rw-         0     40000  [anon:scudo:primary]
+    00000074'a517a000-00000074'b512ffff ---         0   ffb6000  [anon:scudo:primary_reserve]
+    00000074'b5130000-00000074'b516ffff rw-         0     40000  [anon:scudo:primary]
+    00000074'b5170000-00000074'd5132fff ---         0  1ffc3000  [anon:scudo:primary_reserve]
+    00000074'd5133000-00000074'd5172fff rw-         0     40000  [anon:scudo:primary]
+    00000074'd5173000-00000074'e5135fff ---         0   ffc3000  [anon:scudo:primary_reserve]
+    00000074'e5136000-00000074'e5175fff rw-         0     40000  [anon:scudo:primary]
+    00000074'e5176000-00000074'f5139fff ---         0   ffc4000  [anon:scudo:primary_reserve]
+    00000074'f513a000-00000074'f5179fff rw-         0     40000  [anon:scudo:primary]
+    00000074'f517a000-00000075'0512bfff ---         0   ffb2000  [anon:scudo:primary_reserve]
+    00000075'0512c000-00000075'0543efff ---         0    313000  [anon:cfi shadow]
+    00000075'0543f000-00000075'0543ffff r--         0      1000  [anon:cfi shadow]
+    00000075'05440000-00000075'054c2fff ---         0     83000  [anon:cfi shadow]
+    00000075'054c3000-00000075'054c3fff r--         0      1000  [anon:cfi shadow]
+    00000075'054c4000-00000075'054d7fff ---         0     14000  [anon:cfi shadow]
+    00000075'054d8000-00000075'054d8fff r--         0      1000  [anon:cfi shadow]
+    00000075'054d9000-00000075'8512bfff ---         0  7fc53000  [anon:cfi shadow]
+    00000075'8512c000-00000075'8518bfff rw-         0     60000  [anon:linker_alloc]
+    00000075'8518c000-00000075'85199fff r--         0      e000  /system/lib64/libbase.so (BuildId: 1d4f677660208d77c6732219f31285b5)
+    00000075'8519a000-00000075'851bdfff r-x      e000     24000  /system/lib64/libbase.so (BuildId: 1d4f677660208d77c6732219f31285b5)
+    00000075'851be000-00000075'851befff r--     32000      1000  /system/lib64/libbase.so (BuildId: 1d4f677660208d77c6732219f31285b5)
+    00000075'851bf000-00000075'851bffff rw-     33000      1000  /system/lib64/libbase.so (BuildId: 1d4f677660208d77c6732219f31285b5)
+    00000075'851e7000-00000075'851e7fff r--         0      1000  /vendor/lib64/android.hardware.biometrics.common.thread.so (BuildId: 0dc6f588a103b4959064cfe5945533e5)
+    00000075'851e8000-00000075'851e8fff r-x      1000      1000  /vendor/lib64/android.hardware.biometrics.common.thread.so (BuildId: 0dc6f588a103b4959064cfe5945533e5)
+    00000075'851e9000-00000075'851e9fff r--      2000      1000  /vendor/lib64/android.hardware.biometrics.common.thread.so (BuildId: 0dc6f588a103b4959064cfe5945533e5)
+    00000075'85224000-00000075'85228fff r--         0      5000  /system/lib64/liblog.so (BuildId: 741f74f0c2be5568355e82125207d7ec)
+    00000075'85229000-00000075'85232fff r-x      5000      a000  /system/lib64/liblog.so (BuildId: 741f74f0c2be5568355e82125207d7ec)
+    00000075'85233000-00000075'85233fff r--      f000      1000  /system/lib64/liblog.so (BuildId: 741f74f0c2be5568355e82125207d7ec)
+    00000075'85234000-00000075'85234fff rw-     10000      1000  /system/lib64/liblog.so (BuildId: 741f74f0c2be5568355e82125207d7ec)
+    00000075'8525e000-00000075'8526bfff r--         0      e000  /system/lib64/libutils.so (BuildId: 3935d148552eae0f0d9a2a3c8d197efd)
+    00000075'8526c000-00000075'8527dfff r-x      e000     12000  /system/lib64/libutils.so (BuildId: 3935d148552eae0f0d9a2a3c8d197efd)
+    00000075'8527e000-00000075'8527efff r--     20000      1000  /system/lib64/libutils.so (BuildId: 3935d148552eae0f0d9a2a3c8d197efd)
+    00000075'8527f000-00000075'8527ffff rw-     21000      1000  /system/lib64/libutils.so (BuildId: 3935d148552eae0f0d9a2a3c8d197efd)
+    00000075'85296000-00000075'852eefff r--         0     59000  /apex/com.android.runtime/lib64/bionic/libc.so (BuildId: a10541b33c9014fa2be05995a5155d29)
+    00000075'852ef000-00000075'85391fff r-x     59000     a3000  /apex/com.android.runtime/lib64/bionic/libc.so (BuildId: a10541b33c9014fa2be05995a5155d29)
+    00000075'85392000-00000075'85395fff r--     fc000      4000  /apex/com.android.runtime/lib64/bionic/libc.so (BuildId: a10541b33c9014fa2be05995a5155d29)
+    00000075'85396000-00000075'85396fff rw-    100000      1000  /apex/com.android.runtime/lib64/bionic/libc.so (BuildId: a10541b33c9014fa2be05995a5155d29)
+    00000075'85397000-00000075'853a7fff rw-         0     11000  [anon:.bss]
+    00000075'853a8000-00000075'853a8fff r--         0      1000  [anon:.bss]
+    00000075'853a9000-00000075'853b0fff rw-         0      8000  [anon:.bss]
+    00000075'853e4000-00000075'853e5fff r--         0      2000  /vendor/lib64/android.hardware.biometrics.common.util.so (BuildId: 144631a2660acf067785f11b14323997)
+    00000075'853e6000-00000075'853e6fff r-x      2000      1000  /vendor/lib64/android.hardware.biometrics.common.util.so (BuildId: 144631a2660acf067785f11b14323997)
+    00000075'853e7000-00000075'853e7fff r--      3000      1000  /vendor/lib64/android.hardware.biometrics.common.util.so (BuildId: 144631a2660acf067785f11b14323997)
+    00000075'853e8000-00000075'853e8fff rw-         0      1000  [anon:.bss]
+    00000075'85404000-00000075'85417fff r--         0     14000  /apex/com.android.runtime/lib64/bionic/libm.so (BuildId: 23e5877a9c75a7e5233ec0c4fc72691a)
+    00000075'85418000-00000075'8543bfff r-x     14000     24000  /apex/com.android.runtime/lib64/bionic/libm.so (BuildId: 23e5877a9c75a7e5233ec0c4fc72691a)
+    00000075'8543c000-00000075'8543cfff r--     38000      1000  /apex/com.android.runtime/lib64/bionic/libm.so (BuildId: 23e5877a9c75a7e5233ec0c4fc72691a)
+    00000075'8543d000-00000075'8543dfff rw-     39000      1000  /apex/com.android.runtime/lib64/bionic/libm.so (BuildId: 23e5877a9c75a7e5233ec0c4fc72691a)
+    00000075'8545f000-00000075'8545ffff r--         0      1000  /apex/com.android.runtime/lib64/bionic/libdl.so (BuildId: f4c24f02dc7a0dc6c2aae98bec61faf2)
+    00000075'85460000-00000075'85460fff r-x      1000      1000  /apex/com.android.runtime/lib64/bionic/libdl.so (BuildId: f4c24f02dc7a0dc6c2aae98bec61faf2)
+    00000075'85461000-00000075'85461fff r--      2000      1000  /apex/com.android.runtime/lib64/bionic/libdl.so (BuildId: f4c24f02dc7a0dc6c2aae98bec61faf2)
+    00000075'85462000-00000075'85462fff r--         0      1000  [anon:.bss]
+    00000075'8549b000-00000075'85515fff r--         0     7b000  /system/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'85516000-00000075'85518fff ---         0      3000
+    00000075'85519000-00000075'855a4fff r-x     7a000     8c000  /system/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'855a5000-00000075'855a7fff ---         0      3000
+    00000075'855a8000-00000075'855affff r--    105000      8000  /system/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'855b0000-00000075'855b2fff ---         0      3000
+    00000075'855b3000-00000075'855b3fff rw-    10c000      1000  /system/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'855b4000-00000075'855bafff rw-         0      7000  [anon:.bss]
+    00000075'855c8000-00000075'855d6fff r--         0      f000  /system/lib64/libapexsupport.so (BuildId: feb541f1386a5c7730704143cfc84323)
+    00000075'855d7000-00000075'855ebfff r-x      f000     15000  /system/lib64/libapexsupport.so (BuildId: feb541f1386a5c7730704143cfc84323)
+    00000075'855ec000-00000075'855eefff r--     24000      3000  /system/lib64/libapexsupport.so (BuildId: feb541f1386a5c7730704143cfc84323)
+    00000075'855ef000-00000075'855effff rw-     27000      1000  /system/lib64/libapexsupport.so (BuildId: feb541f1386a5c7730704143cfc84323)
+    00000075'85631000-00000075'85631fff r--         0      1000  /vendor/lib64/libhardware.so (BuildId: bd15468564949fdc3a02bb924df9f937)
+    00000075'85632000-00000075'85632fff r-x      1000      1000  /vendor/lib64/libhardware.so (BuildId: bd15468564949fdc3a02bb924df9f937)
+    00000075'85633000-00000075'85633fff r--      2000      1000  /vendor/lib64/libhardware.so (BuildId: bd15468564949fdc3a02bb924df9f937)
+    00000075'85663000-00000075'85667fff r--         0      5000  /vendor/lib64/android.hardware.biometrics.common.config.so (BuildId: e983ff748e6f723ad2a014fe7e4f5849)
+    00000075'85668000-00000075'85677fff r-x      5000     10000  /vendor/lib64/android.hardware.biometrics.common.config.so (BuildId: e983ff748e6f723ad2a014fe7e4f5849)
+    00000075'85678000-00000075'85678fff r--     15000      1000  /vendor/lib64/android.hardware.biometrics.common.config.so (BuildId: e983ff748e6f723ad2a014fe7e4f5849)
+    00000075'85681000-00000075'85681fff r--         0      1000  /vendor/lib64/android.hardware.keymaster-V4-ndk.so (BuildId: 1e9d9ac48eaed292d138670682f7267e)
+    00000075'85682000-00000075'85683fff r-x      1000      2000  /vendor/lib64/android.hardware.keymaster-V4-ndk.so (BuildId: 1e9d9ac48eaed292d138670682f7267e)
+    00000075'85684000-00000075'85684fff r--      3000      1000  /vendor/lib64/android.hardware.keymaster-V4-ndk.so (BuildId: 1e9d9ac48eaed292d138670682f7267e)
+    00000075'85685000-00000075'85685fff rw-      4000      1000  /vendor/lib64/android.hardware.keymaster-V4-ndk.so (BuildId: 1e9d9ac48eaed292d138670682f7267e)
+    00000075'856b8000-00000075'856d7fff r--         0     20000  /dev/__properties__/u:object_r:vendor_fp_prop:s0
+    00000075'856d8000-00000075'85752fff r--         0     7b000  /vendor/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'85753000-00000075'85755fff ---         0      3000
+    00000075'85756000-00000075'857e1fff r-x     7a000     8c000  /vendor/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'857e2000-00000075'857e4fff ---         0      3000
+    00000075'857e5000-00000075'857ecfff r--    105000      8000  /vendor/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'857ed000-00000075'857effff ---         0      3000
+    00000075'857f0000-00000075'857f0fff rw-    10c000      1000  /vendor/lib64/libc++.so (BuildId: 3f6a75430111b7c3bac48af41a15963c1b45ab49) (load bias 0x4000)
+    00000075'857f1000-00000075'857f7fff rw-         0      7000  [anon:.bss]
+    00000075'85800000-00000075'875fffff ---         0   1e00000
+    00000075'87612000-00000075'87631fff r--         0     20000  /dev/__properties__/u:object_r:hwservicemanager_prop:s0
+    00000075'87632000-00000075'87651fff r--         0     20000  /dev/__properties__/u:object_r:vendor_display_prop:s0
+    00000075'87652000-00000075'87657fff r--         0      6000  /vendor/lib64/android.hardware.biometrics.common-V4-ndk.so (BuildId: 05e4c5e5cffb4edf6741f2334d119e5b)
+    00000075'87658000-00000075'8765cfff r-x      6000      5000  /vendor/lib64/android.hardware.biometrics.common-V4-ndk.so (BuildId: 05e4c5e5cffb4edf6741f2334d119e5b)
+    00000075'8765d000-00000075'8765dfff r--      b000      1000  /vendor/lib64/android.hardware.biometrics.common-V4-ndk.so (BuildId: 05e4c5e5cffb4edf6741f2334d119e5b)
+    00000075'8765e000-00000075'8765efff rw-      c000      1000  /vendor/lib64/android.hardware.biometrics.common-V4-ndk.so (BuildId: 05e4c5e5cffb4edf6741f2334d119e5b)
+    00000075'87661000-00000075'87680fff r--         0     20000  /dev/__properties__/u:object_r:property_service_version_prop:s0
+    00000075'87681000-00000075'8768dfff r--         0      d000  /vendor/lib64/android.hardware.biometrics.fingerprint-V4-ndk.so (BuildId: 6f7d5e8c6b6584dee1899adb3a022414)
+    00000075'8768e000-00000075'87699fff r-x      d000      c000  /vendor/lib64/android.hardware.biometrics.fingerprint-V4-ndk.so (BuildId: 6f7d5e8c6b6584dee1899adb3a022414)
+    00000075'8769a000-00000075'8769bfff r--     19000      2000  /vendor/lib64/android.hardware.biometrics.fingerprint-V4-ndk.so (BuildId: 6f7d5e8c6b6584dee1899adb3a022414)
+    00000075'8769c000-00000075'8769cfff rw-     1b000      1000  /vendor/lib64/android.hardware.biometrics.fingerprint-V4-ndk.so (BuildId: 6f7d5e8c6b6584dee1899adb3a022414)
+    00000075'876b6000-00000075'876d5fff r--         0     20000  /dev/__properties__/u:object_r:vendor_adsprpc_prop:s0
+    00000075'876d6000-00000075'876e6fff r--         0     11000  /system/lib64/libbinder_ndk.so (BuildId: 5bbf72f8292f48070fd84314eacbda50)
+    00000075'876e7000-00000075'876f9fff r-x     11000     13000  /system/lib64/libbinder_ndk.so (BuildId: 5bbf72f8292f48070fd84314eacbda50)
+    00000075'876fa000-00000075'876fbfff r--     24000      2000  /system/lib64/libbinder_ndk.so (BuildId: 5bbf72f8292f48070fd84314eacbda50)
+    00000075'876fc000-00000075'876fcfff rw-         0      1000  [anon:.bss]
+    00000075'8771b000-00000075'87766fff r--         0     4c000  /system/lib64/libbinder.so (BuildId: 8368183f213c4d0e35e98bf710c5b6f8)
+    00000075'87767000-00000075'877e3fff r-x     4c000     7d000  /system/lib64/libbinder.so (BuildId: 8368183f213c4d0e35e98bf710c5b6f8)
+    00000075'877e4000-00000075'877f3fff r--     c9000     10000  /system/lib64/libbinder.so (BuildId: 8368183f213c4d0e35e98bf710c5b6f8)
+    00000075'877f4000-00000075'877f4fff rw-     d9000      1000  /system/lib64/libbinder.so (BuildId: 8368183f213c4d0e35e98bf710c5b6f8)
+    00000075'87800000-00000075'8b5fffff ---         0   3e00000
+    00000075'8b609000-00000075'8b628fff r--         0     20000  /dev/__properties__/u:object_r:timezone_prop:s0
+    00000075'8b629000-00000075'8b648fff r--         0     20000  /dev/__properties__/u:object_r:exported_default_prop:s0
+    00000075'8b649000-00000075'8b649fff r--         0      1000  /system/lib64/libvndksupport.so (BuildId: 77647dad78de7dd60c6ead84129fdfbe)
+    00000075'8b64a000-00000075'8b64afff r-x      1000      1000  /system/lib64/libvndksupport.so (BuildId: 77647dad78de7dd60c6ead84129fdfbe)
+    00000075'8b64b000-00000075'8b64bfff r--      2000      1000  /system/lib64/libvndksupport.so (BuildId: 77647dad78de7dd60c6ead84129fdfbe)
+    00000075'8b64c000-00000075'8b64cfff rw-         0      1000  [anon:.bss]
+    00000075'8b661000-00000075'8b680fff r--         0     20000  /dev/__properties__/u:object_r:build_vendor_prop:s0
+    00000075'8b681000-00000075'8b68efff r--         0      e000  /vendor/lib64/libbase.so (BuildId: d280b13c261a59dbc01bf534339be7bc)
+    00000075'8b68f000-00000075'8b6b2fff r-x      e000     24000  /vendor/lib64/libbase.so (BuildId: d280b13c261a59dbc01bf534339be7bc)
+    00000075'8b6b3000-00000075'8b6b3fff r--     32000      1000  /vendor/lib64/libbase.so (BuildId: d280b13c261a59dbc01bf534339be7bc)
+    00000075'8b6b4000-00000075'8b6b4fff rw-     33000      1000  /vendor/lib64/libbase.so (BuildId: d280b13c261a59dbc01bf534339be7bc)
+    00000075'8b6ba000-00000075'8b6bafff ---         0      1000
+    00000075'8b6bb000-00000075'8b6c2fff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b6c3000-00000075'8b6c3fff ---         0      1000
+    00000075'8b6c4000-00000075'8b6cbfff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b6cc000-00000075'8b6d4fff r--         0      9000  /system/lib64/libcutils.so (BuildId: 2d22b44094cd24cba0d07aca7e6efca3)
+    00000075'8b6d5000-00000075'8b6e0fff r-x      9000      c000  /system/lib64/libcutils.so (BuildId: 2d22b44094cd24cba0d07aca7e6efca3)
+    00000075'8b6e1000-00000075'8b6e2fff r--     15000      2000  /system/lib64/libcutils.so (BuildId: 2d22b44094cd24cba0d07aca7e6efca3)
+    00000075'8b6e3000-00000075'8b6e3fff rw-     17000      1000  /system/lib64/libcutils.so (BuildId: 2d22b44094cd24cba0d07aca7e6efca3)
+    00000075'8b6e5000-00000075'8b6e5fff ---         0      1000
+    00000075'8b6e6000-00000075'8b6fafff rw-         0     15000  [anon:scudo:secondary]
+    00000075'8b6fb000-00000075'8b6fbfff ---         0      1000
+    00000075'8b6fc000-00000075'8b71bfff r--         0     20000  /dev/__properties__/u:object_r:bootloader_prop:s0
+    00000075'8b71c000-00000075'8b724fff r--         0      9000  /vendor/lib64/libcutils.so (BuildId: be44d546f7dcb25b6cf145f097781755)
+    00000075'8b725000-00000075'8b72ffff r-x      9000      b000  /vendor/lib64/libcutils.so (BuildId: be44d546f7dcb25b6cf145f097781755)
+    00000075'8b730000-00000075'8b731fff r--     14000      2000  /vendor/lib64/libcutils.so (BuildId: be44d546f7dcb25b6cf145f097781755)
+    00000075'8b732000-00000075'8b732fff rw-     16000      1000  /vendor/lib64/libcutils.so (BuildId: be44d546f7dcb25b6cf145f097781755)
+    00000075'8b735000-00000075'8b735fff ---         0      1000
+    00000075'8b736000-00000075'8b73dfff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b73e000-00000075'8b73efff ---         0      1000
+    00000075'8b73f000-00000075'8b746fff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b747000-00000075'8b747fff r--         0      1000  /apex/com.android.runtime/lib64/bionic/libdl_android.so (BuildId: f957674418075e2ddf0580881660a7ad)
+    00000075'8b748000-00000075'8b748fff r-x      1000      1000  /apex/com.android.runtime/lib64/bionic/libdl_android.so (BuildId: f957674418075e2ddf0580881660a7ad)
+    00000075'8b749000-00000075'8b749fff r--      2000      1000  /apex/com.android.runtime/lib64/bionic/libdl_android.so (BuildId: f957674418075e2ddf0580881660a7ad)
+    00000075'8b74f000-00000075'8b76efff r--         0     20000  /dev/__properties__/u:object_r:vendor_default_prop:s0
+    00000075'8b76f000-00000075'8b78efff r--         0     20000  /dev/__properties__/u:object_r:log_file_logger_prop:s0
+    00000075'8b78f000-00000075'8b78ffff rw-         0      1000  [anon:bionic_alloc_small_objects]
+    00000075'8b791000-00000075'8b792fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8b795000-00000075'8b7b4fff r--         0     20000  /dev/__properties__/u:object_r:heapprofd_prop:s0
+    00000075'8b7b5000-00000075'8b7b5fff rw-         0      1000  [anon:bionic_alloc_small_objects]
+    00000075'8b7bc000-00000075'8b7bcfff ---         0      1000
+    00000075'8b7bd000-00000075'8b7c4fff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b7c5000-00000075'8b7e4fff r--         0     20000  /dev/__properties__/u:object_r:libc_debug_prop:s0
+    00000075'8b7e5000-00000075'8b804fff r--         0     20000  /dev/__properties__/u:object_r:gwp_asan_prop:s0
+    00000075'8b805000-00000075'8b824fff r--         0     20000  /dev/__properties__/u:object_r:debug_prop:s0
+    00000075'8b825000-00000075'8b844fff r--         0     20000  /dev/__properties__/properties_serial
+    00000075'8b845000-00000075'8b865fff r--         0     21000  /dev/__properties__/property_info
+    00000075'8b866000-00000075'8b885fff r--         0     20000  /dev/__properties__/u:object_r:log_tag_prop:s0
+    00000075'8b886000-00000075'8b8a5fff r--         0     20000  /dev/__properties__/u:object_r:build_prop:s0
+    00000075'8b8a6000-00000075'8b8c5fff r--         0     20000  /dev/__properties__/u:object_r:vendor_socket_hook_prop:s0
+    00000075'8b8c6000-00000075'8b985fff r--         0     c0000  [anon:linker_alloc]
+    00000075'8b986000-00000075'8b987fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8b989000-00000075'8b98afff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8b98e000-00000075'8b98efff rw-         0      1000  [anon:bionic_alloc_small_objects]
+    00000075'8b990000-00000075'8b990fff rw-         0      1000  [anon:bionic_alloc_small_objects]
+    00000075'8b991000-00000075'8b991fff rw-         0      1000  [anon:abort message]
+    00000075'8b992000-00000075'8b993fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8b994000-00000075'8b994fff rw-         0      1000  /dmabuf:
+    00000075'8b995000-00000075'8b995fff ---         0      1000
+    00000075'8b996000-00000075'8b99dfff rw-         0      8000  [anon:thread signal stack]
+    00000075'8b99e000-00000075'8b99ffff rw-         0      2000  /dmabuf:
+    00000075'8b9a0000-00000075'8b9a4fff rw-         0      5000  [anon:System property context nodes]
+    00000075'8b9a5000-00000075'8b9a5fff ---         0      1000
+    00000075'8b9a6000-00000075'8b9a9fff rw-         0      4000  [anon:stack_and_tls:main]
+    00000075'8b9aa000-00000075'8b9aafff ---         0      1000
+    00000075'8b9ab000-00000075'8b9b2fff rw-         0      8000  [anon:bionic_alloc_small_objects]
+    00000075'8b9b3000-00000075'8b9d2fff r--         0     20000  /dev/__properties__/u:object_r:vndk_prop:s0
+    00000075'8b9d3000-00000075'8b9d4fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8b9d5000-00000075'8b9f4fff r--         0     20000  /dev/__properties__/u:object_r:device_config_memory_safety_native_prop:s0
+    00000075'8b9f5000-00000075'8ba14fff r--         0     20000  /dev/__properties__/u:object_r:arm64_memtag_prop:s0
+    00000075'8ba15000-00000075'8ba74fff r--         0     60000  [anon:linker_alloc]
+    00000075'8ba75000-00000075'8ba76fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8ba77000-00000075'8ba96fff r--         0     20000  /dev/__properties__/u:object_r:debug_prop:s0
+    00000075'8ba97000-00000075'8ba97fff ---         0      1000
+    00000075'8ba98000-00000075'8ba9ffff rw-         0      8000
+    00000075'8baa0000-00000075'8baa0fff ---         0      1000
+    00000075'8baa1000-00000075'8bac0fff r--         0     20000  /dev/__properties__/properties_serial
+    00000075'8bac1000-00000075'8bac5fff rw-         0      5000  [anon:System property context nodes]
+    00000075'8bac6000-00000075'8bae6fff r--         0     21000  /dev/__properties__/property_info
+    00000075'8bae7000-00000075'8bb46fff r--         0     60000  [anon:linker_alloc]
+    00000075'8bb47000-00000075'8bb47fff r--         0      1000  [anon:atexit handlers]
+    00000075'8bb48000-00000075'8bb49fff rw-         0      2000  [anon:bionic_alloc_small_objects]
+    00000075'8bb4a000-00000075'8c3f3fff ---         0    8aa000
+    00000075'8c3f4000-00000075'8c3f7fff rw-         0      4000
+    00000075'8c3f8000-00000075'8cb49fff ---         0    752000
+    00000075'8cb4a000-00000075'8cb4afff ---         0      1000
+    00000075'8cb4b000-00000075'8cb52fff rw-         0      8000  [anon:thread signal stack]
+    00000075'8cb53000-00000075'8cb53fff rw-         0      1000  [anon:arc4random data]
+    00000075'8cb54000-00000075'8cb54fff rw-         0      1000  /dmabuf:
+    00000075'8cb55000-00000075'8cb55fff r--         0      1000  [anon:atexit handlers]
+    00000075'8cb56000-00000075'8cb56fff rw-         0      1000  [anon:arc4random data]
+    00000075'8cb57000-00000075'8cb57fff r--         0      1000  [vvar]
+    00000075'8cb58000-00000075'8cb58fff r-x         0      1000  [vdso]
+    00000075'8cb59000-00000075'8cba6fff r--         0     4e000  /apex/com.android.runtime/bin/linker64 (BuildId: 54ee3f1fe23da034cf595d5e78f7f829)
+    00000075'8cba7000-00000075'8cd18fff r-x     4e000    172000  /apex/com.android.runtime/bin/linker64 (BuildId: 54ee3f1fe23da034cf595d5e78f7f829)
+    00000075'8cd19000-00000075'8cd23fff r--    1c0000      b000  /apex/com.android.runtime/bin/linker64 (BuildId: 54ee3f1fe23da034cf595d5e78f7f829)
+    00000075'8cd24000-00000075'8cd26fff rw-    1cb000      3000  /apex/com.android.runtime/bin/linker64 (BuildId: 54ee3f1fe23da034cf595d5e78f7f829)
+    00000075'8cd27000-00000075'8cd28fff rw-         0      2000  [anon:.bss]
+    00000075'8cd29000-00000075'8cd29fff r--         0      1000  [anon:.bss]
+    00000075'8cd2a000-00000075'8cd35fff rw-         0      c000  [anon:.bss]
+    0000007f'caf7d000-0000007f'caf9efff rw-         0     22000  [stack]
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10807, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  b4000074a513c288  x1  0000000000000089  x2  000000000000000a  x3  0000000000000000
+    x4  0000000000000000  x5  00000000ffffffff  x6  00000000ffffffff  x7  7f7f7f7f7f7f7f7f
+    x8  0000000000000062  x9  0000000000000009  x10 0000000000002a37  x11 0000000000002a37
+    x12 00000002aada50da  x13 0000000034155555  x14 0000000000000018  x15 00000002aad95c69
+    x16 0000007585395260  x17 000000758533c480  x18 00000072f1630000  x19 000000000000000a
+    x20 0000000000000000  x21 b4000074a513c288  x22 0000000000000089  x23 00000072f269ff08
+    x24 00000072f269ff80  x25 0000000000000000  x26 00000072f2ad2eb8  x27 00000072f2ad2ea8
+    x28 00000072f2ad2eb0  x29 00000072f269fa60
+    lr  000000758530f574  sp  00000072f269fa40  pc  000000758533c49c  pst 0000000040001000
+    esr 0000000000000000
+
+8 total frames
+backtrace:
+      #00 pc 00000000000a649c  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+28) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 0000000000079570  /apex/com.android.runtime/lib64/bionic/libc.so (__futex_wait_ex(void volatile*, bool, int, bool, timespec const*)+144) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #02 pc 0000000000089cd8  /apex/com.android.runtime/lib64/bionic/libc.so (pthread_cond_wait+72) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #03 pc 0000000000036fc0  /vendor/lib64/libgf_hal.so (goodix::HalDsp::processSendCmd()+148) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #04 pc 00000000000370a4  /vendor/lib64/libgf_hal.so (goodix::HalDsp::threadLoop()+64) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #05 pc 0000000000047cd8  /vendor/lib64/libgf_hal.so (goodix::Thread::sthreadLoop(void*)+32) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #06 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #07 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10808, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  0000000000000010  x1  00000072f15a1a80  x2  0000000000000000  x3  0000000000000000
+    x4  0000000000000000  x5  0000000000000000  x6  6e636d64752d7372  x7  7f7f7f7f7f7f7f7f
+    x8  0000000000000048  x9  ea82312f22ef0e82  x10 0000000000008000  x11 0000000000002a38
+    x12 000000758539f800  x13 0000000000000000  x14 0000000000000031  x15 0000000000000031
+    x16 00000072f2acfd28  x17 000000758531e660  x18 00000072f11f0000  x19 000000000000000e
+    x20 000000000000000d  x21 000000000000000f  x22 b40000739513a198  x23 b400007485130400
+    x24 0000000000000010  x25 b400007485130410  x26 0000000000000010  x27 00000072f2a5a94e
+    x28 00000072f15a1f80  x29 00000072f15a1b10
+    lr  00000072f2a76698  sp  00000072f15a19c0  pc  000000758537fec4  pst 0000000060001000
+    esr 0000000000000000
+
+5 total frames
+backtrace:
+      #00 pc 00000000000e9ec4  /apex/com.android.runtime/lib64/bionic/libc.so (__pselect6+4) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 000000000003c694  /vendor/lib64/libgf_hal.so (goodix::Device::NetlinkRoutingThread::threadLoop()+808) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #02 pc 0000000000047cd8  /vendor/lib64/libgf_hal.so (goodix::Thread::sthreadLoop(void*)+32) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #03 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #04 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10809, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  0000000000000011  x1  00000000c0185204  x2  00000072f0389790  x3  0000000004020200
+    x4  00000072f038baf0  x5  0000000000000080  x6  0000000000000010  x7  7f7f7f7f7f7f7f7f
+    x8  000000000000001d  x9  00000072f0389620  x10 ffffff80ffffffd0  x11 0000000000000004
+    x12 0000000000000002  x13 00000000ffffffff  x14 0000000000000018  x15 00000002aad95c69
+    x16 00000072f03cd468  x17 000000758531b0d0  x18 00000072ef8b8000  x19 00000072f038bf80
+    x20 0000000000000000  x21 b4000074e5138930  x22 0000000000000000  x23 0000000000000003
+    x24 0000000004020200  x25 0000000000000000  x26 0000000000000000  x27 00000072f038bf80
+    x28 0000000000000000  x29 00000072f0389650
+    lr  000000758531b16c  sp  00000072f0389570  pc  000000758537dc84  pst 0000000080001000
+    esr 0000000000000000
+
+7 total frames
+backtrace:
+      #00 pc 00000000000e7c84  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+4) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 0000000000085168  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+152) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #02 pc 000000000001dcc8  /vendor/lib64/libcdsprpc.so (remote_handle_invoke_domain+4448) (BuildId: 65789a45b8a89fa7602580d9f538099d)
+      #03 pc 0000000000020478  /vendor/lib64/libcdsprpc.so (remote_handle_invoke.cfi+280) (BuildId: 65789a45b8a89fa7602580d9f538099d)
+      #04 pc 0000000000025b74  /vendor/lib64/libcdsprpc.so (listener_start_thread.cfi+984) (BuildId: 65789a45b8a89fa7602580d9f538099d)
+      #05 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #06 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10810, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  00000072ef285b10  x1  0000000000000002  x2  0000000000000000  x3  0000000000000000
+    x4  0000000000000000  x5  0000000000000000  x6  2e626f716f726360  x7  7f7f7f7f7f7f7f7f
+    x8  0000000000000049  x9  000000750512c000  x10 00000072f03d0eb0  x11 00000072ef285b20
+    x12 00000002aa24c182  x13 0000000034155555  x14 0000000000000018  x15 00000002aa23b869
+    x16 00000072f03cd898  x17 000000758531e4b0  x18 00000072ee8e4000  x19 0000000000000000
+    x20 00000072ef28df80  x21 00000072f03d0ec0  x22 00000072f03d0a58  x23 0000000000000003
+    x24 00000072f03d0eb0  x25 00000072f03d0eb8  x26 00000072ef28df68  x27 000000007fffffff
+    x28 00000072f03d0f10  x29 00000072ef285a70
+    lr  000000758531e510  sp  00000072ef285a50  pc  000000758537ff04  pst 0000000060001000
+    esr 0000000000000000
+
+5 total frames
+backtrace:
+      #00 pc 00000000000e9f04  /apex/com.android.runtime/lib64/bionic/libc.so (__ppoll+4) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 000000000008850c  /apex/com.android.runtime/lib64/bionic/libc.so (poll+92) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #02 pc 00000000000326f0  /vendor/lib64/libcdsprpc.so (file_watcher_thread.cfi+476) (BuildId: 65789a45b8a89fa7602580d9f538099d)
+      #03 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #04 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10824, name: android.hardwar  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  b40000734513c1a8  x1  0000000000000089  x2  0000000000000002  x3  0000000000000000
+    x4  0000000000000000  x5  00000000ffffffff  x6  00000000ffffffff  x7  7f7f7f7f7f7f7f7f
+    x8  0000000000000062  x9  0000000000000009  x10 0000000000002a48  x11 0000000000002a48
+    x12 0000000000000030  x13 0000000000000000  x14 0000000000000031  x15 0000000000000031
+    x16 0000007585395260  x17 000000758533c480  x18 00000072ede00000  x19 0000000000000002
+    x20 0000000000000000  x21 b40000734513c1a8  x22 0000000000000089  x23 00000072ee145f08
+    x24 00000072ee145f80  x25 0000000000000000  x26 00000072ee145f68  x27 00000072ee145fc0
+    x28 00000072ee04d000  x29 00000072ee145ab0
+    lr  000000758530f574  sp  00000072ee145a90  pc  000000758533c49c  pst 0000000040001000
+    esr 0000000000000000
+
+7 total frames
+backtrace:
+      #00 pc 00000000000a649c  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+28) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 0000000000079570  /apex/com.android.runtime/lib64/bionic/libc.so (__futex_wait_ex(void volatile*, bool, int, bool, timespec const*)+144) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #02 pc 0000000000089cd8  /apex/com.android.runtime/lib64/bionic/libc.so (pthread_cond_wait+72) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #03 pc 0000000000047174  /vendor/lib64/libgf_hal.so (goodix::EventCenter::threadLoop()+128) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #04 pc 0000000000047cd8  /vendor/lib64/libgf_hal.so (goodix::Thread::sthreadLoop(void*)+32) (BuildId: 0c4b6c603c27c4aa7c0949aa9c1cdd59)
+      #05 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #06 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Executable: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+Cmdline: /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi
+pid: 10805, tid: 10826, name: HwBinder:10805_  >>> /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.xiaomi <<<
+uid: 1000
+    x0  fffffffffffffffc  x1  00000000c0306201  x2  00000072ecf49920  x3  0000000000000004
+    x4  7472756500000000  x5  0000000065757274  x6  0000000065757274  x7  00000072ecf497cd
+    x8  000000000000001d  x9  00000072ecf49800  x10 ffffff80ffffffd0  x11 0000000000000100
+    x12 0000000000000000  x13 b4000074a513cf50  x14 b4000074a513c530  x15 0000000000000028
+    x16 00000072f29f39b0  x17 000000758531b0d0  x18 00000072ec2dc000  x19 00000072ecf49f80
+    x20 0000000000000000  x21 00000072ecf49c00  x22 00000072ecf49890  x23 00000072ecf49928
+    x24 0000000000000000  x25 000000000000720c  x26 0000000000000000  x27 000000000000720c
+    x28 0000000080487201  x29 00000072ecf49830
+    lr  000000758531b16c  sp  00000072ecf49750  pc  000000758537dc88  pst 0000000080001000
+    esr 0000000000000000
+
+8 total frames
+backtrace:
+      #00 pc 00000000000e7c88  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+8) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #01 pc 0000000000085168  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+152) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #02 pc 000000000003faf8  /vendor/lib64/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+1272) (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+      #03 pc 000000000003f5c8  /vendor/lib64/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e0d9089e889f617b0c1b206a2c0a536d)
+      #04 pc 000000000001678c  /vendor/lib64/libutils.so (android::Thread::_threadLoop(void*)+204) (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+      #05 pc 00000000000189b4  /vendor/lib64/libutils.so (libutil_thread_trampoline(void*) (.__uniq.226528677032898775202282855395389835431)+20) (BuildId: 97cd73d08ddde005ac8aba4aa7cd255f)
+      #06 pc 000000000008aaac  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*) (.__uniq.67847048707805468364044055584648682506)+236) (BuildId: a10541b33c9014fa2be05995a5155d29)
+      #07 pc 000000000007ac40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: a10541b33c9014fa2be05995a5155d29)
+
+open files:
+    fd 0: /dev/null (unowned)
+    fd 1: /dev/null (unowned)
+    fd 2: /dev/null (unowned)
+    fd 3: /dev/binderfs/binder (unowned)
+    fd 4: socket:[128589] (unowned)
+    fd 5: /dev/goodix_fp (unowned)
+    fd 6: /dev/qseecom (unowned)
+    fd 7: /dev/ion (unowned)
+    fd 8: /dmabuf: (unowned)
+    fd 9: /dev/ion (unowned)
+    fd 10: /dmabuf: (unowned)
+    fd 11: /dev/ion (unowned)
+    fd 12: /dmabuf: (unowned)
+    fd 13: pipe:[119225] (unowned)
+    fd 14: pipe:[119225] (unowned)
+    fd 15: socket:[132126] (unowned)
+    fd 16: /dev/ion (unowned)
+    fd 17: /dev/adsprpc-smd-secure (unowned)
+    fd 18: anon_inode:[eventfd] (unowned)
+    fd 19: anon_inode:inotify (unowned)
+    fd 20: anon_inode:[eventfd] (unowned)
+    fd 21: /dmabuf: (unowned)
+    fd 22: /dmabuf: (unowned)
+    fd 23: /dev/binderfs/hwbinder (unowned)
+    fd 24: /sys/kernel/tracing/trace_marker (unowned)

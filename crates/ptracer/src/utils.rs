@@ -3,14 +3,21 @@
 
 use std::io;
 use std::mem::size_of;
+use std::time::{Duration, Instant};
 
 use rz_common::plog;
+use thiserror::Error;
 
-pub const TAG: &str = if cfg!(target_pointer_width = "64") {
-    "zygisk-ptrace64"
-} else {
-    "zygisk-ptrace32"
-};
+/// Errors that can occur during ptrace register operations.
+#[derive(Debug, Error)]
+pub enum RegsError {
+    #[error("GETREGS ptrace call failed")]
+    GetRegsFailed,
+    #[error("SETREGS ptrace call failed")]
+    SetRegsFailed,
+}
+
+pub const TAG: &str = rz_common::LOG_TAG_TRACER;
 
 // libc's android bindings don't export the PTRACE_SEIZE group (kernel 3.4+)
 // nor NT_PRSTATUS; glibc's ptrace takes a c_uint request, bionic a c_int.
@@ -177,9 +184,52 @@ pub fn get_program(pid: i32) -> io::Result<String> {
     Ok(String::from_utf8_lossy(&buf[..sz as usize]).into_owned())
 }
 
+/// Best-effort `/proc/<pid>/cmdline`, argv joined with single spaces. Empty on
+/// any failure — diagnostics only.
+pub fn get_cmdline(pid: i32) -> String {
+    let path = std::ffi::CString::new(format!("/proc/{pid}/cmdline")).unwrap();
+    let mut buf = [0u8; 4096];
+    let fd = unsafe { libc::open(path.as_ptr(), libc::O_RDONLY) };
+    if fd < 0 {
+        return String::new();
+    }
+    let n = unsafe { libc::read(fd, buf.as_mut_ptr() as *mut libc::c_void, buf.len()) };
+    unsafe { libc::close(fd) };
+    if n <= 0 {
+        return String::new();
+    }
+
+    buf[..n as usize]
+        .split(|&b| b == 0)
+        .filter(|s| !s.is_empty())
+        .map(String::from_utf8_lossy)
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// Best-effort parent pid from `/proc/<pid>/stat` (field 4, after the parenthesized
+/// comm which may contain spaces). None on any failure.
+pub fn get_ppid(pid: i32) -> Option<i32> {
+    let path = std::ffi::CString::new(format!("/proc/{pid}/stat")).unwrap();
+    let mut buf = [0u8; 1024];
+    let fd = unsafe { libc::open(path.as_ptr(), libc::O_RDONLY) };
+    if fd < 0 {
+        return None;
+    }
+    let n = unsafe { libc::read(fd, buf.as_mut_ptr() as *mut libc::c_void, buf.len()) };
+    unsafe { libc::close(fd) };
+    if n <= 0 {
+        return None;
+    }
+
+    let s = String::from_utf8_lossy(&buf[..n as usize]);
+    let after_comm = s.rfind(')')? + 1;
+    s[after_comm..].split_whitespace().nth(1)?.parse().ok()
+}
+
 /// utils.c `fork_dont_care`: double fork so the grandchild is reparented away
-/// from the tracer (no SIGCHLD back to us). Returns 0 in the grandchild,
-/// the intermediate pid in the parent.
+/// from the tracer (no SIGCHLD back to us). Returns 0 in the grandchild, the
+/// intermediate pid in the parent, or -1 when the chain could not be started.
 pub fn fork_dont_care() -> i32 {
     let pid = unsafe { libc::fork() };
     if pid < 0 {
@@ -188,13 +238,42 @@ pub fn fork_dont_care() -> i32 {
         let pid = unsafe { libc::fork() };
         if pid < 0 {
             plog!(TAG, "fork 2");
+            // Never fall through: this child must not run caller (monitor)
+            // code as a duplicate — that forked a second monitor competing
+            // for the same signalfd/epoll while the original blocked forever
+            // in waitpid below.
+            unsafe { libc::_exit(127) };
         } else if pid > 0 {
-            unsafe { libc::exit(0) };
+            // _exit, not exit: no atexit/stdio machinery in a forked child.
+            unsafe { libc::_exit(0) };
         }
     } else {
+        // The intermediate must exit immediately; blocking here forever would
+        // stall the monitor's only thread (SIGCHLD drain, watchdog and all).
+        // Bound the wait and escalate to SIGKILL if it misbehaves.
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         let mut status = 0;
-        unsafe {
-            libc::waitpid(pid, &mut status, libc::__WALL);
+        loop {
+            let r = unsafe { libc::waitpid(pid, &mut status, libc::__WALL | libc::WNOHANG) };
+            if r == pid {
+                if !wifexited(status) || wexitstatus(status) != 0 {
+                    return -1;
+                }
+                break;
+            }
+            if r == -1 {
+                plog!(TAG, "waitpid fork_dont_care");
+                return -1;
+            }
+            if std::time::Instant::now() > deadline {
+                dlogw!("fork_dont_care: intermediate {pid} did not exit cleanly, killing");
+                unsafe {
+                    libc::kill(pid, libc::SIGKILL);
+                    libc::waitpid(pid, std::ptr::null_mut(), libc::__WALL);
+                }
+                return -1;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
         }
     }
 
@@ -368,13 +447,13 @@ impl UserRegs {
     pub fn set_reg_sysnr(&mut self, v: i64) { self.orig_eax = v as u32; }
 }
 
-/// utils.c `get_regs`.
-pub fn get_regs(pid: i32, regs: &mut UserRegs) -> bool {
+/// utils.c `get_regs` - Result-returning version.
+pub fn try_get_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
     unsafe {
         if libc::ptrace(libc::PTRACE_GETREGS, pid, 0, regs as *mut UserRegs as libc::c_long) == -1 {
             plog!(TAG, "getregs");
-            return false;
+            return Err(RegsError::GetRegsFailed);
         }
     }
 
@@ -390,23 +469,28 @@ pub fn get_regs(pid: i32, regs: &mut UserRegs) -> bool {
 
             if libc::ptrace(12, pid, 0, regs as *mut UserRegs as libc::c_long) == -1 {
                 plog!(TAG, "GETREGS");
-                return false;
+                return Err(RegsError::GetRegsFailed);
             }
 
-            return true;
+            return Ok(());
         }
     }
 
-    true
+    Ok(())
 }
 
-/// utils.c `set_regs`.
-pub fn set_regs(pid: i32, regs: &mut UserRegs) -> bool {
+/// utils.c `get_regs` - bool-returning version for backward compatibility.
+pub fn get_regs(pid: i32, regs: &mut UserRegs) -> bool {
+    try_get_regs(pid, regs).is_ok()
+}
+
+/// utils.c `set_regs` - Result-returning version.
+pub fn try_set_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
     unsafe {
         if libc::ptrace(libc::PTRACE_SETREGS, pid, 0, regs as *mut UserRegs as libc::c_long) == -1 {
             plog!(TAG, "setregs");
-            return false;
+            return Err(RegsError::SetRegsFailed);
         }
     }
 
@@ -422,14 +506,19 @@ pub fn set_regs(pid: i32, regs: &mut UserRegs) -> bool {
 
             if libc::ptrace(13, pid, 0, regs as *mut UserRegs as libc::c_long) == -1 {
                 plog!(TAG, "SETREGS");
-                return false;
+                return Err(RegsError::SetRegsFailed);
             }
 
-            return true;
+            return Ok(());
         }
     }
 
-    true
+    Ok(())
+}
+
+/// utils.c `set_regs` - bool-returning version for backward compatibility.
+pub fn set_regs(pid: i32, regs: &mut UserRegs) -> bool {
+    try_set_regs(pid, regs).is_ok()
 }
 
 /// utils.c `align_stack` (~0xf is negative; cast through signed).
@@ -483,16 +572,19 @@ pub fn remote_call(pid: i32, regs: &mut UserRegs, func_addr: u64, return_addr: u
     #[cfg(target_arch = "x86")]
     {
         if !args.is_empty() {
-            let remain = args.len() as i64 * size_of::<i64>() as i64;
+            // C: `long remain = args_size * sizeof(long);` — i386 `long` is
+            // 4 bytes, so each pushed arg occupies a 4-byte stack slot.
+            let remain = args.len() as i64 * size_of::<u32>() as i64;
             align_stack(regs, remain);
 
-            let bytes: Vec<u8> = args.iter().flat_map(|a| a.to_ne_bytes()).collect();
+            let bytes: Vec<u8> = args.iter().flat_map(|a| (*a as u32).to_ne_bytes()).collect();
             if write_proc(pid, regs.reg_sp() as usize, &bytes) as usize != bytes.len() {
                 dloge!("failed to push arguments");
             }
         }
 
-        regs.set_reg_sp(regs.reg_sp() - size_of::<i64>() as u64);
+        // C: `regs->REG_SP -= sizeof(long);` — 4 bytes on i386.
+        regs.set_reg_sp(regs.reg_sp() - size_of::<u32>() as u64);
 
         let ra = (return_addr as u32).to_ne_bytes();
         if write_proc(pid, regs.reg_sp() as usize, &ra) != ra.len() as isize {
@@ -527,10 +619,12 @@ pub fn remote_call(pid: i32, regs: &mut UserRegs, func_addr: u64, return_addr: u
         }
 
         if args.len() > 4 {
-            let remain = (args.len() - 4) as i64 * size_of::<i64>() as i64;
+            // C: `long remain = (args_size - 4) * sizeof(long);` — arm32
+            // `long` is 4 bytes, so each stack arg is a 4-byte slot.
+            let remain = (args.len() - 4) as i64 * size_of::<u32>() as i64;
             align_stack(regs, remain);
 
-            let bytes: Vec<u8> = args[4..].iter().flat_map(|a| a.to_ne_bytes()).collect();
+            let bytes: Vec<u8> = args[4..].iter().flat_map(|a| (*a as u32).to_ne_bytes()).collect();
             write_proc(pid, regs.reg_sp() as usize, &bytes);
         }
 
@@ -556,7 +650,11 @@ pub fn remote_call(pid: i32, regs: &mut UserRegs, func_addr: u64, return_addr: u
     }
 
     let mut status = 0;
-    wait_for_trace(pid, &mut status, libc::__WALL);
+    if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, Duration::from_secs(30)) {
+        dloge!("remote call to {func_addr:#x} did not regain control in time");
+        return 0;
+    }
+
     if !get_regs(pid, regs) {
         dloge!("failed to get regs after call");
         return 0;
@@ -729,6 +827,57 @@ pub fn wait_for_trace(pid: i32, status: &mut i32, flags: i32) {
     }
 }
 
+/// `wait_for_trace` with a hard deadline. A tracer that blocks forever keeps
+/// the zygote frozen and wedges the boot; on expiry the status is set to the
+/// same `255 << 8` failure sentinel and `false` is returned so callers take
+/// their failure paths (detach / kill + restart cycle).
+pub fn wait_for_trace_deadline(pid: i32, status: &mut i32, flags: i32, timeout: Duration) -> bool {
+    let deadline = Instant::now() + timeout;
+    loop {
+        let result = unsafe { libc::waitpid(pid, status, flags | libc::WNOHANG) };
+        if result == pid {
+            // Same filtering as wait_for_trace.
+            if wifstopped(*status) && wstopsig(*status) == libc::SIGCHLD {
+                dlogi!("process {pid} stopped by SIGCHLD, continue");
+                unsafe {
+                    libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
+                }
+                continue;
+            } else if *status >> 8 == (libc::SIGTRAP | (libc::PTRACE_EVENT_SECCOMP << 8)) {
+                tracee_skip_syscall(pid);
+                unsafe {
+                    libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
+                }
+                continue;
+            } else if !wifstopped(*status) {
+                dloge!("process {pid} not stopped for trace: {}", parse_status(*status));
+                return false;
+            }
+
+            return true;
+        }
+
+        if result == -1 {
+            let err = io::Error::last_os_error();
+            if err.raw_os_error() == Some(libc::EINTR) {
+                continue;
+            }
+
+            dloge!("wait {pid} failed");
+            *status = 255 << 8;
+            return false;
+        }
+
+        if Instant::now() > deadline {
+            dloge!("wait {pid} timed out after {timeout:?}");
+            *status = 255 << 8;
+            return false;
+        }
+
+        std::thread::sleep(Duration::from_millis(10));
+    }
+}
+
 /// utils.c `wait_for_event_stop`: drain stops until PTRACE_EVENT_STOP.
 pub fn wait_for_event_stop(pid: i32) -> bool {
     loop {
@@ -764,6 +913,71 @@ pub fn wait_for_ptrace_syscall_stop(pid: i32, status: &mut i32) -> bool {
 
             plog!(TAG, "waitpid");
             return false;
+        }
+
+        if waited != pid {
+            continue;
+        }
+
+        if !wifstopped(*status) {
+            dloge!("Remote syscall stop is not ptrace-stop: {}", parse_status(*status));
+            return false;
+        }
+
+        let stop_sig = wstopsig(*status);
+        let stop_event = (wptevent(*status)) & 0xff;
+        let is_syscall_stop = stop_event == 0 && (stop_sig == libc::SIGTRAP || stop_sig == (libc::SIGTRAP | 0x80));
+
+        if (stop_sig == libc::SIGSTOP || stop_sig == libc::SIGTRAP) && stop_event == libc::PTRACE_EVENT_STOP {
+            if step_retries >= 4 {
+                dloge!("Remote syscall stuck in ptrace-stop: {}", parse_status(*status));
+                return false;
+            }
+            step_retries += 1;
+
+            dlogv!("Remote syscall got pending ptrace-stop, retrying (retry {step_retries})");
+
+            if unsafe { libc::ptrace(libc::PTRACE_SYSCALL, pid, 0, 0) } == -1 {
+                plog!(TAG, "PTRACE_SYSCALL retry");
+                return false;
+            }
+
+            continue;
+        }
+
+        if is_syscall_stop {
+            return true;
+        }
+
+        dloge!("Remote syscall unexpected stop: {}", parse_status(*status));
+        return false;
+    }
+}
+
+/// `wait_for_ptrace_syscall_stop` with a hard deadline on the whole wait.
+pub fn wait_for_ptrace_syscall_stop_deadline(pid: i32, status: &mut i32, timeout: Duration) -> bool {
+    let deadline = Instant::now() + timeout;
+    let mut step_retries = 0;
+    loop {
+        let waited = unsafe { libc::waitpid(pid, status, libc::__WALL | libc::WNOHANG) };
+        if waited == -1 {
+            let err = io::Error::last_os_error();
+            if err.raw_os_error() == Some(libc::EINTR) {
+                continue;
+            }
+
+            plog!(TAG, "waitpid");
+            return false;
+        }
+
+        if waited == 0 {
+            if Instant::now() > deadline {
+                dloge!("Remote syscall wait timed out after {timeout:?}");
+                return false;
+            }
+
+            std::thread::sleep(Duration::from_millis(10));
+            continue;
         }
 
         if waited != pid {
@@ -906,7 +1120,7 @@ pub fn remote_syscall(pid: i32, regs: &mut UserRegs, syscall_gadget: u64, sysnr:
             }
 
             let mut status = 0;
-            if !wait_for_ptrace_syscall_stop(pid, &mut status) {
+            if !wait_for_ptrace_syscall_stop_deadline(pid, &mut status, Duration::from_secs(15)) {
                 break 'restore;
             }
 
@@ -1299,7 +1513,9 @@ pub fn tango_wait_linker_ready(pid: i32, watch: &mut TangoLinkerWatch) -> bool {
                     continue;
                 };
 
-                watch.libc_init_got_slot = (m.start as u32 - bias).wrapping_add(got_off);
+                // utils.c:694: ((uint32_t)(uintptr_t)m->start - bias) + got_off
+                // is unsigned wrapping arithmetic on the 32-bit values.
+                watch.libc_init_got_slot = (m.start as u32).wrapping_sub(bias).wrapping_add(got_off);
 
                 break;
             }

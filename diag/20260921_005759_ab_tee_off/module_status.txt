@@ -1,0 +1,8 @@
+/data/adb/modules/bindhosts : enabled
+/data/adb/modules/dd_fixes : DISABLED
+/data/adb/modules/debian_shortcuts : DISABLED
+/data/adb/modules/magic_mount_rs : enabled
+/data/adb/modules/miuicamera_country_fix : enabled
+/data/adb/modules/playintegrityfix : enabled
+/data/adb/modules/rezygisk : enabled
+/data/adb/modules/tricky_store : DISABLED

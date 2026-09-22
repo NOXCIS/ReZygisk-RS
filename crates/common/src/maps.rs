@@ -57,13 +57,16 @@ pub fn parse_maps_line(line: &str) -> Option<MapEntry> {
     let end = usize::from_str_radix(end, 16).ok()?;
 
     let perms_bytes = perms.as_bytes();
-    if perms_bytes.len() < 4 {
+    // C `%4s` accepts 1-4 chars into a zero-initialized char[5]; a missing
+    // char means the corresponding perms[1..3] == 0, so the line is accepted
+    // with those PROT bits and is_private false instead of being dropped.
+    if perms_bytes.is_empty() {
         return None;
     }
     let mut perms_bit = 0u8;
-    if perms_bytes[0] == b'r' { perms_bit |= MapPerms::READ; }
-    if perms_bytes[1] == b'w' { perms_bit |= MapPerms::WRITE; }
-    if perms_bytes[2] == b'x' { perms_bit |= MapPerms::EXEC; }
+    if perms_bytes.get(0) == Some(&b'r') { perms_bit |= MapPerms::READ; }
+    if perms_bytes.get(1) == Some(&b'w') { perms_bit |= MapPerms::WRITE; }
+    if perms_bytes.get(2) == Some(&b'x') { perms_bit |= MapPerms::EXEC; }
 
     let offset = usize::from_str_radix(offset, 16).ok()?;
 
@@ -77,7 +80,7 @@ pub fn parse_maps_line(line: &str) -> Option<MapEntry> {
         start,
         end,
         perms: MapPerms(perms_bit),
-        is_private: perms_bytes[3] == b'p',
+        is_private: perms_bytes.get(3) == Some(&b'p'),
         offset,
         dev_major,
         dev_minor,

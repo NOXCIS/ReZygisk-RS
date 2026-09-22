@@ -1,0 +1,2070 @@
+[truman] === early (Mon Sep 14 14:20:27 EDT 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] === early done ===
+[truman] === late (Mon Sep 14 14:20:36 EDT 2026) ===
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398 com.eltavine.duckdetector 10373 
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] === early (Thu Jan 22 19:40:49 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] === early done ===
+[truman] === late (Mon Sep 14 14:21:46 EDT 2026) ===
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] === late (Mon Sep 14 14:23:04 EDT 2026) ===
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+sh: e: No such file or directory
+[truman] === early (Thu Jan 22 21:15:22 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] === early done ===
+[truman] === late (Mon Sep 14 15:56:21 EDT 2026) ===
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 22:31:04 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] === early done ===
+[truman] === late (Mon Sep 14 17:12:02 EDT 2026) ===
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+sh: c: No such file or directory
+sh: r: No such file or directory
+sh: c: No such file or directory
+sh: w: No such file or directory
+[truman] === late (Mon Sep 14 17:15:21 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] === early (Thu Jan 22 22:37:16 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 17:18:14 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 22:54:35 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 17:35:34 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 23:04:50 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 17:45:48 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 23:06:09 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 17:47:07 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 23:20:45 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 18:01:43 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 23:24:59 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 18:05:57 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=145
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Thu Jan 22 23:38:00 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 18:18:59 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 00:04:38 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 18:45:36 EDT 2026) ===
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 00:32:22 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 19:13:21 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 02:34:18 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 21:15:16 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 02:46:41 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 21:27:40 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 03:01:01 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 21:42:00 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 03:20:23 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt: added io.github.qwq233.keyattestation
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 22:01:22 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 03:21:53 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Mon Sep 14 22:02:52 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Fri Jan 23 15:03:35 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10373)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Tue Sep 15 09:44:34 EDT 2026) ===
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398 com.eltavine.duckdetector 10405 
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] === early (Sat Jan 24 04:11:58 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Tue Sep 15 22:52:56 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] cmdline already clean
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] cmdline already clean
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Wed Sep 16 02:19:04 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 02:19:42 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] === disarm (operator) ===
+[truman] set persist.truman.enabled=0
+[truman] enroll err=0 count=0 (disarm)
+[truman] P2: package filter unpublished (fail-open)
+[truman] disarm: boot props restored to honest values
+[truman] disarm: Google apps force-stopped (live table now visible to new processes)
+[truman] === disarm done (no reboot; run `ksud truman enable` to re-arm) ===
+[truman] canary FAIL (uid 10405): entry count 503 outside stock range
+[truman] set persist.truman.enabled=1
+[truman] === arm (operator) ===
+[truman] === early (Wed Sep 16 02:20:07 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 02:20:07 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] qemu_sf hunter started
+[truman] === early (Wed Sep 16 02:37:36 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] === early (Sat Jan 24 15:49:14 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 10:30:13 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Wed Sep 16 10:42:58 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] module takeover: legacy module removed (v0.5), ksud truman v0.6-ksud is the authority
+[truman] === early (Sat Jan 24 16:07:32 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] canary FAIL (uid 10405): entry count 497 outside stock range
+[truman] canary FAIL (uid 10405): entry count 497 outside stock range
+[truman] === late (Wed Sep 16 10:53:28 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] === early (Sat Jan 24 16:15:59 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Sat Jan 24 16:17:43 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] SPAWNPROBE start: exe=/data/adb/ksud pid=987 uid=0
+[truman] SPAWNPROBE A pid=1081 exited=true code=Some(0) stdout="truman v0.6-ksud (versionCode 6) — ksud 4.1.0-1324-g7a97c884\nenabled: true\nkernel: ksu v40722 susfs v2.0.0 (dome support" stderr=""
+[truman] SPAWNPROBE B(status,null,pgid) pid=1083 state=State:	Z (zombie) cmd=""
+[truman] qemu_sf hunter started
+[truman] SPAWNPROBE C(watchdog,null,pgid) pid=1085 state=State:	S (sleeping) cmd="/data/adb/ksud truman watchdog"
+[truman] SPAWNPROBE done
+[truman] === early (Sat Jan 24 16:19:11 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] SPAWNPROBE[early] start: exe=/data/adb/ksud pid=985 pgid=985 session=0 cgroup=3:cpuset:/ 2:cpu:/ 1:blkio:/ 0::/system/uid_0/pid_985
+[truman] SPAWNPROBE[early] re-arm helper pid=1079
+[truman] === early (Sat Jan 24 16:28:13 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] SPAWNPROBE[early] start: exe=/data/adb/ksud pid=982 pgid=982 session=0 cgroup=3:cpuset:/ 2:cpu:/ 1:blkio:/ 0::/system/uid_0/pid_982
+[truman] SPAWNPROBE[early] re-arm helper pid=1076
+[truman] === early (Sat Jan 24 16:34:26 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] SPAWNPROBE[early] start: exe=/data/adb/ksud pid=989 pgid=989 session=0 cgroup=3:cpuset:/ 2:cpu:/ 1:blkio:/ 0::/system/uid_0/pid_989
+[truman] SPAWNPROBE[early] re-arm helper pid=1083
+[truman] === early (Sat Jan 24 16:39:32 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] SPAWNPROBE[late] start: exe=/data/adb/ksud pid=2114 pgid=2114 session=0 cgroup=3:cpuset:/ 2:cpu:/ 1:blkio:/ 0::/
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +1s pid=2128 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +5s pid=2128 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +15s pid=2128 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] probe child entered boot path (pid 3837, pgid 2114)
+[truman] === late (Wed Sep 16 11:20:45 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] SPAWNPROBE[late] P pid=3837 code=Some(0) signal=None stdout="" stderr=""
+[truman] SPAWNPROBE[late] probe child entered boot path (pid 4113, pgid 4113)
+[truman] === late (Wed Sep 16 11:20:51 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] SPAWNPROBE[late] Q(late,null,pgid) +2s pid=4113 state=State:	Z (zombie) cmd=""
+[truman] SPAWNPROBE[late] Q(late,null,pgid) +8s pid=4113 state=State:	Z (zombie) cmd=""
+[truman] SPAWNPROBE[late] Q effects: late-banners +2 pidfile 4110 -> 4110
+[truman] SPAWNPROBE[late] done
+[truman] === late (Wed Sep 16 11:20:59 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] SPAWNPROBE[late] start: exe=/data/adb/ksud pid=9929 pgid=9922 session=9922 cgroup=3:cpuset:/ 2:cpu:/ 1:blkio:/ 0::/
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +1s pid=9930 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +5s pid=9930 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] S(sleep300,pgid) +15s pid=9930 state=State:	S (sleeping) cmd="/system/bin/sleep 300"
+[truman] SPAWNPROBE[late] probe child entered boot path (pid 10001, pgid 9922)
+[truman] === late (Wed Sep 16 11:27:33 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] SPAWNPROBE[late] P pid=10001 code=Some(0) signal=None stdout="" stderr=""
+[truman] SPAWNPROBE[late] probe child entered boot path (pid 10004, pgid 10004)
+[truman] === late (Wed Sep 16 11:27:33 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] SPAWNPROBE[late] Q(late,null,pgid) +2s pid=10004 state=State:	Z (zombie) cmd=""
+[truman] SPAWNPROBE[late] Q(late,null,pgid) +8s pid=10004 state=State:	Z (zombie) cmd=""
+[truman] SPAWNPROBE[late] Q effects: late-banners +2 pidfile 4110 -> 4110
+[truman] SPAWNPROBE[late] done
+[truman] === late (Wed Sep 16 11:27:41 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] === early (Sat Jan 24 16:49:22 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Sat Jan 24 18:22:35 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 13:03:32 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sat Jan 24 19:11:10 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 13:52:08 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] module takeover: legacy module reinstalled (v0.5) — ksud truman stands down; delete /data/adb/modules/truman to hand authority back to ksud
+[truman] === early (Sat Jan 24 19:25:06 EST 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] stand-down: legacy module reinstalled — ksud truman is not arming this boot
+[truman] stand-down: legacy module authority — no late audit, no watchdog this boot
+[truman] === late (Wed Sep 16 14:06:04 EDT 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+enroll err=0
+count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+capture err=0
+entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] qemu_sf hunter started
+[truman] === late done ===
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+sh: e: No such file or directory
+sh: D: No such file or directory
+sh: x: No such file or directory
+[truman] module takeover: legacy module gone — ksud truman is the authority again
+[truman] === early (Sat Jan 24 19:27:55 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 14:08:53 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] dome member added: io.element.android.x — re-enrolling
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398 com.eltavine.duckdetector 10405 io.element.android.x 10379
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405,10379)
+[truman] enroll err=0 count=6
+[truman] P3: kernel enrollment submitted (6 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] dome member removed: com.eltavine.duckdetector — re-enrolling
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398 io.element.android.x 10379
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10379)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] dome member removed: io.element.android.x — re-enrolling
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398)
+[truman] enroll err=0 count=4
+[truman] P3: kernel enrollment submitted (4 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] dome member added: com.eltavine.duckdetector — re-enrolling
+[truman] UID enrollment updated: com.google.android.gms 10259 com.google.android.gsf 10291 com.android.vending 10256 com.google.android.apps.walletnfcrel 10398 com.eltavine.duckdetector 10405
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] P2: package filter published (44 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] filter: com.aurora.store no longer hidden
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] filter: io.element.android.x hidden from dome members
+[truman] P2: package filter published (44 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] filter: io.element.android.x no longer hidden
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] filter: com.aurora.store hidden from dome members
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 156 entries, 0 leaks)
+[truman] === early (Sun Jan 25 01:36:36 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 20:17:34 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Sun Jan 25 03:19:08 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Wed Sep 16 22:00:05 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Sun Jan 25 05:30:32 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 00:11:29 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 06:16:37 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] boot gate armed (gate_ms published)
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 00:57:35 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] truman_guard retired (v0.7): framework owns the boot gate + package filters
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 13:19:10 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 08:00:08 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 15:48:12 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 10:29:10 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 16:16:36 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 10:57:32 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 17:27:57 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 12:08:53 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair partial
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === arm (operator) ===
+[truman] === early (Thu Sep 17 12:15:23 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 12:15:23 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair partial
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] === early (Sun Jan 25 19:09:58 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 13:50:53 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair partial
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 19:59:26 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 14:40:21 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair deferred (roots unset)
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 20:48:56 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 15:29:51 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair deferred (roots unset)
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Sun Jan 25 22:15:04 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 16:56:00 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair deferred (roots unset)
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 13)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Mon Jan 26 01:28:07 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Mon Jan 26 02:44:45 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Thu Sep 17 21:25:39 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: attempt 7 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: attempt 8 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] boot-apply backstop: attempt 9 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: attempt 10 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: attempt 11 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: apply stamped after 12 attempt(s)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === late (Thu Sep 17 21:43:42 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] === late (Thu Sep 17 21:43:50 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] === late (Thu Sep 17 21:44:29 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === late (Thu Sep 17 21:45:21 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === late (Thu Sep 17 22:59:39 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=156
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Mon Jan 26 13:21:03 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 08:01:59 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: attempt 7 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: attempt 8 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] boot-apply backstop: attempt 9 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: attempt 10 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: attempt 11 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: attempt 12 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 13)
+[truman] boot-apply backstop: apply stamped after 13 attempt(s)
+[truman] === early (Mon Jan 26 13:25:19 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 08:06:14 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Mon Jan 26 13:30:57 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 08:11:54 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: attempt 7 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: attempt 8 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] === arm (operator) ===
+[truman] === early (Fri Sep 18 08:14:13 -04:00 2026) ===
+[truman] boot props applied
+[truman] cmdline already clean
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' renders as 'GoogleSmartPixelsOverlay.apk'
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' renders as 'com.google.android.platform-res.apk'
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 08:14:13 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' renders as 'GoogleSmartPixelsOverlay.apk'
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' renders as 'com.google.android.platform-res.apk'
+[truman] spoof: late-phase re-issue done
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] boot-apply backstop: attempt 9 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: attempt 10 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: attempt 11 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: attempt 12 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 13)
+[truman] boot-apply backstop: apply stamped after 13 attempt(s)
+[truman] === early (Mon Jan 26 13:56:44 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' renders as 'GoogleSmartPixelsOverlay.apk'
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' renders as 'com.google.android.platform-res.apk'
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 08:37:40 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Mon Jan 26 15:05:49 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 09:46:46 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Mon Jan 26 15:18:20 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Mon Jan 26 15:22:26 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 10:03:22 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] canary PASS (uid 10405: 143 entries, 0 leaks)
+[truman] === early (Mon Jan 26 23:10:30 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' renders as 'GoogleSmartPixelsOverlay.apk'
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' renders as 'com.google.android.platform-res.apk'
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Mon Jan 26 23:55:48 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 00:07:33 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 01:14:43 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 01:23:16 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 20:04:12 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Tue Jan 27 01:26:03 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' renders as 'GoogleSmartPixelsOverlay.apk'
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' renders as 'com.google.android.platform-res.apk'
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 20:06:59 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Tue Jan 27 01:27:10 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 20:08:06 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Tue Jan 27 01:35:15 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 20:16:12 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Tue Jan 27 01:39:41 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 01:45:06 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 20:26:02 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Tue Jan 27 01:54:50 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 01:59:24 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 02:24:04 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 02:34:10 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 21:15:06 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: attempt 7 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: attempt 8 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] boot-apply backstop: attempt 9 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: attempt 10 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: attempt 11 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: apply stamped after 12 attempt(s)
+[truman] === early (Tue Jan 27 02:47:42 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 03:06:12 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 03:16:45 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 03:52:22 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 04:04:16 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Tue Jan 27 04:19:19 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Fri Sep 18 23:00:15 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+[truman] boot-apply backstop: attempt 7 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 8)
+[truman] boot-apply backstop: attempt 8 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 9)
+[truman] boot-apply backstop: attempt 9 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 10)
+[truman] boot-apply backstop: attempt 10 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 11)
+[truman] boot-apply backstop: attempt 11 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 12)
+[truman] boot-apply backstop: apply stamped after 12 attempt(s)
+[truman] === early (Tue Jan 27 04:42:12 -05:00 1970) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Wed Dec 31 19:33:07 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === early (Wed Dec 31 20:13:11 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Sun Aug 23 14:54:07 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Wed Dec 31 20:16:33 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' -> 'GoogleSmartPixelsOverlay.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' -> 'com.google.android.platform-res.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Sun Sep 20 19:37:12 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Wed Dec 31 20:23:11 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' -> 'GoogleSmartPixelsOverlay.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' -> 'com.google.android.platform-res.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Sun Sep 20 19:43:51 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] === early (Wed Dec 31 20:25:04 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] audit silence armed (scanner-probe dontaudit)
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] spoof: '/product/overlay/CrDroidSmartPixelsOverlay.apk' -> 'GoogleSmartPixelsOverlay.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] spoof: '/system/framework/org.lineageos.platform-res.apk' -> 'com.google.android.platform-res.apk' failed: Unsupported SuSFS command: 0x60032
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Sun Sep 20 19:45:42 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 1)
+[truman] boot-apply backstop: attempt 1 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 2)
+[truman] boot-apply backstop: attempt 2 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 3)
+[truman] boot-apply backstop: attempt 3 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 4)
+[truman] boot-apply backstop: attempt 4 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 5)
+[truman] boot-apply backstop: attempt 5 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 6)
+[truman] boot-apply backstop: attempt 6 did not stamp; respawning
+[truman] boot-apply backstop: spawning susfs apply_boot (attempt 7)
+                                                                                                                                      [truman] === early (Wed Dec 31 20:27:43 -05:00 1969) ===
+[truman] boot props applied
+[truman] cmdline spoof armed
+[truman] kernel_umount=0 enforced
+[truman] qemu_sf area removed
+[truman] P3: qemu_sf property-area removal
+[truman] susfs config applied
+[truman] target.txt core set present
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] === early done ===
+[truman] === late (Sun Sep 20 19:48:23 -04:00 2026) ===
+[truman] P2: package filter published (45 pkgs, uids: 10259,10291,10256,10398,10405)
+[truman] enroll err=0 count=5
+[truman] P3: kernel enrollment submitted (5 uid(s))
+[truman] capture err=0 entries=143
+[truman] P3: mount template capture submitted
+[truman] AUDIT: all surfaces armed
+[truman] susfs kernel repair applied
+[truman] boot gate released (armed=1)
+[truman] === late done ===
+[truman] qemu_sf hunter started

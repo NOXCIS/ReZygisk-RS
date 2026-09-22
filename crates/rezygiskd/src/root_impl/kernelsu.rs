@@ -179,7 +179,13 @@ fn ksu_probe_prctl() -> RootImplState {
         return RootImplState::Abnormal;
     }
     if version < rz_common::MIN_KSU_KERNEL_VERSION as i32 {
-        return RootImplState::TooOld;
+        // kernelsu.c 129-130: only 1..=MIN-1 is TooOld; anything below 1 is
+        // Abnormal.
+        return if version >= 1 {
+            RootImplState::TooOld
+        } else {
+            RootImplState::Abnormal
+        };
     }
 
     // ksud must exist — custom kernels may pre-install KSU while the user

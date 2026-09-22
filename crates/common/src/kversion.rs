@@ -10,7 +10,9 @@ pub struct KernelVersion {
 impl KernelVersion {
     pub fn parse(release: &str) -> Option<Self> {
         let mut it = release.split(|c: char| !c.is_ascii_digit());
-        let major: u8 = it.next()?.parse().ok()?;
+        // C `%hhu` converts via mod-256 truncation on overflow; parse as u32
+        // then cast to u8 to reproduce that instead of failing the parse.
+        let major: u8 = it.next()?.parse::<u32>().ok()? as u8;
         let minor: u32 = it.next()?.parse().ok()?;
         let patch: u32 = it.next()?.parse().ok()?;
         Some(Self { major, minor, patch })

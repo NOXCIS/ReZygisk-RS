@@ -1,0 +1,54 @@
+=== [zygisk-ptrace monitor] pid=998 epoch=10661 stdio redirected ===
+ReZygisk 1.0.0
+handoff tracer: pid=1085 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+Service online (lp64)
+=== [rezygiskd] pid=1092 epoch=1789953498 stdio redirected ===
+KernelSU root implementation found (v3 ioctl).
+KernelSU root implementation found.
+Loading modules for architecture: arm64-v8a
+Built-in module [truman] loaded: /data/adb/modules/rezygisk/zygisk/truman/arm64-v8a.so
+Sent root implementation and modules information to controller socket
+exec tracer command: ./bin/zygisk-ptrace64 trace 1085 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=1107 epoch=1789953498 stdio redirected ===
+start tracing 1085 (tracer 1107)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 1085
+handoff tracer: pid=1086 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+Service online (lp32)
+=== [rezygiskd] pid=1108 epoch=1789953498 stdio redirected ===
+KernelSU root implementation found (v3 ioctl).
+KernelSU root implementation found.
+Loading modules for architecture: armeabi-v7a
+Built-in module [truman] loaded: /data/adb/modules/rezygisk/zygisk/truman/armeabi-v7a.so
+Sent root implementation and modules information to controller socket
+exec tracer command: ./bin/zygisk-ptrace32 trace 1086 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=1110 epoch=1789953498 stdio redirected ===
+start tracing 1086 (tracer 1110)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 1086
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x191000), entry 0x1000bba04
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ⚠️
+client entry call returned 0x75ce796684
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 1085 released
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe9e27000 (size 0x119000), entry 0xe9e9ccad
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x1
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 1086 released
+process 1796 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1985 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1989 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 4041 (program=<unreadable>, cmdline="") received unknown sigchld_status 0x7f00 exited with 127

@@ -1,0 +1,7 @@
+  730     1 keystore     21:18:14 keystore2 /data/misc/keystore
+  998     1 root         21:18:16 zygisk-ptrace64 monitor
+ 1092   998 root         21:18:16 zygiskd64
+ 1108   998 root         21:18:17 zygiskd32
+ 2065     1 root         21:18:19 supervisor ./daemon /data/adb/modules/tricky_store
+ 2079  2065 root         21:18:19 TEESimulator
+ 4301     1 root         21:18:40 ksud truman watchdog

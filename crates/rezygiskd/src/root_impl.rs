@@ -45,6 +45,10 @@ static SETUP: Mutex<Option<SetupKind>> = Mutex::new(None);
 /// cache the result (the probes have side effects — KSU fd creation, feature
 /// writes — so they must not be repeated).
 pub fn root_impls_setup() -> SetupKind {
+    if let Some(kind) = *SETUP.lock().unwrap() {
+        return kind;
+    }
+
     let state_ksu = kernelsu::ksu_get_existence();
     let state_apatch = apatch::apatch_get_existence();
     let state_magisk = magisk::magisk_get_existence();

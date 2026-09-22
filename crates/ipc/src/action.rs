@@ -127,35 +127,34 @@ const fn lp_code(on_32: u8, on_64: u8) -> u8 {
 }
 
 /// zygiskd.c `zygiskd_start` success report: the sequence of datagrams sent
-/// to the controller socket. Each element is one sendto() datagram.
+/// to the controller socket. Each element is one `sendto()` datagram.
+///
+/// Critical: the controller socket is `SOCK_DGRAM`. The monitor reads with
+/// separate `read(4)` / `read(N)` calls — one field per datagram — matching
+/// C. Combining len+payload into a single datagram truncates on the 4-byte
+/// read and leaves the monitor busy-spinning on `EAGAIN` (boot wedge).
 pub fn build_set_info_datagrams(impl_name: &str, module_names: &[&str]) -> Vec<Vec<u8>> {
-    let mut out = Vec::with_capacity(3 + module_names.len());
+    let mut out = Vec::with_capacity(3 + module_names.len() * 2);
     out.push(vec![controller_code(ControllerCode::DaemonSetInfo)]);
-
-    let mut name_frame = (impl_name.len() as u32).to_ne_bytes().to_vec();
-    name_frame.extend_from_slice(impl_name.as_bytes());
-    out.push(name_frame);
-
+    out.push((impl_name.len() as u32).to_ne_bytes().to_vec());
+    out.push(impl_name.as_bytes().to_vec());
     out.push((module_names.len() as u32).to_ne_bytes().to_vec());
 
     for name in module_names {
-        let mut frame = (name.len() as u32).to_ne_bytes().to_vec();
-        frame.extend_from_slice(name.as_bytes());
-        out.push(frame);
+        out.push((name.len() as u32).to_ne_bytes().to_vec());
+        out.push(name.as_bytes().to_vec());
     }
 
     out
 }
 
-/// zygiskd.c error path report (unknown/multiple root impl).
+/// zygiskd.c error path report (unknown/multiple root impl):
+/// `[cmd]`, `[u32 len]`, `[msg bytes]` — separate datagrams.
 pub fn build_error_info_datagrams(msg: &str) -> Vec<Vec<u8>> {
     vec![
         vec![controller_code(ControllerCode::DaemonSetErrorInfo)],
-        {
-            let mut frame = (msg.len() as u32).to_ne_bytes().to_vec();
-            frame.extend_from_slice(msg.as_bytes());
-            frame
-        },
+        (msg.len() as u32).to_ne_bytes().to_vec(),
+        msg.as_bytes().to_vec(),
     ]
 }
 
@@ -203,35 +202,27 @@ mod tests {
 
     #[test]
     fn set_info_datagrams_golden() {
+        // C zygiskd.c: one field per sendto — never combine len||payload.
         let frames = build_set_info_datagrams("KernelSU", &["truman", "playintegrityfix"]);
-        assert_eq!(frames.len(), 5);
+        assert_eq!(frames.len(), 8);
 
         assert_eq!(frames[0], vec![controller_code(ControllerCode::DaemonSetInfo)]);
-
-        // u32 length prefix + name (controller protocol uses uint32_t).
-        let mut expected_impl = 8u32.to_ne_bytes().to_vec();
-        expected_impl.extend_from_slice(b"KernelSU");
-        assert_eq!(frames[1], expected_impl);
-
-        assert_eq!(frames[2], 2u32.to_ne_bytes().to_vec());
-
-        let mut expected_m0 = 6u32.to_ne_bytes().to_vec();
-        expected_m0.extend_from_slice(b"truman");
-        assert_eq!(frames[3], expected_m0);
-
-        let mut expected_m1 = 16u32.to_ne_bytes().to_vec();
-        expected_m1.extend_from_slice(b"playintegrityfix");
-        assert_eq!(frames[4], expected_m1);
+        assert_eq!(frames[1], 8u32.to_ne_bytes().to_vec());
+        assert_eq!(frames[2], b"KernelSU".to_vec());
+        assert_eq!(frames[3], 2u32.to_ne_bytes().to_vec());
+        assert_eq!(frames[4], 6u32.to_ne_bytes().to_vec());
+        assert_eq!(frames[5], b"truman".to_vec());
+        assert_eq!(frames[6], 16u32.to_ne_bytes().to_vec());
+        assert_eq!(frames[7], b"playintegrityfix".to_vec());
     }
 
     #[test]
     fn error_info_datagrams_golden() {
-        let frames = build_error_info_datagrams("Unsupported environment: Unknown root implementation");
-        assert_eq!(frames.len(), 2);
+        let msg = "Unsupported environment: Unknown root implementation";
+        let frames = build_error_info_datagrams(msg);
+        assert_eq!(frames.len(), 3);
         assert_eq!(frames[0], vec![controller_code(ControllerCode::DaemonSetErrorInfo)]);
-        let len = "Unsupported environment: Unknown root implementation".len() as u32;
-        let mut expected = len.to_ne_bytes().to_vec();
-        expected.extend_from_slice(b"Unsupported environment: Unknown root implementation");
-        assert_eq!(frames[1], expected);
+        assert_eq!(frames[1], (msg.len() as u32).to_ne_bytes().to_vec());
+        assert_eq!(frames[2], msg.as_bytes().to_vec());
     }
 }

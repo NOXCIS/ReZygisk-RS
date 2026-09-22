@@ -1,0 +1,128 @@
+[trumand cert_read] FAIL: Play Store home not reachable
+[trumand cert_read] FAIL: Play Store home not reachable
+[trumand 2026-09-14 14:30:33] started: interval=60s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 14:35:34] cert read skipped (screen awake)
+[trumand 2026-09-14 14:35:50] started without explicit mode (assumed loop)
+[trumand 2026-09-14 14:35:50] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 14:36:26] started without explicit mode (assumed loop)
+[trumand 2026-09-14 14:36:26] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand cert_read] FAIL: profile page
+[trumand cert_read] FAIL: Play Store home not reachable
+[trumand cert_read] FAIL: profile page
+[trumand cert_read] FAIL: Play Store home not reachable
+[trumand cert_read] FAIL: profile page
+[trumand cert_read] FAIL: profile page
+[trumand cert_read] skip: screen not awake
+[trumand cert_read] FAIL: profile page — texts: 
+[trumand cert_read] FAIL: profile page — descs: content-desc="Navigate up"|content-desc="Screenshot 1 of 6"|
+[trumand cert_read] FAIL: profile page — texts: text="1"|text="2"|text="3"|text="4"|text="4.5"|text="5"|text="96,003"|text="Account deletion available"|text="Apps"|text="Books"|text="Data is encrypted in transit"|text="Data safety"|text="Games"|text="Ratings and reviews"|text="Search"|text="See details"|text="This app may collect these data types"|text="You can request to delete collected data"|text="You"|
+[trumand cert_read] FAIL: profile page — descs: content-desc="1 star: 8%"|content-desc="2 stars: 0%"|content-desc="3 stars: 1%"|content-desc="4 stars: 9%"|content-desc="5 stars: 79%"|content-desc="96,003 reviews"|content-desc="Average rating: 4.5"|content-desc="Learn more about data safety"|content-desc="See details"|content-desc="View all ratings and reviews"|content-desc="review policy label info icon"|
+[trumand cert_read] FAIL: profile page — texts: text="Apps"|text="Books"|text="Connect and explore"|text="Games"|text="More by Nord Security"|text="More"|text="Search"|text="Similar apps"|text="Sponsored"|text="You"|
+[trumand cert_read] FAIL: profile page — descs: content-desc="Google Play refund policy"|content-desc="More options"|content-desc="More results for Similar apps"|content-desc="More"|content-desc="My Airtel&#10;Star rating: 4.5&#10;"|
+[trumand cert_read] skip: screen not awake
+[trumand cert_read] FAIL: profile page — texts: text="09/04/2026"|text="13/03/2025"|text="39 people found this helpful"|text="835 people found this helpful"|text="Apps"|text="Books"|text="Games"|text="J"|text="Nord Security"|text="Search"|text="Steve"|text="Was this review helpful?"|text="You"|
+[trumand cert_read] FAIL: profile page — descs: content-desc="No"|content-desc="Options"|content-desc="Star rating: 5.0"|content-desc="Yes"|
+[trumand cert_read] FAIL: account menu
+[trumand cert_read] FAIL: account menu
+[trumand 2026-09-14 15:17:14] started without explicit mode (assumed loop)
+[trumand 2026-09-14 15:17:14] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 15:56:21] started without explicit mode (assumed loop)
+[trumand 2026-09-14 15:56:21] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 17:12:02] started without explicit mode (assumed loop)
+[trumand 2026-09-14 17:12:02] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 17:18:14] started without explicit mode (assumed loop)
+[trumand 2026-09-14 17:18:14] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 17:35:34] started without explicit mode (assumed loop)
+[trumand 2026-09-14 17:35:34] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 17:45:48] started without explicit mode (assumed loop)
+[trumand 2026-09-14 17:45:48] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 17:47:07] started without explicit mode (assumed loop)
+[trumand 2026-09-14 17:47:07] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 18:01:43] started without explicit mode (assumed loop)
+[trumand 2026-09-14 18:01:43] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 18:05:57] started without explicit mode (assumed loop)
+[trumand 2026-09-14 18:05:57] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 18:18:59] started without explicit mode (assumed loop)
+[trumand 2026-09-14 18:18:59] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 18:45:36] started without explicit mode (assumed loop)
+[trumand 2026-09-14 18:45:36] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 19:13:21] started without explicit mode (assumed loop)
+[trumand 2026-09-14 19:13:21] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand cert_read] FAIL: account page — texts: text="About Google Play"|text="About"|text="Account preferences, notifications"|text="Data usage for downloads, auto-updates"|text="Device is certified"|text="Family"|text="General"|text="Learn more"|text="Licence details for open-source software"|text="Network preferences"|text="Open-source licences"|text="Parental control, parent guide"|text="Play Protect certification"|text="Play Store version"|text="Settings"|text="Update Play Store"|text="Version: 53.0.27-34 [0] [PR] 973951861"|
+[trumand 2026-09-14 21:15:16] started without explicit mode (assumed loop)
+[trumand 2026-09-14 21:15:17] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 21:27:39] started without explicit mode (assumed loop)
+[trumand 2026-09-14 21:27:40] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 21:42:00] started without explicit mode (assumed loop)
+[trumand 2026-09-14 21:42:00] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 22:01:22] started without explicit mode (assumed loop)
+[trumand 2026-09-14 22:01:22] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-14 22:02:52] started without explicit mode (assumed loop)
+[trumand 2026-09-14 22:02:52] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand cert_read] FAIL: account page — texts: text="2"|text="Community"|text="Following"|text="For You"|text="Friends"|text="Home"|text="Inbox"|text="Local"|text="Profile"|text="STEM"|
+[trumand 2026-09-15 00:41:19] cert read: no verdict (rc=2)
+[trumand cert_read] FAIL: account menu
+[trumand 2026-09-15 02:42:32] cert read: no verdict (rc=2)
+[trumand 2026-09-15 09:44:34] started without explicit mode (assumed loop)
+[trumand 2026-09-15 09:44:34] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand cert_read] skip: screen not awake
+[trumand cert_read] skip: user busy (mCurrentFocus=Window{b34cc2 u0 co.leanremote.universalremotecontrol.remotecontrol/co.leanremote.universalremotecontrol.remotecontrol.FragmentLoadTempleteActivity})
+[trumand 2026-09-15 11:50:29] cert read: no verdict (rc=2)
+[trumand cert_read] skip: user busy (mCurrentFocus=Window{dd25850 u0 com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity})
+[trumand 2026-09-15 15:42:13] cert read: no verdict (rc=2)
+[trumand 2026-09-15 22:52:56] started without explicit mode (assumed loop)
+[trumand 2026-09-15 22:52:56] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-16 02:19:42] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 02:20:07] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 02:20:23] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 02:36:40] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 10:30:12] started without explicit mode (assumed loop)
+[trumand 2026-09-16 10:30:13] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-16 10:53:28] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 1970-01-24 16:19:10] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 11:20:51] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 13:03:53] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 13:52:28] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 14:06:04] started without explicit mode (assumed loop)
+[trumand 2026-09-16 14:06:04] started: interval=1200s cert_every=6 ladder= snapshots=
+[trumand 2026-09-16 14:09:13] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 20:17:54] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-16 22:00:26] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 00:11:50] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 00:57:56] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 08:00:27] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 10:29:28] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 10:57:52] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 12:09:12] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 13:51:13] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 14:40:41] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 15:30:12] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 16:56:21] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 21:26:01] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 21:44:29] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 21:45:21] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 22:59:39] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-17 22:59:40] another watchdog owns the lock — exiting
+[trumand 2026-09-18 08:02:19] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 08:06:35] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 08:12:14] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 08:38:00] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 09:47:06] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 10:03:42] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 20:04:32] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 20:07:20] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 20:08:27] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 20:16:33] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 20:26:23] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 21:15:27] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-18 23:00:35] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 19:34:11] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 19:37:45] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 19:44:12] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 19:46:03] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 19:48:44] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 20:56:13] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 21:00:42] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 21:11:27] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 21:15:57] started: interval=1200s drift-scan only (certification is confirmed manually)
+[trumand 2026-09-20 21:18:42] started: interval=1200s drift-scan only (certification is confirmed manually)

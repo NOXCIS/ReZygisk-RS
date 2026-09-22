@@ -11,7 +11,7 @@ use crate::utils::{dlogi, switch_mount_namespace};
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
-    dlogi!("Welcome to ReZygiskd{}", rz_common::lp_select!("32", "64"));
+    dlogi!("Service online (lp{})", rz_common::lp_select!("32", "64"));
 
     if args.len() > 1 {
         match args[1].as_str() {
@@ -20,7 +20,9 @@ fn main() {
                     dlogi!("Usage: zygiskd companion <fd>");
                     std::process::exit(1);
                 }
-                let fd: i32 = args[2].parse().unwrap_or(-1);
+                // main.c 21: C parses the fd with atoi, which yields 0 for
+                // a non-numeric argument.
+                let fd: i32 = args[2].parse().unwrap_or(0);
                 companion::companion_entry(fd);
             }
             "version" => {
@@ -43,6 +45,10 @@ fn main() {
             }
         }
     }
+
+    // Daemon mode only: keep CLI helpers (version/root) writing to real stdout.
+    rz_common::init_log_level_from_flags();
+    rz_common::redirect_stdio_to_log("rezygiskd");
 
     if !switch_mount_namespace(1) {
         dlogi!("Failed to switch mount namespace");

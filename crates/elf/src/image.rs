@@ -54,6 +54,18 @@ impl Symbol {
     }
 }
 
+/// Which symbol filter a lookup applies. PLTI's elf_util.c
+/// (`elfutil_gnu_lookup` / `elfutil_elf_lookup`, elf_util.c 422-495)
+/// compares raw names with NO shndx/visibility filter — even SHN_UNDEF
+/// imports resolve, since relocations reference them directly. The
+/// common/csoloader chains (`GnuLookup`/`ElfLookup` + `is_dynamic_symbol_visible`)
+/// always drop SHN_UNDEF and optionally filter binding/visibility.
+#[derive(Clone, Copy)]
+enum SymbolFilter {
+    None,
+    Dynamic { exported_only: bool },
+}
+
 pub struct ElfImage<'a> {
     raw: &'a [u8],
     elf: Elf<'a>,
@@ -73,14 +85,18 @@ impl<'a> ElfImage<'a> {
         let is_64 = elf.is_64;
 
         let mut dyn_entries = Vec::new();
+        // elf_util.c 147-167: the phdr scan has no `break`, so the LAST
+        // PT_DYNAMIC wins, and the dynamic-table entry count comes from
+        // `p_memsz` (`dynamic_size_`), not `p_filesz`.
         if let Some(ph) = elf
             .program_headers
             .iter()
+            .rev()
             .find(|ph| ph.p_type == PT_DYNAMIC)
         {
             let file_off = ph.p_offset as usize;
             let entsize = if is_64 { 16 } else { 8 };
-            let count = ph.p_filesz as usize / entsize;
+            let count = ph.p_memsz as usize / entsize;
             for i in 0..count {
                 let at = file_off + i * entsize;
                 let (tag, val) = if is_64 {
@@ -133,6 +149,15 @@ impl<'a> ElfImage<'a> {
 
     pub fn dynamic_find(&self, tag: u64) -> Option<u64> {
         self.dyn_entries.iter().find(|(t, _)| *t == tag).map(|(_, v)| *v)
+    }
+
+    /// The C dynamic-table scans assign scalar fields per occurrence
+    /// (elf_util.c 169-262, linker.c 1702-1737), so the LAST occurrence of a
+    /// tag in the table is the one that sticks. `dynamic_find` keeps the
+    /// first-wins lookup for consumers that expect it; this is the C-faithful
+    /// variant.
+    fn dynamic_find_last(&self, tag: u64) -> Option<u64> {
+        self.dyn_entries.iter().rev().find(|(t, _)| *t == tag).map(|(_, v)| *v)
     }
 
     pub fn dynamic_entries(&self) -> &[(u64, u64)] {
@@ -230,6 +255,17 @@ impl<'a> ElfImage<'a> {
 
     /// Every program header as (p_type, flattened segment) in **file order** —
     /// PLTI's VMA-boundary scan depends on the phdr iteration order.
+    /// Raw on-disk program-header table (`img->header` + `e_phoff`, `e_phnum`
+    /// entries) — backtrace-support.c `copy_program_headers` input. Returns
+    /// `(count, bytes)` in file order.
+    pub fn phdr_table(&self) -> (usize, &[u8]) {
+        let ent_size = if self.is_64 { 56 } else { 32 };
+        let off = self.elf.header.e_phoff as usize;
+        let count = self.elf.header.e_phnum as usize;
+        let bytes = &self.raw[off..off + count * ent_size];
+        (count, bytes)
+    }
+
     pub fn all_segments(&self) -> Vec<(u32, LoadSegment)> {
         self.elf
             .program_headers
@@ -265,16 +301,25 @@ impl<'a> ElfImage<'a> {
             }
         }
 
-        // Fall back to DT_SYMTAB/DT_STRTAB with the count from DT_HASH nchain.
-        let symtab = self.dynamic_find(DT_SYMTAB)?;
+        // Fall back to DT_SYMTAB/DT_STRTAB (plti elf_util.c 169-262: last
+        // occurrence of each tag wins). The C never bounds the table
+        // (`dyn_sym_` is a raw pointer), so the count here is only a safety
+        // bound: DT_HASH nchain when present, otherwise the bytes remaining
+        // in the PT_LOAD that holds the symtab — GNU-hash-only images (and
+        // mapped snapshots, which have no section headers) resolve through
+        // DT_SYMTAB alone in the C.
+        let symtab = self.dynamic_find_last(DT_SYMTAB)?;
         let symtab_off = self.vaddr_to_file_offset(symtab)? as usize;
-        if let Some(hash) = self.dynamic_find(DT_HASH) {
+        if let Some(hash) = self.dynamic_find_last(DT_HASH) {
             let hash_off = self.vaddr_to_file_offset(hash)? as usize;
             let nchain = u32::from_le_bytes(self.raw.get(hash_off + 4..hash_off + 8)?.try_into().ok()?);
             return Some((symtab_off, entsize, nchain as usize));
         }
-
-        None
+        let seg = self.elf.program_headers.iter().find(|ph| {
+            ph.p_type == PT_LOAD && symtab >= ph.p_vaddr && symtab < ph.p_vaddr + ph.p_filesz
+        })?;
+        let available = (seg.p_vaddr + seg.p_filesz).saturating_sub(symtab) as usize;
+        return Some((symtab_off, entsize, available / entsize));
     }
 
     pub fn dynsym_count(&self) -> usize {
@@ -291,7 +336,7 @@ impl<'a> ElfImage<'a> {
 
     /// dynstr via DT_STRTAB (works even with no section headers).
     pub fn dynstr_at(&self, offset: u64) -> Option<&'a str> {
-        let strtab = self.dynamic_find(DT_STRTAB)?;
+        let strtab = self.dynamic_find_last(DT_STRTAB)?;
         let base = self.vaddr_to_file_offset(strtab)? as usize;
         self.cstr_at(base + offset as usize)
     }
@@ -349,7 +394,7 @@ impl<'a> ElfImage<'a> {
     /// GNU hash table parsed from DT_GNU_HASH:
     /// (nbucket, symoffset, bloom_size, bloom_shift, bloom_off, bucket_off, chain_off)
     fn gnu_hash_table(&self) -> Option<(u32, u32, u32, u32, usize, usize, usize)> {
-        let tag = self.dynamic_find(DT_GNU_HASH)?;
+        let tag = self.dynamic_find_last(DT_GNU_HASH)?;
         let off = self.vaddr_to_file_offset(tag)? as usize;
         let r = &self.raw;
         let nbucket = u32::from_le_bytes(r.get(off..off + 4)?.try_into().ok()?);
@@ -367,13 +412,28 @@ impl<'a> ElfImage<'a> {
         self.gnu_lookup_index(name, hash).and_then(|i| self.symbol_at(i))
     }
 
-    /// PLTI `elfutil_gnu_lookup`: dynsym index of `name` via the GNU hash
-    /// table (no visibility filter — relocations reference raw indexes).
+    /// common/csoloader `GnuLookup` index (SHN_UNDEF filtered, no binding/
+    /// visibility filter) — `symbol_by_name` chain.
     fn gnu_lookup_index(&self, name: &str, hash: u32) -> Option<usize> {
-        self.gnu_lookup_index_filtered(name, hash, false)
+        self.gnu_lookup_index_filtered(name, hash, SymbolFilter::Dynamic { exported_only: false })
     }
 
-    fn gnu_lookup_index_filtered(&self, name: &str, hash: u32, exported_only: bool) -> Option<usize> {
+    fn symbol_matches(&self, sym: &Symbol, name: &str, filter: SymbolFilter) -> bool {
+        if sym.name != name {
+            return false;
+        }
+        match filter {
+            SymbolFilter::None => true,
+            SymbolFilter::Dynamic { exported_only } => crate::symbol_is_visible(sym, exported_only),
+        }
+    }
+
+    fn gnu_lookup_index_filtered(
+        &self,
+        name: &str,
+        hash: u32,
+        filter: SymbolFilter,
+    ) -> Option<usize> {
         let (nbucket, symoffset, bloom_size, bloom_shift, bloom_off, bucket_off, chain_off) =
             self.gnu_hash_table()?;
         if nbucket == 0 || bloom_size == 0 {
@@ -415,7 +475,7 @@ impl<'a> ElfImage<'a> {
 
             let sym = self.read_symbol(sym_off + sym_index as usize * sym_ent, None);
             let matches = (chain_val ^ hash) >> 1 == 0
-                && sym.is_some_and(|s| s.name == name && crate::symbol_is_visible(&s, exported_only));
+                && sym.is_some_and(|s| self.symbol_matches(&s, name, filter));
 
             if matches {
                 return Some(sym_index as usize);
@@ -432,12 +492,14 @@ impl<'a> ElfImage<'a> {
         self.elf_lookup_index(name, hash).and_then(|i| self.symbol_at(i))
     }
 
+    /// common/csoloader `ElfLookup` index (SHN_UNDEF filtered, no binding/
+    /// visibility filter) — `symbol_by_name` chain.
     fn elf_lookup_index(&self, name: &str, hash: u32) -> Option<usize> {
-        self.elf_lookup_index_filtered(name, hash, false)
+        self.elf_lookup_index_filtered(name, hash, SymbolFilter::Dynamic { exported_only: false })
     }
 
-    fn elf_lookup_index_filtered(&self, name: &str, hash: u32, exported_only: bool) -> Option<usize> {
-        let tag = self.dynamic_find(DT_HASH)?;
+    fn elf_lookup_index_filtered(&self, name: &str, hash: u32, filter: SymbolFilter) -> Option<usize> {
+        let tag = self.dynamic_find_last(DT_HASH)?;
         let off = self.vaddr_to_file_offset(tag)? as usize;
         let nbucket = u32::from_le_bytes(self.raw.get(off..off + 4)?.try_into().ok()?);
         if nbucket == 0 {
@@ -455,7 +517,7 @@ impl<'a> ElfImage<'a> {
         while n != 0 {
             // STN_UNDEF == 0
             let sym = self.symbol_at(n)?;
-            if sym.name == name && crate::symbol_is_visible(&sym, exported_only) {
+            if self.symbol_matches(&sym, name, filter) {
                 return Some(n);
             }
             n = u32::from_le_bytes(
@@ -482,27 +544,57 @@ impl<'a> ElfImage<'a> {
     /// csoloader elf_util.c lookup chain with the exported-only filter of
     /// `gnu_symbol_lookup`/`elf_symbol_lookup` (csoloader_elf_symb_address_exported).
     pub fn symbol_by_name_ex(&self, name: &str, exported_only: bool) -> Option<Symbol> {
-        if let Some(i) = self.gnu_lookup_index_filtered(name, gnu_hash(name), exported_only) {
+        let filter = SymbolFilter::Dynamic { exported_only };
+        if let Some(i) = self.gnu_lookup_index_filtered(name, gnu_hash(name), filter) {
             return self.symbol_at(i);
         }
-        if let Some(i) = self.elf_lookup_index_filtered(name, elf_hash(name), exported_only) {
+        if let Some(i) = self.elf_lookup_index_filtered(name, elf_hash(name), filter) {
             return self.symbol_at(i);
         }
         None
     }
 
     /// PLTI `elfutil_gnu_lookup` → `elfutil_elf_lookup` → `elfutil_linear_lookup`:
-    /// dynsym *index* of the first symbol matching `name` (no visibility
-    /// filter, matching the C).
+    /// dynsym *index* of the first symbol matching `name`.
+    ///
+    /// Mirrors the C lookup-chain quirks exactly:
+    /// - raw name match only — no SHN_UNDEF/visibility filter (elf_util.c
+    ///   422-495: imports referenced by relocations must resolve);
+    /// - with a GNU hash table (DT_GNU_HASH) the SysV lookup is skipped
+    ///   entirely (`elfutil_elf_lookup` returns 0 when `bloom_` is set);
+    /// - `elfutil_linear_lookup` only runs when DT_GNU_HASH was parsed
+    ///   (`sym_offset_` is GNU-only) and scans only indexes in
+    ///   `[0, sym_offset)`; index 0 is the not-found sentinel, so it can
+    ///   never be returned;
+    /// - without a GNU hash table only the SysV lookup can match.
     pub fn dynsym_index_by_name(&self, name: &str) -> Option<usize> {
-        if let Some(i) = self.gnu_lookup_index(name, gnu_hash(name)) {
+        let has_gnu = self.gnu_hash_table().is_some();
+
+        if has_gnu {
+            if let Some(i) = self.gnu_lookup_index_filtered(name, gnu_hash(name), SymbolFilter::None)
+            {
+                return Some(i);
+            }
+            // C quirk: the SysV path is skipped when GNU hash exists, and the
+            // linear fallback runs only then (sym_offset_ comes from
+            // DT_GNU_HASH), scanning [1, sym_offset) — 0 is the not-found
+            // sentinel in C.
+            let symoffset = self.gnu_hash_table()?.1;
+            for i in 1..symoffset as usize {
+                if self.symbol_at(i).is_some_and(|s| s.name == name) {
+                    return Some(i);
+                }
+            }
+            return None;
+        }
+
+        // No GNU hash: only the SysV lookup can match (the C chain's linear
+        // lookup returns 0 without sym_offset_).
+        if let Some(i) = self.elf_lookup_index_filtered(name, elf_hash(name), SymbolFilter::None) {
             return Some(i);
         }
-        if let Some(i) = self.elf_lookup_index(name, elf_hash(name)) {
-            return Some(i);
-        }
-        // elfutil_linear_lookup: plain dynsym scan on name equality.
-        (0..self.dynsym_count()).find(|&i| self.symbol_at(i).is_some_and(|s| s.name == name))
+
+        None
     }
 
     /// PLTI prefix matching support: all dynsym indexes whose name starts
@@ -588,13 +680,6 @@ impl<'a> ElfImage<'a> {
     // Relocation tables (linker.c _linker_process_relocations)
     // ------------------------------------------------------------------
 
-    fn dyn_table_bytes(&self, tag: u64, size_tag: u64) -> Option<&'a [u8]> {
-        let vaddr = self.dynamic_find(tag)?;
-        let size = self.dynamic_find(size_tag)? as usize;
-        let off = self.vaddr_to_file_offset(vaddr)? as usize;
-        self.raw.get(off..off + size)
-    }
-
     fn read_rela_table(&self, bytes: &[u8]) -> Vec<Reloc> {
         let entsize = if self.is_64 { 24 } else { 12 };
         let mut out = Vec::with_capacity(bytes.len() / entsize);
@@ -657,32 +742,60 @@ impl<'a> ElfImage<'a> {
         out
     }
 
-    /// All relocations in linker.c processing order: DT_RELA, DT_REL, Android
-    /// packed (RELA then REL), then DT_JMPREL. RELR is separate (see
+    /// All relocations in linker.c processing order: DT_RELA, DT_REL, the
+    /// Android packed table (the last DT_ANDROID_REL/RELA occurrence wins,
+    /// linker.c 1702-1737), then DT_JMPREL. RELR is separate (see
     /// [`relr_offsets`]) because its effect is "add bias to target", not a
-    /// value write.
+    /// value write. Scalar tags use last-wins like the C's flat assignments.
     pub fn relocations(&self) -> Result<Vec<Reloc>> {
         let mut out = Vec::new();
 
-        if let Some(b) = self.dyn_table_bytes(DT_RELA, DT_RELASZ) {
+        if let Some(vaddr) = self.dynamic_find_last(DT_RELA)
+            && let Some(sz) = self.dynamic_find_last(DT_RELASZ)
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
             out.extend(self.read_rela_table(b));
         }
-        if let Some(b) = self.dyn_table_bytes(DT_REL, DT_RELSZ) {
+        if let Some(vaddr) = self.dynamic_find_last(DT_REL)
+            && let Some(sz) = self.dynamic_find_last(DT_RELSZ)
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
             out.extend(self.read_rel_table(b));
         }
-        if let Some(b) = self.dyn_table_bytes(crate::reloc::DT_ANDROID_RELA, crate::reloc::DT_ANDROID_RELASZ) {
-            out.extend(crate::reloc::decode_android_packed(b, true, self.is_64)?);
-        }
-        if let Some(b) = self.dyn_table_bytes(crate::reloc::DT_ANDROID_REL, crate::reloc::DT_ANDROID_RELSZ) {
-            out.extend(crate::reloc::decode_android_packed(b, false, self.is_64)?);
+        // linker.c 1721-1724: only ONE android table is processed — whichever
+        // of DT_ANDROID_REL/DT_ANDROID_RELA occurs last (the C pointer is
+        // overwritten per occurrence). The sticky `is_rela` of linker.c
+        // (DT_ANDROID_REL never resets it) is NOT copied: the winning tag
+        // decides, like plti's elf_util.c 219-230.
+        let android_vaddr = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_ANDROID_RELA || *t == crate::reloc::DT_ANDROID_REL)
+            .copied();
+        let android_size = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_ANDROID_RELASZ || *t == crate::reloc::DT_ANDROID_RELSZ)
+            .map(|(_, v)| *v);
+        if let Some((tag, vaddr)) = android_vaddr
+            && let Some(sz) = android_size
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
+            out.extend(crate::reloc::decode_android_packed(
+                b,
+                tag == crate::reloc::DT_ANDROID_RELA,
+                self.is_64,
+            )?);
         }
 
         if let (Some(jmprel), Some(sz)) = (
-            self.dynamic_find(DT_JMPREL),
-            self.dynamic_find(DT_PLTRELSZ),
+            self.dynamic_find_last(DT_JMPREL),
+            self.dynamic_find_last(DT_PLTRELSZ),
         )
             && let Some(off) = self.vaddr_to_file_offset(jmprel) {
-                let pltrel = self.dynamic_find(DT_PLTREL);
+                let pltrel = self.dynamic_find_last(DT_PLTREL);
                 let is_rela = pltrel == Some(DT_RELA);
                 let bytes = self
                     .raw
@@ -700,17 +813,20 @@ impl<'a> ElfImage<'a> {
 
     /// Relocations split by dynamic-table origin, in the order PLTI /
     /// CSOLoader process them: DT_JMPREL (PLT), then DT_REL/DT_RELA, then the
-    /// Android packed table. Order inside each table is preserved.
+    /// Android packed table. Order inside each table is preserved. Scalar tags
+    /// use the C's last-wins assignments (elf_util.c 186-236); REL/RELA and
+    /// the two Android tables pair the last table tag with the last size tag,
+    /// exactly like the C's flat `rel_dyn_`/`rel_dyn_size_` fields.
     pub fn relocations_grouped(&self) -> Result<RelocTables> {
         let mut tables = RelocTables::default();
 
         if let (Some(jmprel), Some(sz)) = (
-            self.dynamic_find(DT_JMPREL),
-            self.dynamic_find(DT_PLTRELSZ),
+            self.dynamic_find_last(DT_JMPREL),
+            self.dynamic_find_last(DT_PLTRELSZ),
         )
             && let Some(off) = self.vaddr_to_file_offset(jmprel)
         {
-            let pltrel = self.dynamic_find(DT_PLTREL);
+            let pltrel = self.dynamic_find_last(DT_PLTREL);
             let is_rela = pltrel == Some(DT_RELA);
             let bytes = self
                 .raw
@@ -724,42 +840,84 @@ impl<'a> ElfImage<'a> {
             }
         }
 
-        if let Some(b) = self.dyn_table_bytes(DT_RELA, DT_RELASZ) {
-            tables.rel_is_rela = true;
-            tables.rel = self.read_rela_table(b);
-        } else if let Some(b) = self.dyn_table_bytes(DT_REL, DT_RELSZ) {
-            tables.rel_is_rela = false;
-            tables.rel = self.read_rel_table(b);
+        let rel_tag = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == DT_RELA || *t == DT_REL)
+            .copied();
+        let rel_size = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == DT_RELASZ || *t == DT_RELSZ)
+            .map(|(_, v)| *v);
+        if let Some((tag, vaddr)) = rel_tag
+            && let Some(sz) = rel_size
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
+            tables.rel_is_rela = tag == DT_RELA;
+            if tables.rel_is_rela {
+                tables.rel = self.read_rela_table(b);
+            } else {
+                tables.rel = self.read_rel_table(b);
+            }
         }
 
-        if let Some(b) = self.dyn_table_bytes(crate::reloc::DT_ANDROID_RELA, crate::reloc::DT_ANDROID_RELASZ) {
-            tables.android_is_rela = true;
-            tables.android = crate::reloc::decode_android_packed(b, true, self.is_64)?;
-        } else if let Some(b) = self.dyn_table_bytes(crate::reloc::DT_ANDROID_REL, crate::reloc::DT_ANDROID_RELSZ) {
-            tables.android_is_rela = false;
-            tables.android = crate::reloc::decode_android_packed(b, false, self.is_64)?;
+        let android_tag = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_ANDROID_RELA || *t == crate::reloc::DT_ANDROID_REL)
+            .copied();
+        let android_size = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_ANDROID_RELASZ || *t == crate::reloc::DT_ANDROID_RELSZ)
+            .map(|(_, v)| *v);
+        if let Some((tag, vaddr)) = android_tag
+            && let Some(sz) = android_size
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
+            tables.android_is_rela = tag == crate::reloc::DT_ANDROID_RELA;
+            tables.android = crate::reloc::decode_android_packed(b, tables.android_is_rela, self.is_64)?;
         }
 
         Ok(tables)
     }
+
+    /// Bytes of a vaddr+size dynamic-table pair, or None when either tag is
+    /// missing or the range does not fall inside the file image.
+    fn table_bytes(&self, vaddr: u64, size: u64) -> Option<&'a [u8]> {
+        let off = self.vaddr_to_file_offset(vaddr)? as usize;
+        self.raw.get(off..off.checked_add(size as usize)?)
+    }
+
     pub fn relr_offsets(&self) -> Result<Vec<u64>> {
         let word_size = if self.is_64 { 8 } else { 4 };
 
-        if let Some(b) = self.dyn_table_bytes(crate::reloc::DT_RELR, crate::reloc::DT_RELRSZ) {
+        // linker.c 1712-1726: one `relr` pointer, overwritten by whichever of
+        // DT_RELR/DT_ANDROID_RELR comes last, sized by the last of the two
+        // size tags (cross-paired, like the C's flat assignments).
+        let relr_vaddr = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_RELR || *t == crate::reloc::DT_ANDROID_RELR)
+            .map(|(_, v)| *v);
+        let relr_size = self
+            .dyn_entries
+            .iter()
+            .rev()
+            .find(|(t, _)| *t == crate::reloc::DT_RELRSZ || *t == crate::reloc::DT_ANDROID_RELRSZ)
+            .map(|(_, v)| *v);
+
+        if let (Some(vaddr), Some(sz)) = (relr_vaddr, relr_size)
+            && let Some(b) = self.table_bytes(vaddr, sz)
+        {
             return crate::reloc::decode_relr(b, word_size);
         }
-
-        if let (Some(vaddr), Some(sz)) = (
-            self.dynamic_find(crate::reloc::DT_ANDROID_RELR),
-            self.dynamic_find(crate::reloc::DT_ANDROID_RELRSZ),
-        )
-            && let Some(off) = self.vaddr_to_file_offset(vaddr) {
-                let bytes = self
-                    .raw
-                    .get(off as usize..off as usize + sz as usize)
-                    .ok_or(Error::OutOfBounds("android relr", off as usize))?;
-                return crate::reloc::decode_relr(bytes, word_size);
-            }
 
         Ok(Vec::new())
     }

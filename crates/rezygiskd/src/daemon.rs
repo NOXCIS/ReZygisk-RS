@@ -32,10 +32,32 @@ struct Context {
     modules: Vec<Module>,
 }
 
+/// zygiskd.c `free_modules`: close the per-module fds. Strings/vec memory is
+/// managed by Rust, but `process::exit` below skips drops, so the fds are
+/// closed explicitly like the C.
+fn free_modules(context: &Context) {
+    for module in &context.modules {
+        if module.companion >= 0 {
+            unsafe { libc::close(module.companion) };
+        }
+        if module.lib_fd >= 0 {
+            unsafe { libc::close(module.lib_fd) };
+        }
+    }
+}
+
 /// zygiskd.c `load_modules`: built-in truman prepend, then every enabled
 /// module with a per-ARCH so file.
 fn load_modules() -> Context {
     let mut modules: Vec<Module> = Vec::new();
+
+    // zygiskd.c 56-63: the modules directory handle is opened first; when
+    // that fails the context stays empty (the built-in truman module is
+    // skipped too).
+    let Ok(dir) = std::fs::read_dir(PATH_MODULES_DIR) else {
+        dloge!("Failed opening modules directory: {PATH_MODULES_DIR}.");
+        return Context { modules };
+    };
 
     dlogi!("Loading modules for architecture: {}", rz_common::arch_str());
 
@@ -59,11 +81,6 @@ fn load_modules() -> Context {
     } else {
         dlogi!("No built-in truman module at {truman_path} (skipping)");
     }
-
-    let Ok(dir) = std::fs::read_dir(PATH_MODULES_DIR) else {
-        dloge!("Failed opening modules directory: {PATH_MODULES_DIR}.");
-        return Context { modules };
-    };
 
     for entry in dir.flatten() {
         let Ok(ftype) = entry.file_type() else { continue };
@@ -125,10 +142,9 @@ fn spawn_companion(argv0: &str, name: &str, lib_fd: RawFd) -> RawFd {
         unsafe { libc::close(companion_fd) };
 
         let mut status = 0;
-        if unsafe { libc::waitpid(pid, &mut status, 0) } == -1 {
-            unsafe { libc::close(daemon_fd) };
-            return -1;
-        }
+        // zygiskd.c 223-224: waitpid's return value is not checked; a
+        // failure leaves status 0, which reads as "exited 0" and proceeds.
+        unsafe { libc::waitpid(pid, &mut status, 0) };
         if !libc_wifexited(status) || libc_wexitstatus(status) != 0 {
             dloge!("Exited with status {status}");
             unsafe { libc::close(daemon_fd) };
@@ -190,33 +206,29 @@ fn spawn_companion(argv0: &str, name: &str, lib_fd: RawFd) -> RawFd {
 
         // non_blocking_execv: fork a grandchild that execs, exit immediately
         // so the daemon's waitpid unblocks.
-        let mut pipe_fds = [0 as libc::c_int; 2];
-        let exec_ok = libc::pipe(pipe_fds.as_mut_ptr()) != -1;
-        if exec_ok {
-            let gpid = libc::fork();
-            if gpid == 0 {
-                libc::dup2(pipe_fds[1], libc::STDOUT_FILENO);
-                libc::close(pipe_fds[0]);
-                libc::close(pipe_fds[1]);
+        let gpid = libc::fork();
+        if gpid == 0 {
+            // The C version dup2'd a pipe write-end here whose read end was
+            // never held by anyone: the exec'd companion's first println!
+            // hit EPIPE and aborted it (Rust ignores SIGPIPE). Point stdout
+            // at the verbose log (fd 2) instead.
+            libc::dup2(2, libc::STDOUT_FILENO);
 
-                let cfile = std::ffi::CString::new(ZYGISKD_PATH).unwrap();
-                let cargs: Vec<std::ffi::CString> = [
-                    process_name.as_str(),
-                    "companion",
-                    companion_fd_str.as_str(),
-                ]
-                .iter()
-                .map(|s| std::ffi::CString::new(*s).unwrap())
-                .collect();
-                let mut argp: Vec<*const libc::c_char> = cargs.iter().map(|c| c.as_ptr()).collect();
-                argp.push(std::ptr::null());
-                libc::execv(cfile.as_ptr(), argp.as_ptr() as *const *const libc::c_char);
+            let cfile = std::ffi::CString::new(ZYGISKD_PATH).unwrap();
+            let cargs: Vec<std::ffi::CString> = [
+                process_name.as_str(),
+                "companion",
+                companion_fd_str.as_str(),
+            ]
+            .iter()
+            .map(|s| std::ffi::CString::new(*s).unwrap())
+            .collect();
+            let mut argp: Vec<*const libc::c_char> = cargs.iter().map(|c| c.as_ptr()).collect();
+            argp.push(std::ptr::null());
+            libc::execv(cfile.as_ptr(), argp.as_ptr() as *const *const libc::c_char);
 
-                libc::_exit(1);
-            }
+            libc::_exit(1);
         }
-        libc::close(pipe_fds[0]);
-        libc::close(pipe_fds[1]);
         libc::_exit(0);
     }
 }
@@ -229,8 +241,24 @@ fn libc_wexitstatus(status: i32) -> i32 {
     (status >> 8) & 0xff
 }
 
-fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::RootImpl, first_process: &mut bool) -> Result<(), ()> {
-    let action8 = read_u8(client_fd).map_err(|_| ())?;
+/// zygiskd.c error taxonomy for one cp client:
+/// - the action-byte read failure (`len == -1` / `len == 0` in C) breaks the
+///   accept loop and ends the daemon (the monitor restarts it);
+/// - any mid-frame failure (safe_read / ASSURE_SIZE_* `return`/`break` in C)
+///   only drops the offending client and the loop keeps serving.
+enum ClientError {
+    Fatal,
+    MidFrame,
+}
+
+fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::RootImpl, first_process: &mut bool) -> Result<(), ClientError> {
+    // C (zygiskd.c 389-400): a failure reading the action byte — transport
+    // error or client disconnect before sending anything — breaks the
+    // accept loop. Mid-frame failures only drop this client (safe_read's
+    // `return` / ASSURE_SIZE_*'s `break`), so they map to ClientError::MidFrame.
+    let action8 = read_u8(client_fd).map_err(|_| ClientError::Fatal)?;
+    dlogi!("cp request: action={action8}");
+
     let Ok(action) = DaemonSocketAction::try_from(action8) else {
         return Ok(());
     };
@@ -251,10 +279,10 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
             }
         }
         DaemonSocketAction::GetProcessFlags => {
-            let uid = read_u32(client_fd).map_err(|_| ())?;
+            let uid = read_u32(client_fd).map_err(|_| ClientError::MidFrame)?;
 
             let mut process = [0u8; rz_common::PROCESS_NAME_MAX_LEN];
-            let ret = read_string_bounded(client_fd, &mut process).map_err(|_| ())?;
+            let ret = read_string_bounded(client_fd, &mut process).map_err(|_| ClientError::MidFrame)?;
             let process = String::from_utf8_lossy(&process[..ret]).into_owned();
 
             let mut flags = ProcessFlags::empty();
@@ -276,36 +304,39 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
 
             flags |= impl_.kind.flag_bit();
 
-            write_u32(client_fd, flags.bits()).map_err(|_| ())?;
+            write_u32(client_fd, flags.bits()).map_err(|_| ClientError::MidFrame)?;
         }
         DaemonSocketAction::GetInfo => {
             let mut flags = ProcessFlags::empty();
             flags |= impl_.kind.flag_bit();
 
-            write_u32(client_fd, flags.bits()).map_err(|_| ())?;
-            write_u32(client_fd, unsafe { libc::getpid() } as u32).map_err(|_| ())?;
-            write_usize(client_fd, context.modules.len()).map_err(|_| ())?;
+            write_u32(client_fd, flags.bits()).map_err(|_| ClientError::MidFrame)?;
+            write_u32(client_fd, unsafe { libc::getpid() } as u32).map_err(|_| ClientError::MidFrame)?;
+            write_usize(client_fd, context.modules.len()).map_err(|_| ClientError::MidFrame)?;
 
             for module in &context.modules {
-                write_string(client_fd, &module.name).map_err(|_| ())?;
+                write_string(client_fd, &module.name).map_err(|_| ClientError::MidFrame)?;
             }
         }
         DaemonSocketAction::ReadModules => {
-            write_usize(client_fd, context.modules.len()).map_err(|_| ())?;
+            write_usize(client_fd, context.modules.len()).map_err(|_| ClientError::MidFrame)?;
 
             for module in &context.modules {
-                write_string(client_fd, &module.so_path).map_err(|_| ())?;
-                // L2: attach the pre-opened module lib fd so the zygote can
-                // load via /proc/self/fd/N (no path walk).
-                send_fd(client_fd, module.lib_fd).map_err(|_| ())?;
+                write_string(client_fd, &module.so_path).map_err(|_| ClientError::MidFrame)?;
+                // zygiskd.c 544-550: the pre-opened lib fd is only attached
+                // when it is open; attach it so the zygote can load via
+                // /proc/self/fd/N (no path walk).
+                if module.lib_fd >= 0 {
+                    send_fd(client_fd, module.lib_fd).map_err(|_| ClientError::MidFrame)?;
+                }
             }
         }
         DaemonSocketAction::RequestCompanionSocket => {
-            let index = read_usize(client_fd).map_err(|_| ())?;
+            let index = read_usize(client_fd).map_err(|_| ClientError::MidFrame)?;
 
             if index >= context.modules.len() {
                 dloge!("Invalid module index: {index}");
-                write_u8(client_fd, 0).map_err(|_| ())?;
+                write_u8(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
                 return Ok(());
             }
 
@@ -334,22 +365,22 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
 
                 if send_fd(module.companion, client_fd).is_err() {
                     dloge!(" - Failed to send companion fd socket of module \"{}\"", module.name);
-                    write_u8(client_fd, 0).map_err(|_| ())?;
+                    write_u8(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
 
                     unsafe { libc::close(module.companion) };
                     module.companion = -1;
                 }
             } else {
                 dloge!(" - Failed to spawn companion for module \"{}\"", module.name);
-                write_u8(client_fd, 0).map_err(|_| ())?;
+                write_u8(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
             }
         }
         DaemonSocketAction::GetModuleDir => {
-            let index = read_usize(client_fd).map_err(|_| ())?;
+            let index = read_usize(client_fd).map_err(|_| ClientError::MidFrame)?;
 
             if index >= context.modules.len() {
                 dloge!("Invalid module index: {index}");
-                write_u8(client_fd, 0).map_err(|_| ())?;
+                write_u8(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
                 return Ok(());
             }
 
@@ -369,34 +400,33 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
             unsafe { libc::close(fd) };
         }
         DaemonSocketAction::UpdateMountNamespace => {
-            let pid = read_u32(client_fd).map_err(|_| ())?;
-            let mns_state = read_u8(client_fd).map_err(|_| ())?;
-            let Ok(mns_state) = MountNamespaceState::try_from(mns_state) else {
-                return Ok(());
-            };
+            let pid = read_u32(client_fd).map_err(|_| ClientError::MidFrame)?;
+            let mns_state = read_u8(client_fd).map_err(|_| ClientError::MidFrame)?;
 
-            write_u32(client_fd, unsafe { libc::getpid() } as u32).map_err(|_| ())?;
+            write_u32(client_fd, unsafe { libc::getpid() } as u32).map_err(|_| ClientError::MidFrame)?;
 
-            // Warm-up: building the clean ns also needs the mounted ns fd.
-            if mns_state == MountNamespaceState::Clean {
-                save_mns_fd(pid as i32, MountNamespaceState::Mounted, impl_.kind);
+            // zygiskd.c 665-666: building the clean ns also needs the mounted
+            // ns fd. The raw byte is compared (not enum-validated) exactly
+            // like the C cast: any non-zero value skips the warm-up.
+            if mns_state == MountNamespaceState::Clean as u8 {
+                save_mns_fd(pid as i32, MountNamespaceState::Mounted as u8, impl_.kind);
             }
 
             let ns_fd = save_mns_fd(pid as i32, mns_state, impl_.kind);
             if ns_fd == -1 {
                 dloge!("Failed to save mount namespace fd for pid {pid}: {}", io::Error::last_os_error());
-                write_u32(client_fd, 0).map_err(|_| ())?;
+                write_u32(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
                 return Ok(());
             }
 
-            write_u32(client_fd, ns_fd as u32).map_err(|_| ())?;
+            write_u32(client_fd, ns_fd as u32).map_err(|_| ClientError::MidFrame)?;
         }
         DaemonSocketAction::RemoveModule => {
-            let index = read_usize(client_fd).map_err(|_| ())?;
+            let index = read_usize(client_fd).map_err(|_| ClientError::MidFrame)?;
 
             if index >= context.modules.len() {
                 dloge!("Invalid module index: {index}");
-                write_u8(client_fd, 0).map_err(|_| ())?;
+                write_u8(client_fd, 0).map_err(|_| ClientError::MidFrame)?;
                 return Ok(());
             }
 
@@ -411,7 +441,17 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
             }
             context.modules.remove(index);
 
-            write_u8(client_fd, 1).map_err(|_| ())?;
+            // Keep the monitor's state.json / WebUI module list truthful:
+            // re-report the shrunken list. The monitor's SetInfo handler is
+            // idempotent (replaces env.modules, re-renders status), so a
+            // re-send needs no new protocol.
+            let module_names: Vec<&str> = context.modules.iter().map(|m| m.name.as_str()).collect();
+            let impl_name = root_impl::stringify_root_impl_name(impl_);
+            for frame in build_set_info_datagrams(impl_name, &module_names) {
+                unix_datagram_sendto(CONTROLLER_SOCKET, &frame);
+            }
+
+            write_u8(client_fd, 1).map_err(|_| ClientError::MidFrame)?;
         }
     }
 
@@ -427,14 +467,12 @@ thread_local! {
 pub fn zygiskd_start(argv0: &str) -> ! {
     ARGV0.with(|a| *a.borrow_mut() = Some(argv0.to_string()));
 
+    // Probe once (idempotent). Builders already include the cmd datagram —
+    // do not send the code byte again (double-send desyncs the monitor).
     let setup = root_impl::root_impls_setup();
 
     let context = match setup {
         SetupKind::None => {
-            unix_datagram_sendto(
-                CONTROLLER_SOCKET,
-                &[controller_code(ControllerCode::DaemonSetErrorInfo)],
-            );
             let msg = "Unsupported environment: Unknown root implementation";
             dloge!("{msg}");
             for frame in build_error_info_datagrams(msg) {
@@ -443,10 +481,6 @@ pub fn zygiskd_start(argv0: &str) -> ! {
             std::process::exit(1);
         }
         SetupKind::Multiple => {
-            unix_datagram_sendto(
-                CONTROLLER_SOCKET,
-                &[controller_code(ControllerCode::DaemonSetErrorInfo)],
-            );
             let msg = "Unsupported environment: Multiple root implementations found";
             dloge!("{msg}");
             for frame in build_error_info_datagrams(msg) {
@@ -456,11 +490,6 @@ pub fn zygiskd_start(argv0: &str) -> ! {
         }
         SetupKind::Single(impl_) => {
             let ctx = load_modules();
-
-            unix_datagram_sendto(
-                CONTROLLER_SOCKET,
-                &[controller_code(ControllerCode::DaemonSetInfo)],
-            );
 
             let impl_name = root_impl::stringify_root_impl_name(impl_);
             let module_names: Vec<&str> = ctx.modules.iter().map(|m| m.name.as_str()).collect();
@@ -480,8 +509,11 @@ pub fn zygiskd_start(argv0: &str) -> ! {
         Err(e) => {
             dloge!("Failed creating daemon socket");
             plog!(TAG, "listen_abstract: {e}");
+            free_modules(&context);
             root_impl::root_impl_cleanup();
-            std::process::exit(1);
+            // zygiskd.c 366-373: C cleans up and returns; main.c 62 then
+            // exits with status 0.
+            std::process::exit(0);
         }
     };
 
@@ -491,7 +523,7 @@ pub fn zygiskd_start(argv0: &str) -> ! {
 
     let mut first_process = true;
     loop {
-        let client_fd = unsafe { libc::accept(socket_fd, std::ptr::null_mut(), std::ptr::null_mut()) };
+        let client_fd = unsafe { libc::accept4(socket_fd, std::ptr::null_mut(), std::ptr::null_mut(), libc::SOCK_CLOEXEC) };
         if client_fd == -1 {
             dloge!("accept: {}", io::Error::last_os_error());
             break;
@@ -499,10 +531,15 @@ pub fn zygiskd_start(argv0: &str) -> ! {
 
         match handle_client(client_fd, &mut context, impl_, &mut first_process) {
             Ok(()) => {}
-            Err(()) => {
-                // C breaks out of the accept loop on transport errors
-                // (including a client that disconnects before sending an
-                // action); the monitor's crash handling restarts us.
+            // C closes the client and keeps accepting on mid-frame errors.
+            Err(ClientError::MidFrame) => {
+                dloge!("cp client mid-frame error, dropping connection");
+            }
+            // C breaks out of the accept loop when the action byte cannot
+            // be read (transport error or early disconnect); the monitor's
+            // crash handling restarts us.
+            Err(ClientError::Fatal) => {
+                dloge!("cp client error, shutting down");
                 unsafe { libc::close(client_fd) };
                 break;
             }
@@ -512,6 +549,7 @@ pub fn zygiskd_start(argv0: &str) -> ! {
     }
 
     unsafe { libc::close(socket_fd) };
+    free_modules(&context);
     root_impl::root_impl_cleanup();
     std::process::exit(0);
 }

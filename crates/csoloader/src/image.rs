@@ -13,7 +13,7 @@ use rz_elf::{ElfImage, GenericReloc, RelocTables, STT_GNU_IFUNC};
 
 use crate::{Error, Result};
 
-pub const TAG: &str = "zygisk";
+pub const TAG: &str = rz_common::LOG_TAG;
 
 macro_rules! dlogd {
     ($($arg:tt)*) => {{ rz_common::logd!(TAG, $($arg)*); }};
@@ -63,7 +63,9 @@ pub struct CsoElf {
     /// `img->bias`: file `p_vaddr - p_offset` of the first PT_LOAD with
     /// `p_offset == 0`, falling back to the first PT_LOAD (signed `off_t`).
     bias: i64,
-    /// Owning file copy; `img` borrows from its heap buffer.
+    /// Owning file copy; `img` borrows from its heap buffer. The borrow
+    /// itself is invisible to rustc, hence the allow.
+    #[allow(dead_code)]
     raw: Box<[u8]>,
     /// SAFETY: borrows `raw`'s heap buffer. `Box<[u8]>` never reallocates or
     /// moves its data, and struct fields drop in declaration order, so `img`
@@ -100,15 +102,25 @@ impl CsoElf {
 
     /// `csoloader_elf_create(elf, NULL)`: resolve the base of an already
     /// loaded library via `dl_iterate_phdr` (substring match on the soname,
-    /// like the C `dl_cb`).
+    /// like the C `dl_cb`). The C `dl_cb` (elf_util.c:89-117) replaces
+    /// `img->elf` with the matched `dlpi_name` and the subsequent
+    /// `open(img->elf)` at elf_util.c:199-206 reads *that* full path — a
+    /// soname like "libc.so" is not itself openable. Mirror that: read the
+    /// file from the resolved path and store it.
     pub fn create_loaded(path: &str) -> Result<Self> {
-        let base = find_loaded_base(path)
+        let (base, resolved) = find_loaded_module(path)
             .ok_or_else(|| Error::Other(format!("no loaded module base for {path}")))?;
-        Self::create(path, base)
+        let raw: Box<[u8]> = std::fs::read(&resolved)
+            .map_err(|e| Error::Other(format!("failed to read {resolved}: {e}")))?
+            .into_boxed_slice();
+        Self::from_raw(resolved, base, raw)
     }
 
     fn from_raw(path: String, base: usize, raw: Box<[u8]>) -> Result<Self> {
-        if raw.len() <= 64 {
+        // C: `img->size <= sizeof(ElfW(Ehdr))` — ElfW tracks the host word
+        // size, not the file's class.
+        let ehdr_size = if cfg!(target_pointer_width = "64") { 64 } else { 52 };
+        if raw.len() <= ehdr_size {
             return Err(Error::Other(format!("invalid file size {} for {}", raw.len(), path)));
         }
 
@@ -265,11 +277,11 @@ impl CsoElf {
     // ------------------------------------------------------------------
 
     pub fn relocations_grouped(&self) -> Result<RelocTables> {
-        self.img.relocations_grouped()
+        Ok(self.img.relocations_grouped()?)
     }
 
     pub fn relr_offsets(&self) -> Result<Vec<u64>> {
-        self.img.relr_offsets()
+        Ok(self.img.relr_offsets()?)
     }
 
     pub fn machine(&self) -> u16 {
@@ -299,6 +311,10 @@ impl CsoElf {
     }
 
     fn resolve_runtime(&self, name: &str, exported_only: bool) -> Option<usize> {
+        // elf_util.c 954/883: `offset == 0 || !img->base` → 0.
+        if self.base == 0 {
+            return None;
+        }
         let sym = self.img.symbol_by_name_ex(name, exported_only)?;
         let addr = self.runtime(sym.value);
 
@@ -335,6 +351,12 @@ impl CsoElf {
         let Some(sym) = self.img.symbol_by_prefix(prefix) else {
             return 0;
         };
+
+        // elf_util.c 969: `offset == 0 || !img->base` → 0.
+        if sym.value == 0 || self.base == 0 {
+            return 0;
+        }
+
         let addr = self.runtime(sym.value);
 
         if sym.type_() == STT_GNU_IFUNC {
@@ -409,51 +431,135 @@ impl CsoElf {
         }
     }
 
+    /// backtrace-support.c `copy_program_headers` input: (`e_phnum`, raw
+    /// on-disk phdr table bytes) from the file image.
+    pub(crate) fn phdr_table(&self) -> (usize, &[u8]) {
+        self.img.phdr_table()
+    }
+
+    /// linker.c PT_LOAD walk input (phdr file order) from the parsed image —
+    /// the C reads `img->header`, the file copy, not the disk (so a deleted
+    /// or fd-based file keeps working).
+    pub(crate) fn load_segments(&self) -> Vec<rz_elf::LoadSegment> {
+        self.img.load_segments()
+    }
+
+    /// linker.c PT_GNU_RELRO walk input (phdr file order).
+    pub(crate) fn gnu_relro_segments(&self) -> Vec<rz_elf::LoadSegment> {
+        self.img.gnu_relro_segments()
+    }
+
+    /// linker.c full `e_phnum` phdr walk input (phdr order, all p_types).
+    pub(crate) fn all_segments(&self) -> Vec<(u32, rz_elf::LoadSegment)> {
+        self.img.all_segments()
+    }
+
+    /// The parsed file image — the relocation walker reads the dynamic
+    /// tables through it. The C reads the mapped dynamic section; the
+    /// file-backed PT_LOAD segments holding those tables are byte-identical
+    /// to this file copy.
+    pub(crate) fn image(&self) -> &ElfImage<'static> {
+        &self.img
+    }
+
     // ------------------------------------------------------------------
     // EH frame location for backtrace registration
     // ------------------------------------------------------------------
 
     /// backtrace-support.c `locate_eh_frame`: .eh_frame section first, then
-    /// decode .eh_frame_hdr via PT_GNU_EH_FRAME.
-    pub(crate) fn locate_eh_frame(&self) -> Option<usize> {
-        if let Some((vaddr, _)) = self.eh_frame {
+    /// decode .eh_frame_hdr via PT_GNU_EH_FRAME. Returns the runtime address
+    /// and, when known, the section size (the C keeps `out_size` at 0 for
+    /// the PT_GNU_EH_FRAME path).
+    #[cfg_attr(target_arch = "arm", allow(dead_code))] // EHABI: no .eh_frame registration
+    pub(crate) fn locate_eh_frame(&self) -> Option<(usize, usize)> {
+        if let Some((vaddr, size)) = self.eh_frame {
             let addr = self.runtime(vaddr);
             if addr != 0 {
-                return Some(addr);
+                return Some((addr, size as usize));
             }
         }
 
-        let (vaddr, memsz) = self.img.gnu_eh_frame_segment()?;
-        let hdr = self.runtime(vaddr);
-        decode_eh_frame_ptr(hdr, memsz as usize)
+        // backtrace-support.c 230-276: walk *every* PT_GNU_EH_FRAME segment,
+        // skipping ones that fail (too small / bad version / undecodable)
+        // and only give up after all of them.
+        for (p_type, seg) in self.img.all_segments() {
+            if p_type != PT_GNU_EH_FRAME {
+                continue;
+            }
+            let hdr = self.runtime(seg.vaddr);
+            if let Some(ptr) = decode_eh_frame_ptr(hdr, seg.memsz as usize) {
+                return Some((ptr, 0));
+            }
+        }
+        None
     }
 }
 
 /// Decode a `.eh_frame_hdr` (version 1) into the .eh_frame pointer it
-/// encodes (backtrace-support.c `decode_eh_value` for eh_frame_ptr_enc).
+/// encodes (backtrace-support.c `decode_eh_value` for eh_frame_ptr_enc,
+/// lines 122-205, called by `locate_eh_frame_ptr` at 230-281).
+const PT_GNU_EH_FRAME: u32 = 0x6474e550;
+
+#[cfg_attr(target_arch = "arm", allow(dead_code))] // EHABI: no .eh_frame registration
 fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
-    if hdr == 0 || hdr_size < 8 {
+    // C: `if (!hdr || hdr_sz < 4)` — LOGW "PT_GNU_EH_FRAME too small" + skip.
+    if hdr == 0 || hdr_size < 4 {
         dlogw!("PT_GNU_EH_FRAME too small");
         return None;
     }
 
     let base = hdr as *const u8;
-    let get = |i: usize| -> Option<u8> { Some(unsafe { base.add(i).read() }) };
-    let u16_at = |i: usize| -> Option<u16> { Some(get(i)? as u16 | ((get(i + 1)? as u16) << 8)) };
-    let u32_at = |i: usize| -> Option<u32> {
-        Some(get(i)? as u32 | ((get(i + 1)? as u32) << 8) | ((get(i + 2)? as u32) << 16) | ((get(i + 3)? as u32) << 24))
-    };
-    let u64_at = |i: usize| -> Option<u64> { Some(u32_at(i)? as u64 | ((u32_at(i + 4)? as u64) << 32)) };
+    let end = hdr_size;
 
-    let version = get(0)?;
+    // Bounds-checked LE readers; the C `read_u16/read_u32/read_u64`
+    // (backtrace-support.c:51-60) return -1 when fewer bytes remain, which
+    // `decode_eh_value` turns into a 0 result.
+    let u16_at = |i: usize| -> Option<u16> {
+        if i + 2 > end {
+            return None;
+        }
+        Some(unsafe { u16::from_le_bytes([base.add(i).read(), base.add(i + 1).read()]) })
+    };
+    let u32_at = |i: usize| -> Option<u32> {
+        if i + 4 > end {
+            return None;
+        }
+        Some(unsafe {
+            u32::from_le_bytes([
+                base.add(i).read(),
+                base.add(i + 1).read(),
+                base.add(i + 2).read(),
+                base.add(i + 3).read(),
+            ])
+        })
+    };
+    let u64_at = |i: usize| -> Option<u64> {
+        if i + 8 > end {
+            return None;
+        }
+        Some(unsafe {
+            u64::from_le_bytes([
+                base.add(i).read(),
+                base.add(i + 1).read(),
+                base.add(i + 2).read(),
+                base.add(i + 3).read(),
+                base.add(i + 4).read(),
+                base.add(i + 5).read(),
+                base.add(i + 6).read(),
+                base.add(i + 7).read(),
+            ])
+        })
+    };
+
+    let version = unsafe { base.read() };
     if version != 1 {
         dlogw!(".eh_frame_hdr version {version} not supported");
         return None;
     }
 
-    let enc = get(1)?;
+    let enc = unsafe { base.add(1).read() };
     if enc == 0xff {
-        // DW_EH_PE_omit
+        // DW_EH_PE_omit → decode_eh_value returns 0.
         return None;
     }
 
@@ -474,18 +580,25 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
             }
         }
         0x01 => {
-            // DW_EH_PE_uleb128
+            // DW_EH_PE_uleb128 (read_uleb128, backtrace-support.c:43-48:
+            // OR, then `shift += 7` and break at >= 64, so shifts stay <= 63).
             let mut v = 0usize;
             let mut shift = 0u32;
             let mut i = at;
             loop {
-                let b = get(i)?;
-                v |= ((b & 0x7f) as usize) << shift;
+                if i >= end {
+                    break;
+                }
+                let b = unsafe { base.add(i).read() };
                 i += 1;
-                if b & 0x80 == 0 || shift >= 64 {
+                v |= ((b & 0x7f) as usize) << shift;
+                if b & 0x80 == 0 {
                     break;
                 }
                 shift += 7;
+                if shift >= 64 {
+                    break;
+                }
             }
             v
         }
@@ -498,12 +611,14 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
         _ => return None,
     };
 
-    // pcrel base is the address of the encoded field; datarel is the hdr.
+    // pcrel base is the address of the encoded field (C passes `p` after
+    // the 4 header bytes); datarel is the header start. Unknown application
+    // bits leave the value unchanged (C `default: break`, lines 196-200).
     let value = match app {
         0x00 => value,
         0x10 => value.wrapping_add(hdr.wrapping_add(4)),
         0x30 => value.wrapping_add(hdr),
-        _ => return None,
+        _ => value,
     };
 
     // DW_EH_PE_indirect: resolve through the pointer (C does this; kept for
@@ -520,14 +635,16 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
     Some(value)
 }
 
-/// `csoloader_elf_create(name, NULL)`'s `find_module_base`:
-/// `dl_iterate_phdr` substring match returning `dlpi_addr`.
-pub fn find_loaded_base(name: &str) -> Option<usize> {
+/// `csoloader_elf_create(name, NULL)`'s `find_module_base` +
+/// `dl_cb` (elf_util.c:89-117, 199-206): `dl_iterate_phdr` substring match
+/// returning `(dlpi_addr, dlpi_name)`. The C replaces `img->elf` with the
+/// matched `dlpi_name` and only succeeds when `dlpi_addr != 0`.
+pub fn find_loaded_module(name: &str) -> Option<(usize, String)> {
     let Ok(name_c) = std::ffi::CString::new(name) else {
         return None;
     };
 
-    FOUND.with(|f| f.set(0));
+    FOUND.with(|f| f.set((0, String::new())));
 
     unsafe extern "C" fn callback(
         info: *mut libc::dl_phdr_info,
@@ -540,7 +657,8 @@ pub fn find_loaded_base(name: &str) -> Option<usize> {
             if dlpi.dlpi_name.is_null() || libc::strstr(dlpi.dlpi_name, want).is_null() {
                 return 0;
             }
-            FOUND.with(|f| f.set(dlpi.dlpi_addr as usize));
+            let name = std::ffi::CStr::from_ptr(dlpi.dlpi_name).to_string_lossy().into_owned();
+            FOUND.with(|f| f.set((dlpi.dlpi_addr as usize, name)));
             1
         }
     }
@@ -551,11 +669,11 @@ pub fn find_loaded_base(name: &str) -> Option<usize> {
     }
 
     FOUND.with(|f| {
-        let base = f.get();
-        if base != 0 { Some(base) } else { None }
+        let (base, name) = f.take();
+        if base != 0 { Some((base, name)) } else { None }
     })
 }
 
 thread_local! {
-    static FOUND: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static FOUND: std::cell::Cell<(usize, String)> = const { std::cell::Cell::new((0, String::new())) };
 }

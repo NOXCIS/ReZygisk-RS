@@ -1,0 +1,384 @@
+--------- beginning of crash
+09-21 18:09:39.110  1724  1724 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1724 (init), pid 1724 (init)
+09-21 18:09:39.137  1724  1724 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+09-21 18:09:39.497  1413  1413 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:09:39.498  1413  1413 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1413 (Shutdown thread), pid 1413 (Shutdown thread)
+09-21 18:09:39.506  1912  1912 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1912 (init), pid 1912 (init)
+09-21 18:09:39.510  1916  1916 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1916 (init), pid 1916 (init)
+09-21 18:09:39.545  1912  1912 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+09-21 18:09:39.591  1916  1916 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+09-21 18:09:39.807  1930  1930 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:09:39.807  1930  1930 F DEBUG   : crDroid Version: '12.11'
+09-21 18:09:39.807  1930  1930 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:09:39.807  1930  1930 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:09:39.807  1930  1930 F DEBUG   : Revision: '0'
+09-21 18:09:39.807  1930  1930 F DEBUG   : ABI: 'arm64'
+09-21 18:09:39.807  1930  1930 F DEBUG   : Timestamp: 2026-09-21 18:09:39.645664478-0400
+09-21 18:09:39.807  1930  1930 F DEBUG   : Process uptime: 2s
+09-21 18:09:39.807  1930  1930 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:09:39.807  1930  1930 F DEBUG   : Cmdline: zygote64
+09-21 18:09:39.807  1930  1930 F DEBUG   : pid: 1413, tid: 1413, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:09:39.807  1930  1930 F DEBUG   : uid: 1000
+09-21 18:09:39.807  1930  1930 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:09:39.807  1930  1930 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:09:39.807  1930  1930 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x0  0000000000000000  x1  0000000000000585  x2  0000000000000006  x3  0000007fd5ffb530
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x8  00000000000000f0  x9  d9f0e6a102baaa05  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x12 00000000178131c0  x13 0000000034155555  x14 0000000000000018  x15 00000000177f9db8
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x16 00000076ec345250  x17 00000076ec32cc80  x18 0000007703df0000  x19 0000000000000585
+09-21 18:09:39.807  1930  1930 F DEBUG   :     x20 0000000000000585  x21 00000000ffffffff  x22 00000077031a6005  x23 00000077031a601d
+09-21 18:09:39.808  1930  1930 F DEBUG   :     x24 00000076e4d88640  x25 00000076e4d4d940  x26 0000000000000001  x27 0000000000000001
+09-21 18:09:39.808  1930  1930 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fd5ffb5b0
+09-21 18:09:39.808  1930  1930 F DEBUG   :     lr  00000076ec2bd498  sp  0000007fd5ffb530  pc  00000076ec2bd4bc  pst 0000000000001000
+09-21 18:09:39.808  1930  1930 F DEBUG   :     esr 0000000092000006
+09-21 18:09:39.808  1930  1930 F DEBUG   : 5 total frames
+09-21 18:09:39.808  1930  1930 F DEBUG   : backtrace:
+09-21 18:09:39.808  1930  1930 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:09:39.808  1930  1930 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:09:39.808  1930  1930 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:09:39.808  1930  1930 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:09:39.808  1930  1930 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:47.344  2392  2413 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 2413 (HwBinder:2392_2), pid 2392 (binder:2392_2)
+09-21 18:24:49.752 10990 10990 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:24:49.752 10990 10990 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 10990 (Shutdown thread), pid 10990 (Shutdown thread)
+09-21 18:24:49.927 11031 11031 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:24:49.927 11031 11031 F DEBUG   : crDroid Version: '12.11'
+09-21 18:24:49.927 11031 11031 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:24:49.927 11031 11031 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:24:49.927 11031 11031 F DEBUG   : Revision: '0'
+09-21 18:24:49.927 11031 11031 F DEBUG   : ABI: 'arm64'
+09-21 18:24:49.927 11031 11031 F DEBUG   : Timestamp: 2026-09-21 18:24:49.834005224-0400
+09-21 18:24:49.927 11031 11031 F DEBUG   : Process uptime: 2s
+09-21 18:24:49.927 11031 11031 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:24:49.927 11031 11031 F DEBUG   : Cmdline: zygote64
+09-21 18:24:49.927 11031 11031 F DEBUG   : pid: 10990, tid: 10990, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:24:49.927 11031 11031 F DEBUG   : uid: 1000
+09-21 18:24:49.927 11031 11031 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:24:49.927 11031 11031 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:24:49.927 11031 11031 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x0  0000000000000000  x1  0000000000002aee  x2  0000000000000006  x3  0000007fead1b3b0
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x8  00000000000000f0  x9  778a5338859fd2d2  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x12 0000000429359968  x13 0000000034155555  x14 0000000000000018  x15 0000000429342db8
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x16 0000007a457de250  x17 0000007a457c5c80  x18 0000007a5bd1c000  x19 0000000000002aee
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x20 0000000000002aee  x21 00000000ffffffff  x22 0000007a5acc6005  x23 0000007a5acc601d
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x24 0000007a2a10e640  x25 0000007a2a0d3940  x26 0000000000000001  x27 0000000000000001
+09-21 18:24:49.927 11031 11031 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fead1b430
+09-21 18:24:49.927 11031 11031 F DEBUG   :     lr  0000007a45756498  sp  0000007fead1b3b0  pc  0000007a457564bc  pst 0000000000001000
+09-21 18:24:49.927 11031 11031 F DEBUG   :     esr 0000000092000006
+09-21 18:24:49.927 11031 11031 F DEBUG   : 5 total frames
+09-21 18:24:49.927 11031 11031 F DEBUG   : backtrace:
+09-21 18:24:49.927 11031 11031 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:49.927 11031 11031 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:49.927 11031 11031 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:24:49.927 11031 11031 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:24:49.927 11031 11031 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:54.723 11134 11134 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:24:54.723 11134 11134 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11134 (Shutdown thread), pid 11134 (Shutdown thread)
+09-21 18:24:54.881 11175 11175 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:24:54.881 11175 11175 F DEBUG   : crDroid Version: '12.11'
+09-21 18:24:54.881 11175 11175 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:24:54.881 11175 11175 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:24:54.881 11175 11175 F DEBUG   : Revision: '0'
+09-21 18:24:54.881 11175 11175 F DEBUG   : ABI: 'arm64'
+09-21 18:24:54.881 11175 11175 F DEBUG   : Timestamp: 2026-09-21 18:24:54.807312878-0400
+09-21 18:24:54.881 11175 11175 F DEBUG   : Process uptime: 2s
+09-21 18:24:54.881 11175 11175 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:24:54.881 11175 11175 F DEBUG   : Cmdline: zygote64
+09-21 18:24:54.881 11175 11175 F DEBUG   : pid: 11134, tid: 11134, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:24:54.881 11175 11175 F DEBUG   : uid: 1000
+09-21 18:24:54.881 11175 11175 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:24:54.881 11175 11175 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:24:54.881 11175 11175 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x0  0000000000000000  x1  0000000000002b7e  x2  0000000000000006  x3  0000007fed241d90
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x8  00000000000000f0  x9  63b2745026134ee8  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x12 000000042ee5cbb0  x13 0000000034155555  x14 0000000000000018  x15 000000042ee4d1b8
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x16 0000007807f08250  x17 0000007807eefc80  x18 000000781758c000  x19 0000000000002b7e
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x20 0000000000002b7e  x21 00000000ffffffff  x22 000000781640c005  x23 000000781640c01d
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x24 000000780b95b640  x25 000000780b920940  x26 0000000000000001  x27 0000000000000001
+09-21 18:24:54.881 11175 11175 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fed241e10
+09-21 18:24:54.881 11175 11175 F DEBUG   :     lr  0000007807e80498  sp  0000007fed241d90  pc  0000007807e804bc  pst 0000000000001000
+09-21 18:24:54.881 11175 11175 F DEBUG   :     esr 0000000092000006
+09-21 18:24:54.881 11175 11175 F DEBUG   : 5 total frames
+09-21 18:24:54.881 11175 11175 F DEBUG   : backtrace:
+09-21 18:24:54.881 11175 11175 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:54.881 11175 11175 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:54.881 11175 11175 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:24:54.881 11175 11175 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:24:54.881 11175 11175 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:59.753 11275 11275 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:24:59.754 11275 11275 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11275 (Shutdown thread), pid 11275 (Shutdown thread)
+09-21 18:24:59.929 11318 11318 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:24:59.929 11318 11318 F DEBUG   : crDroid Version: '12.11'
+09-21 18:24:59.929 11318 11318 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:24:59.929 11318 11318 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:24:59.929 11318 11318 F DEBUG   : Revision: '0'
+09-21 18:24:59.929 11318 11318 F DEBUG   : ABI: 'arm64'
+09-21 18:24:59.929 11318 11318 F DEBUG   : Timestamp: 2026-09-21 18:24:59.844520481-0400
+09-21 18:24:59.929 11318 11318 F DEBUG   : Process uptime: 2s
+09-21 18:24:59.929 11318 11318 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:24:59.929 11318 11318 F DEBUG   : Cmdline: zygote64
+09-21 18:24:59.929 11318 11318 F DEBUG   : pid: 11275, tid: 11275, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:24:59.929 11318 11318 F DEBUG   : uid: 1000
+09-21 18:24:59.929 11318 11318 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:24:59.929 11318 11318 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:24:59.929 11318 11318 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x0  0000000000000000  x1  0000000000002c0b  x2  0000000000000006  x3  0000007fe9bf97f0
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x8  00000000000000f0  x9  4a570ed092490e33  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x12 0000000434a79b66  x13 0000000034155555  x14 0000000000000018  x15 0000000434a709b8
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x16 000000753899c250  x17 0000007538983c80  x18 0000007556ddc000  x19 0000000000002c0b
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x20 0000000000002c0b  x21 00000000ffffffff  x22 0000007555e64005  x23 0000007555e6401d
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x24 00000075271ae640  x25 0000007527173940  x26 0000000000000001  x27 0000000000000001
+09-21 18:24:59.929 11318 11318 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fe9bf9870
+09-21 18:24:59.929 11318 11318 F DEBUG   :     lr  0000007538914498  sp  0000007fe9bf97f0  pc  00000075389144bc  pst 0000000000001000
+09-21 18:24:59.929 11318 11318 F DEBUG   :     esr 0000000092000006
+09-21 18:24:59.929 11318 11318 F DEBUG   : 5 total frames
+09-21 18:24:59.929 11318 11318 F DEBUG   : backtrace:
+09-21 18:24:59.929 11318 11318 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:59.929 11318 11318 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:24:59.929 11318 11318 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:24:59.929 11318 11318 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:24:59.929 11318 11318 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:04.617 11419 11419 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:25:04.617 11419 11419 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11419 (Shutdown thread), pid 11419 (Shutdown thread)
+09-21 18:25:04.777 11463 11463 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:25:04.777 11463 11463 F DEBUG   : crDroid Version: '12.11'
+09-21 18:25:04.777 11463 11463 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:25:04.777 11463 11463 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:25:04.777 11463 11463 F DEBUG   : Revision: '0'
+09-21 18:25:04.777 11463 11463 F DEBUG   : ABI: 'arm64'
+09-21 18:25:04.777 11463 11463 F DEBUG   : Timestamp: 2026-09-21 18:25:04.707556937-0400
+09-21 18:25:04.777 11463 11463 F DEBUG   : Process uptime: 2s
+09-21 18:25:04.777 11463 11463 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:25:04.777 11463 11463 F DEBUG   : Cmdline: zygote64
+09-21 18:25:04.777 11463 11463 F DEBUG   : pid: 11419, tid: 11419, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:25:04.777 11463 11463 F DEBUG   : uid: 1000
+09-21 18:25:04.777 11463 11463 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:25:04.777 11463 11463 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:25:04.777 11463 11463 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x0  0000000000000000  x1  0000000000002c9b  x2  0000000000000006  x3  0000007fcf8dc5e0
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x8  00000000000000f0  x9  638b63768a46c9e0  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x12 000000043a385995  x13 0000000034155555  x14 0000000000000018  x15 000000043a36ddb8
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x16 0000007c5dd9d250  x17 0000007c5dd84c80  x18 0000007c6b6a8000  x19 0000000000002c9b
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x20 0000000000002c9b  x21 00000000ffffffff  x22 0000007c6a751005  x23 0000007c6a75101d
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x24 0000007c4dbdc640  x25 0000007c4dba1940  x26 0000000000000001  x27 0000000000000001
+09-21 18:25:04.777 11463 11463 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fcf8dc660
+09-21 18:25:04.777 11463 11463 F DEBUG   :     lr  0000007c5dd15498  sp  0000007fcf8dc5e0  pc  0000007c5dd154bc  pst 0000000000001000
+09-21 18:25:04.777 11463 11463 F DEBUG   :     esr 0000000092000006
+09-21 18:25:04.777 11463 11463 F DEBUG   : 5 total frames
+09-21 18:25:04.777 11463 11463 F DEBUG   : backtrace:
+09-21 18:25:04.777 11463 11463 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:04.777 11463 11463 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:04.777 11463 11463 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:25:04.777 11463 11463 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:25:04.777 11463 11463 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:09.554 11559 11559 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:25:09.554 11559 11559 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11559 (Shutdown thread), pid 11559 (Shutdown thread)
+09-21 18:25:09.727 11607 11607 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:25:09.727 11607 11607 F DEBUG   : crDroid Version: '12.11'
+09-21 18:25:09.727 11607 11607 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:25:09.727 11607 11607 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:25:09.727 11607 11607 F DEBUG   : Revision: '0'
+09-21 18:25:09.727 11607 11607 F DEBUG   : ABI: 'arm64'
+09-21 18:25:09.727 11607 11607 F DEBUG   : Timestamp: 2026-09-21 18:25:09.642579331-0400
+09-21 18:25:09.727 11607 11607 F DEBUG   : Process uptime: 2s
+09-21 18:25:09.727 11607 11607 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:25:09.727 11607 11607 F DEBUG   : Cmdline: zygote64
+09-21 18:25:09.727 11607 11607 F DEBUG   : pid: 11559, tid: 11559, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:25:09.727 11607 11607 F DEBUG   : uid: 1000
+09-21 18:25:09.727 11607 11607 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:25:09.727 11607 11607 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:25:09.727 11607 11607 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x0  0000000000000000  x1  0000000000002d27  x2  0000000000000006  x3  0000007ff65c29d0
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x8  00000000000000f0  x9  c93034e6acc5f328  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x12 000000043fdef874  x13 0000000034155555  x14 0000000000000018  x15 000000043fde21b8
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x16 00000070c4fcb250  x17 00000070c4fb2c80  x18 00000070cd43c000  x19 0000000000002d27
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x20 0000000000002d27  x21 00000000ffffffff  x22 00000070cc4c3005  x23 00000070cc4c301d
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x24 00000070a09c6640  x25 00000070a098b940  x26 0000000000000001  x27 0000000000000001
+09-21 18:25:09.727 11607 11607 F DEBUG   :     x28 431bde82d7b634db  x29 0000007ff65c2a50
+09-21 18:25:09.728 11607 11607 F DEBUG   :     lr  00000070c4f43498  sp  0000007ff65c29d0  pc  00000070c4f434bc  pst 0000000000001000
+09-21 18:25:09.728 11607 11607 F DEBUG   :     esr 0000000092000006
+09-21 18:25:09.728 11607 11607 F DEBUG   : 5 total frames
+09-21 18:25:09.728 11607 11607 F DEBUG   : backtrace:
+09-21 18:25:09.728 11607 11607 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:09.728 11607 11607 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:25:09.728 11607 11607 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:25:09.728 11607 11607 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:25:09.728 11607 11607 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:11.912 11616 11932 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 11932 (HwBinder:11616_), pid 11616 (binder:11616_2)
+09-21 18:29:14.112 16389 16389 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:29:14.112 16389 16389 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 16389 (Shutdown thread), pid 16389 (Shutdown thread)
+09-21 18:29:14.267 16432 16432 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:29:14.267 16432 16432 F DEBUG   : crDroid Version: '12.11'
+09-21 18:29:14.267 16432 16432 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:29:14.267 16432 16432 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:29:14.267 16432 16432 F DEBUG   : Revision: '0'
+09-21 18:29:14.267 16432 16432 F DEBUG   : ABI: 'arm64'
+09-21 18:29:14.267 16432 16432 F DEBUG   : Timestamp: 2026-09-21 18:29:14.195602050-0400
+09-21 18:29:14.267 16432 16432 F DEBUG   : Process uptime: 2s
+09-21 18:29:14.267 16432 16432 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:29:14.267 16432 16432 F DEBUG   : Cmdline: zygote64
+09-21 18:29:14.267 16432 16432 F DEBUG   : pid: 16389, tid: 16389, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:29:14.267 16432 16432 F DEBUG   : uid: 1000
+09-21 18:29:14.267 16432 16432 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:29:14.267 16432 16432 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:29:14.267 16432 16432 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x0  0000000000000000  x1  0000000000004005  x2  0000000000000006  x3  0000007fc56d9720
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x8  00000000000000f0  x9  308cf5f5fc2d6a12  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x12 0000000557bea8b9  x13 0000000034155555  x14 0000000000000018  x15 0000000557bd65b8
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x16 00000073331c2250  x17 00000073331a9c80  x18 0000007353f18000  x19 0000000000004005
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x20 0000000000004005  x21 00000000ffffffff  x22 0000007353676005  x23 000000735367601d
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x24 0000007322143640  x25 0000007322108940  x26 0000000000000001  x27 0000000000000001
+09-21 18:29:14.267 16432 16432 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fc56d97a0
+09-21 18:29:14.267 16432 16432 F DEBUG   :     lr  000000733313a498  sp  0000007fc56d9720  pc  000000733313a4bc  pst 0000000000001000
+09-21 18:29:14.267 16432 16432 F DEBUG   :     esr 0000000092000006
+09-21 18:29:14.267 16432 16432 F DEBUG   : 5 total frames
+09-21 18:29:14.267 16432 16432 F DEBUG   : backtrace:
+09-21 18:29:14.267 16432 16432 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:14.267 16432 16432 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:14.267 16432 16432 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:29:14.267 16432 16432 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:29:14.267 16432 16432 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:19.302 16541 16541 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:29:19.302 16541 16541 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 16541 (Shutdown thread), pid 16541 (Shutdown thread)
+09-21 18:29:19.451 16576 16576 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:29:19.451 16576 16576 F DEBUG   : crDroid Version: '12.11'
+09-21 18:29:19.451 16576 16576 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:29:19.451 16576 16576 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:29:19.451 16576 16576 F DEBUG   : Revision: '0'
+09-21 18:29:19.451 16576 16576 F DEBUG   : ABI: 'arm64'
+09-21 18:29:19.451 16576 16576 F DEBUG   : Timestamp: 2026-09-21 18:29:19.384567725-0400
+09-21 18:29:19.451 16576 16576 F DEBUG   : Process uptime: 2s
+09-21 18:29:19.451 16576 16576 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:29:19.451 16576 16576 F DEBUG   : Cmdline: zygote64
+09-21 18:29:19.451 16576 16576 F DEBUG   : pid: 16541, tid: 16541, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:29:19.451 16576 16576 F DEBUG   : uid: 1000
+09-21 18:29:19.451 16576 16576 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:29:19.451 16576 16576 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:29:19.451 16576 16576 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x0  0000000000000000  x1  000000000000409d  x2  0000000000000006  x3  0000007ffa2d0870
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x8  00000000000000f0  x9  468f2eb21037eb49  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x12 000000055daf35d6  x13 0000000034155555  x14 0000000000000018  x15 000000055dae7db8
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x16 00000075bf2ff250  x17 00000075bf2e6c80  x18 00000075cba34000  x19 000000000000409d
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x20 000000000000409d  x21 00000000ffffffff  x22 00000075cab13005  x23 00000075cab1301d
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x24 00000075bbbae640  x25 00000075bbb73940  x26 0000000000000001  x27 0000000000000001
+09-21 18:29:19.451 16576 16576 F DEBUG   :     x28 431bde82d7b634db  x29 0000007ffa2d08f0
+09-21 18:29:19.451 16576 16576 F DEBUG   :     lr  00000075bf277498  sp  0000007ffa2d0870  pc  00000075bf2774bc  pst 0000000000001000
+09-21 18:29:19.451 16576 16576 F DEBUG   :     esr 0000000092000006
+09-21 18:29:19.451 16576 16576 F DEBUG   : 5 total frames
+09-21 18:29:19.451 16576 16576 F DEBUG   : backtrace:
+09-21 18:29:19.452 16576 16576 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:19.452 16576 16576 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:19.452 16576 16576 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:29:19.452 16576 16576 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:29:19.452 16576 16576 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:24.306 16682 16682 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:29:24.307 16682 16682 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 16682 (Shutdown thread), pid 16682 (Shutdown thread)
+09-21 18:29:24.490 16719 16719 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:29:24.490 16719 16719 F DEBUG   : crDroid Version: '12.11'
+09-21 18:29:24.490 16719 16719 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:29:24.490 16719 16719 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:29:24.490 16719 16719 F DEBUG   : Revision: '0'
+09-21 18:29:24.490 16719 16719 F DEBUG   : ABI: 'arm64'
+09-21 18:29:24.490 16719 16719 F DEBUG   : Timestamp: 2026-09-21 18:29:24.413635640-0400
+09-21 18:29:24.490 16719 16719 F DEBUG   : Process uptime: 2s
+09-21 18:29:24.490 16719 16719 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:29:24.490 16719 16719 F DEBUG   : Cmdline: zygote64
+09-21 18:29:24.490 16719 16719 F DEBUG   : pid: 16682, tid: 16682, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:29:24.490 16719 16719 F DEBUG   : uid: 1000
+09-21 18:29:24.490 16719 16719 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:29:24.490 16719 16719 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:29:24.490 16719 16719 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x0  0000000000000000  x1  000000000000412a  x2  0000000000000006  x3  0000007ff53eeb60
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x8  00000000000000f0  x9  81373fdff66cf6e5  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x12 000000056369600f  x13 0000000034155555  x14 0000000000000018  x15 00000005636881b8
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x16 0000006fe27e2250  x17 0000006fe27c9c80  x18 0000006ff5b08000  x19 000000000000412a
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x20 000000000000412a  x21 00000000ffffffff  x22 0000006ff4d6a005  x23 0000006ff4d6a01d
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x24 0000006feb722640  x25 0000006feb6e7940  x26 0000000000000001  x27 0000000000000001
+09-21 18:29:24.490 16719 16719 F DEBUG   :     x28 431bde82d7b634db  x29 0000007ff53eebe0
+09-21 18:29:24.490 16719 16719 F DEBUG   :     lr  0000006fe275a498  sp  0000007ff53eeb60  pc  0000006fe275a4bc  pst 0000000000001000
+09-21 18:29:24.490 16719 16719 F DEBUG   :     esr 0000000092000006
+09-21 18:29:24.490 16719 16719 F DEBUG   : 5 total frames
+09-21 18:29:24.490 16719 16719 F DEBUG   : backtrace:
+09-21 18:29:24.490 16719 16719 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:24.490 16719 16719 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:24.490 16719 16719 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:29:24.490 16719 16719 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:29:24.490 16719 16719 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:29.282 16826 16826 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:29:29.282 16826 16826 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 16826 (Shutdown thread), pid 16826 (Shutdown thread)
+09-21 18:29:29.461 16862 16862 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:29:29.461 16862 16862 F DEBUG   : crDroid Version: '12.11'
+09-21 18:29:29.461 16862 16862 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:29:29.461 16862 16862 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:29:29.461 16862 16862 F DEBUG   : Revision: '0'
+09-21 18:29:29.461 16862 16862 F DEBUG   : ABI: 'arm64'
+09-21 18:29:29.461 16862 16862 F DEBUG   : Timestamp: 2026-09-21 18:29:29.380059076-0400
+09-21 18:29:29.461 16862 16862 F DEBUG   : Process uptime: 2s
+09-21 18:29:29.461 16862 16862 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:29:29.461 16862 16862 F DEBUG   : Cmdline: zygote64
+09-21 18:29:29.461 16862 16862 F DEBUG   : pid: 16826, tid: 16826, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:29:29.461 16862 16862 F DEBUG   : uid: 1000
+09-21 18:29:29.461 16862 16862 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:29:29.461 16862 16862 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:29:29.461 16862 16862 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x0  0000000000000000  x1  00000000000041ba  x2  0000000000000006  x3  0000007fcbc4beb0
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x8  00000000000000f0  x9  1249faa74cf9a9c0  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x12 00000005691b17f7  x13 0000000034155555  x14 0000000000000018  x15 00000005691a51b8
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x16 0000007f71f2a250  x17 0000007f71f11c80  x18 0000007f81c90000  x19 00000000000041ba
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x20 00000000000041ba  x21 00000000ffffffff  x22 0000007f808f6005  x23 0000007f808f601d
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x24 0000007f50ef6640  x25 0000007f50ebb940  x26 0000000000000001  x27 0000000000000001
+09-21 18:29:29.461 16862 16862 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fcbc4bf30
+09-21 18:29:29.461 16862 16862 F DEBUG   :     lr  0000007f71ea2498  sp  0000007fcbc4beb0  pc  0000007f71ea24bc  pst 0000000000001000
+09-21 18:29:29.461 16862 16862 F DEBUG   :     esr 0000000092000006
+09-21 18:29:29.461 16862 16862 F DEBUG   : 5 total frames
+09-21 18:29:29.461 16862 16862 F DEBUG   : backtrace:
+09-21 18:29:29.461 16862 16862 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:29.461 16862 16862 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:29.461 16862 16862 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:29:29.461 16862 16862 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:29:29.461 16862 16862 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:34.320 16969 16969 F libc    : stack corruption detected (-fstack-protector)
+09-21 18:29:34.320 16969 16969 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 16969 (Shutdown thread), pid 16969 (Shutdown thread)
+09-21 18:29:34.499 17007 17007 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-21 18:29:34.499 17007 17007 F DEBUG   : crDroid Version: '12.11'
+09-21 18:29:34.499 17007 17007 F DEBUG   : Build fingerprint: 'Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys'
+09-21 18:29:34.499 17007 17007 F DEBUG   : Kernel Release: '5.4.302-noxcis-v2-suki-hardened+'
+09-21 18:29:34.499 17007 17007 F DEBUG   : Revision: '0'
+09-21 18:29:34.499 17007 17007 F DEBUG   : ABI: 'arm64'
+09-21 18:29:34.499 17007 17007 F DEBUG   : Timestamp: 2026-09-21 18:29:34.419232720-0400
+09-21 18:29:34.499 17007 17007 F DEBUG   : Process uptime: 2s
+09-21 18:29:34.499 17007 17007 F DEBUG   : Executable: /system/bin/app_process64
+09-21 18:29:34.499 17007 17007 F DEBUG   : Cmdline: zygote64
+09-21 18:29:34.499 17007 17007 F DEBUG   : pid: 16969, tid: 16969, name: Shutdown thread  >>> zygote64 <<<
+09-21 18:29:34.499 17007 17007 F DEBUG   : uid: 1000
+09-21 18:29:34.499 17007 17007 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+09-21 18:29:34.499 17007 17007 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-21 18:29:34.499 17007 17007 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x0  0000000000000000  x1  0000000000004249  x2  0000000000000006  x3  0000007fd5a4ab60
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x8  00000000000000f0  x9  d80ad1296f3caeaa  x10 000000ff00000020  x11 000000003b9ac9ff
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x12 000000056edf1fc1  x13 0000000034155555  x14 0000000000000018  x15 000000056eddb5b8
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x16 000000722d1d1250  x17 000000722d1b8c80  x18 00000072545c0000  x19 0000000000004249
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x20 0000000000004249  x21 00000000ffffffff  x22 00000072535e0005  x23 00000072535e001d
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x24 000000723b1b7640  x25 000000723b17c940  x26 0000000000000001  x27 0000000000000001
+09-21 18:29:34.499 17007 17007 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fd5a4abe0
+09-21 18:29:34.499 17007 17007 F DEBUG   :     lr  000000722d149498  sp  0000007fd5a4ab60  pc  000000722d1494bc  pst 0000000000001000
+09-21 18:29:34.499 17007 17007 F DEBUG   :     esr 0000000092000006
+09-21 18:29:34.499 17007 17007 F DEBUG   : 5 total frames
+09-21 18:29:34.499 17007 17007 F DEBUG   : backtrace:
+09-21 18:29:34.499 17007 17007 F DEBUG   :       #00 pc 00000000000774bc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:34.499 17007 17007 F DEBUG   :       #01 pc 00000000000a6b14  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+20) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:29:34.499 17007 17007 F DEBUG   :       #02 pc 000000000013ab6c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1324) (BuildId: 5b2beab93b81b693ebf62be821dcfc19)
+09-21 18:29:34.499 17007 17007 F DEBUG   :       #03 pc 0000000000002480  /system/bin/app_process64 (main+928) (BuildId: 8e0273c274475f87cb00b19f261234b1)
+09-21 18:29:34.499 17007 17007 F DEBUG   :       #04 pc 000000000006a0c8  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: a10541b33c9014fa2be05995a5155d29)
+09-21 18:45:36.923 17013 18843 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 18843 (HwBinder:17013_), pid 17013 (binder:17013_2)

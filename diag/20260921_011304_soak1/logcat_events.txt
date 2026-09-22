@@ -1,0 +1,446 @@
+--------- beginning of events
+12-31 21:50:25.391   688   688 I auditd  : SELinux: Loaded service context from:
+12-31 21:50:25.391   688   688 I auditd  : 		/system/etc/selinux/plat_service_contexts
+12-31 21:50:25.391   688   688 I auditd  : 		/system_ext/etc/selinux/system_ext_service_contexts
+12-31 21:50:25.391   688   688 I auditd  : 		/product/etc/selinux/product_service_contexts
+12-31 21:50:25.395   688   688 I auditd  : 		/vendor/etc/selinux/vendor_service_contexts
+12-31 21:50:25.395   688   688 I auditd  : 		/odm/etc/selinux/odm_service_contexts
+12-31 19:00:00.179   686   686 I auditd  : type=2000 audit(0.0:1): state=initialized audit_enabled=0 res=1
+12-31 21:50:18.667   686   686 I auditd  : type=1403 audit(0.0:2): auid=4294967295 ses=4294967295 lsm=selinux res=1
+12-31 21:50:18.667   686   686 I auditd  : type=1404 audit(0.0:3): enforcing=1 old_enforcing=0 auid=4294967295 ses=4294967295 enabled=1 old-enabled=1 lsm=selinux res=1
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:4): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=ril.subscription.types pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:5): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=DEVICE_PROVISIONED pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:6): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.dbg.ims_volte_enable pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:7): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.VT_HYBRID_ENABLE pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:8): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.NO_STAPA pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:9): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.dynamic_sar pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:18.811     1     1 I auditd  : type=1107 audit(0.0:10): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=qcom.hw.aac.encoder pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:50:25.191   671   671 I auditd  : type=1400 audit(0.0:81): avc:  denied  { write } for  comm="prng_seeder" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:prng_seeder:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.191   671   671 I auditd  : type=1400 audit(0.0:82): avc:  denied  { write } for  comm="prng_seeder" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:prng_seeder:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.191   672   672 I auditd  : type=1400 audit(0.0:83): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.191   672   672 I auditd  : type=1400 audit(0.0:84): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.215   673   673 I auditd  : type=1400 audit(0.0:85): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.215   673   673 I auditd  : type=1400 audit(0.0:86): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.395   697   697 I auditd  : type=1400 audit(0.0:87): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.395   697   697 I auditd  : type=1400 audit(0.0:88): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.403   699   699 I auditd  : type=1400 audit(0.0:89): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.403   699   699 I auditd  : type=1400 audit(0.0:90): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:50:25.547   729   746 I auditd  : SELinux: Loaded keystore2 context from:
+12-31 21:50:25.547   729   746 I auditd  : 		/system/etc/selinux/plat_keystore2_key_contexts
+12-31 21:50:25.547   729   746 I auditd  : 		/system_ext/etc/selinux/system_ext_keystore2_key_contexts
+12-31 21:50:25.547   729   746 I auditd  : 		/product/etc/selinux/product_keystore2_key_contexts
+12-31 21:50:25.547   729   746 I auditd  : 		/vendor/etc/selinux/vendor_keystore2_key_contexts
+09-20 21:11:03.622   689   689 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:11:04.065  1078  1078 I boot_progress_start: 12416
+09-20 21:11:04.271  1078  1078 I snet_event_log: [200284993,-1,]
+09-20 21:11:04.314  1078  1078 I boot_progress_preload_start: 12665
+09-20 21:11:04.424  1079  1079 I snet_event_log: [200284993,-1,]
+09-20 21:11:04.775   688   688 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:11:04.783   688   688 I auditd  : SELinux: Loaded service context from:
+09-20 21:11:04.784   688   688 I auditd  : 		/system/etc/selinux/plat_service_contexts
+09-20 21:11:04.784   688   688 I auditd  : 		/system_ext/etc/selinux/system_ext_service_contexts
+09-20 21:11:04.784   688   688 I auditd  : 		/product/etc/selinux/product_service_contexts
+09-20 21:11:04.784   688   688 I auditd  : 		/vendor/etc/selinux/vendor_service_contexts
+09-20 21:11:04.784   688   688 I auditd  : 		/odm/etc/selinux/odm_service_contexts
+09-20 21:11:04.887  1400  1400 I auditd  : type=1400 audit(0.0:91): avc:  denied  { read } for  comm="vendor.qti.hard" name="u:object_r:vendor_cap_configstore_dbg_prop:s0" dev="tmpfs" ino=18437 scontext=u:r:vendor_hal_capabilityconfigstore_qti_default:s0 tcontext=u:object_r:vendor_cap_configstore_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:05.027  1078  1078 I boot_progress_preload_end: 13378
+09-20 21:11:05.031  1260  1260 I auditd  : type=1400 audit(0.0:92): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15310 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:11:05.031  1260  1260 I auditd  : type=1400 audit(0.0:93): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15310 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:11:05.377  1557  1557 I system_server_start: [1,13727,13727]
+09-20 21:11:05.378  1557  1557 I boot_progress_system_run: 13728
+09-20 21:11:05.431  1260  1260 I auditd  : type=1400 audit(0.0:94): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15310 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:11:05.431  1260  1260 I auditd  : type=1400 audit(0.0:95): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15310 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:11:05.440  1260  1608 I liblog  : 988
+09-20 21:11:05.575  1772  1772 I auditd  : type=1400 audit(0.0:96): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:11:05.575  1772  1772 I auditd  : type=1400 audit(0.0:97): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:11:05.599  1791  1791 I auditd  : type=1400 audit(0.0:98): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:11:05.599  1791  1791 I auditd  : type=1400 audit(0.0:99): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=1052 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:11:05.694   689   689 I auditd  : avc:  denied  { find } for interface=vendor.qti.diaghal::Idiag sid=u:r:vendor_dpmd:s0 pid=1804 scontext=u:r:vendor_dpmd:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+09-20 21:11:05.696   689   689 I auditd  : avc:  denied  { find } for interface=vendor.qti.diaghal::Idiag sid=u:r:vendor_dpmd:s0 pid=1816 scontext=u:r:vendor_dpmd:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+09-20 21:11:07.287   688   688 I auditd  : type=1400 audit(0.0:100): avc:  denied  { call } for  comm="servicemanager" scontext=u:r:servicemanager:s0 tcontext=u:r:mediaswcodec:s0 tclass=binder permissive=0
+09-20 21:11:08.471  1260  1260 I auditd  : type=1400 audit(0.0:101): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=1058 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:11:08.961  1557  1557 I boot_progress_pms_start: 17311
+09-20 21:11:09.114  1557  1557 I liblog  : 101
+09-20 21:11:09.138  1557  1557 I boot_progress_pms_system_scan_start: 17488
+09-20 21:11:09.955  2042  2042 I auditd  : type=1400 audit(0.0:102): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18499 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:09.955  1992  1992 I auditd  : type=1400 audit(0.0:103): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18499 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:09.979  2042  2042 I auditd  : type=1400 audit(0.0:104): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18499 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:09.991  1992  1992 I auditd  : type=1400 audit(0.0:105): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18499 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:10.041  1557  1557 I boot_progress_pms_data_scan_start: 18391
+09-20 21:11:10.134  1557  1557 I service_manager_stats: [100,12,18484]
+09-20 21:11:10.322  1557  1557 I boot_progress_pms_scan_end: 18672
+09-20 21:11:10.642  1557  1557 I commit_sys_config_file: [package,176]
+09-20 21:11:10.642  1557  1557 I boot_progress_pms_ready: 18993
+09-20 21:11:10.670  1557  2394 I commit_sys_config_file: [package-user-0,28]
+09-20 21:11:10.722  1557  1557 I am_uid_running: 1000
+09-20 21:11:10.726  1557  1557 I am_uid_active: 1000
+09-20 21:11:11.160  1557  1557 I commit_sys_config_file: [overlays,5]
+09-20 21:11:11.182   729   729 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:11:11.207  1260  1260 I auditd  : type=1400 audit(0.0:106): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=1058 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:11:11.207  1260  1260 I auditd  : type=1400 audit(0.0:107): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=1058 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:11:11.207  1260  1260 I auditd  : type=1400 audit(0.0:108): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=1058 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:11:11.273  1557  2654 I battery_status: [2,2,1,1,Li-poly]
+09-20 21:11:11.274  1557  2654 I battery_level: [72,7950,330]
+09-20 21:11:11.588  1557  2831 I commit_sys_config_file: [settings-4-0,4]
+09-20 21:11:11.590  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,No service published for: virtualdevice]
+09-20 21:11:12.001  1557  1557 I wm_task_created: 1
+09-20 21:11:12.005  1557  1756 I am_wtf  : [0,1557,system_server,-1,LineageHardwareManager,Unable to get LineageHardwareService. The service either crashed, was not started, or the interface has been called to early in SystemServer init]
+09-20 21:11:12.007  1557  1701 I sysui_multi_action: [757,1594,758,4,759,0,806,NULL]
+09-20 21:11:12.110  1557  1557 I configuration_changed: 536894968
+09-20 21:11:12.112  1557  1557 I sysui_multi_action: [757,1659,758,4,759,1,1660,0]
+09-20 21:11:12.149  1557  1557 I device_idle: [0,boot]
+09-20 21:11:12.149  1557  1557 I device_idle_light: [0,boot]
+09-20 21:11:12.308  1557  1557 I am_uid_running: 10335
+09-20 21:11:12.315  1557  3010 I storage_state: [41217664-9172-527a-b3d5-edabb50a7d69,0,0,446842707968,497077432320]
+09-20 21:11:12.321  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,No service published for: trust]
+09-20 21:11:12.322  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,Manager wrapper not available: keyguard]
+09-20 21:11:12.351  1557  1756 I am_wtf  : [0,1557,system_server,-1,PowerManagerService,Tried to acquire wake lock for invalid display: 0]
+09-20 21:11:12.377  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,No service published for: usb]
+09-20 21:11:12.378  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,Manager wrapper not available: usb]
+09-20 21:11:12.451  1557  3016 I stream_devices_changed: [4,0,2]
+09-20 21:11:12.452  1557  3016 I stream_devices_changed: [3,0,2]
+09-20 21:11:12.453  1557  3016 I stream_devices_changed: [5,0,2]
+09-20 21:11:12.453  1557  3016 I stream_devices_changed: [2,0,2]
+09-20 21:11:12.454  1557  3016 I stream_devices_changed: [0,0,1]
+09-20 21:11:12.462  1557  2831 I snet_event_log: [35028827,-1,account:Account {name=nemo@noxcis.com, type=com.google} provider:subscribedfeeds user:0]
+09-20 21:11:12.462  1557  2831 I snet_event_log: [26513719,-1,Malformed authority]
+09-20 21:11:12.496  1557  2831 I commit_sys_config_file: [settings-0-0,3]
+09-20 21:11:12.545  1557  1696 I commit_sys_config_file: [notification-policy,3]
+09-20 21:11:12.775  1557  1770 I commit_sys_config_file: [batterystats,3]
+09-20 21:11:12.776  1557  1770 I commit_sys_config_file: [batterystats,0]
+09-20 21:11:12.778  1557  1557 I configuration_changed: 512
+09-20 21:11:12.796  1557  1557 I sysui_multi_action: [757,803,799,dnd_mode_0,802,503]
+09-20 21:11:12.796  1557  1557 I sysui_multi_action: [757,803,799,dnd_type_0,802,503]
+09-20 21:11:12.825  1557  1557 I configuration_changed: 32
+09-20 21:11:12.834  1557  1557 I commit_sys_config_file: [package-session,0]
+09-20 21:11:12.845  1557  1557 I rescue_note: [0,1,21195]
+09-20 21:11:12.918  1557  1557 I boot_progress_ams_ready: 21269
+09-20 21:11:12.921  1557  1557 I configuration_changed: 268468480
+09-20 21:11:12.935  1557  1557 I thermal_changed: [socd,8,-274000.000000,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [battery,2,33.000000,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [nsp0,9,54.599998,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [GPU0,1,57.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU5,0,68.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [ibat,7,-0.156000,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU7,0,79.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [vbat,6,3.986000,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [nsp2,9,53.299999,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [GPU1,1,55.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU4,0,71.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU1,0,65.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU3,0,67.900002,0,0]
+09-20 21:11:12.935  1557  1557 I thermal_changed: [CPU2,0,64.599998,0,0]
+09-20 21:11:12.936  1557  1557 I thermal_changed: [nsp1,9,54.599998,0,0]
+09-20 21:11:12.936  1557  1557 I thermal_changed: [CPU6,0,74.300003,0,0]
+09-20 21:11:12.936  1557  1557 I thermal_changed: [CPU0,0,69.300003,0,0]
+09-20 21:11:12.990  1557  1701 I configuration_changed: 256
+09-20 21:11:13.001  1557  2831 I commit_sys_config_file: [settings-0-0,3]
+09-20 21:11:13.015  1557  1557 I am_uid_running: 10312
+09-20 21:11:13.022  1557  1757 I am_proc_start: [0,3097,10312,com.android.systemui,service,{com.android.systemui/com.android.systemui.wallpapers.GradientColorWallpaper}]
+09-20 21:11:13.049  1557  1696 I commit_sys_config_file: [notification-policy,3]
+09-20 21:11:13.054  1557  2902 I am_proc_bound: [0,3097,com.android.systemui]
+09-20 21:11:13.056  1557  2902 I am_uid_active: 10312
+09-20 21:11:13.142  1557  2971 I commit_sys_config_file: [net-policy,1]
+09-20 21:11:13.178  1557  2824 I am_uid_running: 1037
+09-20 21:11:13.227  1557  2970 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953073227]
+09-20 21:11:13.227  1557  2970 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953073227]
+09-20 21:11:13.235  3097  3136 I wm_shell_desktop_mode_task_update: [4,0,0,0,0,0,0,0,0,0,0,0]
+09-20 21:11:13.238  1557  3157 I wm_task_created: 2
+09-20 21:11:13.239  1557  2902 I wm_task_created: 3
+09-20 21:11:13.241  1557  3157 I wm_task_created: 4
+09-20 21:11:13.250  1557  2970 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953073250]
+09-20 21:11:13.251  1557  2970 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953073250]
+09-20 21:11:13.255  1287  1287 I auditd  : type=1400 audit(0.0:109): avc:  denied  { read } for  comm="Loc_hal_worker" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18499 scontext=u:r:vendor_hal_gnss_qti:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:11:13.279  1557  3157 I wm_task_removed: [3,3,0,reParentTask:sanitizeAndApplyHierarchyOp]
+09-20 21:11:13.279  1557  3157 I wm_task_moved: [3,2,0,1,2147483647]
+09-20 21:11:13.279  1557  3157 I wm_task_removed: [4,4,0,reParentTask:sanitizeAndApplyHierarchyOp]
+09-20 21:11:13.279  1557  3157 I wm_task_moved: [4,2,0,1,2147483647]
+09-20 21:11:13.285  3097  3136 I viewroot_draw_event: [VRI[ShellDropTarget],Not drawing due to not visible. Reason=View.INVISIBLE]
+09-20 21:11:13.286  1557  1757 I am_proc_start: [0,3183,1037,WebViewLoader-armeabi-v7a,,]
+09-20 21:11:13.289  1557  1757 I am_proc_start: [0,3184,1037,WebViewLoader-arm64-v8a,,]
+09-20 21:11:13.302  1557  3157 I am_proc_bound: [0,3184,WebViewLoader-arm64-v8a]
+09-20 21:11:13.302  1557  3157 I am_uid_active: 1037
+09-20 21:11:13.303  1557  2903 I am_proc_bound: [0,3183,WebViewLoader-armeabi-v7a]
+09-20 21:11:13.309  1557  1557 I am_uid_running: 1073
+09-20 21:11:13.314  1557  1557 I ssm_user_starting: 0
+09-20 21:11:13.317  1557  1757 I am_proc_start: [0,3211,1073,com.android.networkstack.process,service,{com.android.networkstack/com.android.server.NetworkStackService}]
+09-20 21:11:13.323  1557  1749 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953073323]
+09-20 21:11:13.323  1557  1749 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953073323]
+09-20 21:11:13.326  1557  1557 I commit_sys_config_file: [supervision,3]
+09-20 21:11:13.343  1557  2903 I am_proc_bound: [0,3211,com.android.networkstack.process]
+09-20 21:11:13.344  1557  2903 I am_uid_active: 1073
+09-20 21:11:13.347  1557  3157 I am_proc_died: [0,3183,WebViewLoader-armeabi-v7a,-700,0]
+09-20 21:11:13.348  1557  3157 I am_low_memory: 4
+09-20 21:11:13.349  1557  1557 I um_user_visibility_changed: [0,1]
+09-20 21:11:13.351  1557  1557 I am_uid_running: 1001
+09-20 21:11:13.351  1557  1557 I am_uid_running: 10245
+09-20 21:11:13.352  1557  1557 I am_uid_running: 10308
+09-20 21:11:13.353  1557  1557 I am_uid_running: 1027
+09-20 21:11:13.354  1557  1557 I am_uid_running: 10293
+09-20 21:11:13.354  1557  1557 I am_uid_running: 1068
+09-20 21:11:13.375  1557  1557 I wm_task_created: 5
+09-20 21:11:13.376  1557  1557 I wm_task_moved: [5,1,0,1,2147483647]
+09-20 21:11:13.378  1557  1557 I wm_task_moved: [1,1,0,1,1]
+09-20 21:11:13.378  1557  1557 I wm_task_to_front: [0,5,0]
+09-20 21:11:13.378  1557  1557 I wm_create_task: [0,5,1,0]
+09-20 21:11:13.378  1557  1557 I wm_create_activity: [0,73691510,5,com.android.settings/.FallbackHome,android.intent.action.MAIN,NULL,NULL,276824320]
+09-20 21:11:13.378  1557  1557 I wm_task_moved: [1,1,0,1,1]
+09-20 21:11:13.378  1557  1557 I wm_task_moved: [5,1,0,1,2147483647]
+09-20 21:11:13.380  1557  1557 I uc_send_user_broadcast: [0,android.intent.action.USER_STARTED]
+09-20 21:11:13.380  1557  1557 I uc_send_user_broadcast: [0,android.intent.action.USER_STARTING]
+09-20 21:11:13.381  1557  1557 I uc_send_user_broadcast: [0,android.intent.action.USER_FOREGROUND]
+09-20 21:11:13.381  1557  1557 I uc_send_user_broadcast: [0,android.intent.action.USER_SWITCHED]
+09-20 21:11:13.386  1557  2903 I am_proc_died: [0,3184,WebViewLoader-arm64-v8a,-700,0]
+09-20 21:11:13.387  1557  2903 I am_uid_stopped: 1037
+09-20 21:11:13.387  1557  2903 I am_low_memory: 3
+09-20 21:11:13.388  1557  3144 I am_proc_start: [0,3240,1000,com.android.axion.quicklook,added application,com.android.axion.quicklook]
+09-20 21:11:13.388  1557  3144 I am_proc_bound: [0,3240,com.android.axion.quicklook]
+09-20 21:11:13.398  1557  1757 I am_proc_start: [0,3262,1001,.dataservices,added application,.dataservices]
+09-20 21:11:13.402  1557  1757 I am_proc_start: [0,3263,10245,.qtidataservices,added application,.qtidataservices]
+09-20 21:11:13.409  1557  1757 I am_proc_start: [0,3264,10308,com.qti.phone,added application,com.qti.phone]
+09-20 21:11:13.411  1557  1557 I notification_cancel_all: [1000,1557,android,0,0,0,20,NULL]
+09-20 21:11:13.411  1557  1557 I notification_cancel_all: [1000,1557,android,0,0,0,20,NULL]
+09-20 21:11:13.411  1557  1557 I notification_cancel_all: [1000,1557,android,0,0,0,20,NULL]
+09-20 21:11:13.411  1557  1557 I notification_cancel_all: [1000,1557,android,0,0,0,20,NULL]
+09-20 21:11:13.415  1557  1757 I am_proc_start: [0,3267,1027,com.android.nfc,added application,com.android.nfc]
+09-20 21:11:13.421  1557  1757 I am_proc_start: [0,3270,10293,org.codeaurora.ims,added application,org.codeaurora.ims]
+09-20 21:11:13.426  1557  1757 I am_proc_start: [0,3271,1068,com.android.se,added application,com.android.se]
+09-20 21:11:13.431  1557  1757 I am_proc_start: [0,3275,1001,com.android.phone,added application,com.android.phone]
+09-20 21:11:13.436  1557  1757 I am_proc_start: [0,3285,1000,org.protonaosp.columbus,added application,org.protonaosp.columbus]
+09-20 21:11:13.437  1557  3157 I am_proc_bound: [0,3262,.dataservices]
+09-20 21:11:13.438  1557  3157 I am_uid_active: 1001
+09-20 21:11:13.442  1557  1757 I am_proc_start: [0,3296,1000,com.android.settings,top-activity,{com.android.settings/com.android.settings.FallbackHome}]
+09-20 21:11:13.447  1557  3157 I am_proc_bound: [0,3267,com.android.nfc]
+09-20 21:11:13.448  1557  2831 I commit_sys_config_file: [settings-0-0,14]
+09-20 21:11:13.452  1557  3157 I am_uid_active: 1027
+09-20 21:11:13.456  1557  3157 I am_proc_bound: [0,3263,.qtidataservices]
+09-20 21:11:13.459  1557  3157 I am_uid_active: 10245
+09-20 21:11:13.459  1557  2903 I am_proc_bound: [0,3271,com.android.se]
+09-20 21:11:13.462  1557  2903 I am_uid_active: 1068
+09-20 21:11:13.463  1557  3157 I am_wtf  : [0,3240,com.android.axion.quicklook,814333517,ContextImpl,Data directory doesn't exist for package com.android.axion.quicklook]
+09-20 21:11:13.464  1557  1598 I am_proc_bound: [0,3270,org.codeaurora.ims]
+09-20 21:11:13.464  1557  1598 I am_uid_active: 10293
+09-20 21:11:13.481  1557  3144 I am_proc_bound: [0,3264,com.qti.phone]
+09-20 21:11:13.483  1557  3144 I am_uid_active: 10308
+09-20 21:11:13.490  1557  2902 I am_proc_bound: [0,3275,com.android.phone]
+09-20 21:11:13.492  1557  1598 I am_proc_bound: [0,3296,com.android.settings]
+09-20 21:11:13.495  1557  2903 I am_proc_bound: [0,3285,org.protonaosp.columbus]
+09-20 21:11:13.576  1557  2654 I wm_restart_activity: [0,73691510,5,com.android.settings/.FallbackHome]
+09-20 21:11:13.577  1557  2654 I wm_set_resumed_activity: [0,com.android.settings/.FallbackHome,realStartActivityLocked - onActivityStateChanged]
+09-20 21:11:13.587  1557  1756 I am_uid_running: 10259
+09-20 21:11:13.593  1557  1757 I am_proc_start: [0,3413,10259,com.google.android.gms,broadcast,{com.google.android.gms/com.google.android.gms.chimera.GmsIntentOperationService$PersistentTrustedReceiver}]
+09-20 21:11:13.606  3296  3296 I wm_on_create_called: [73691510,com.android.settings.FallbackHome,performCreate,22]
+09-20 21:11:13.608  3296  3296 I wm_on_start_called: [73691510,com.android.settings.FallbackHome,handleStartActivity,0]
+09-20 21:11:13.612  3296  3296 I wm_on_resume_called: [73691510,com.android.settings.FallbackHome,RESUME_ACTIVITY,3]
+09-20 21:11:13.619  1557  1557 I notification_enqueue: [1000,1557,android,32,NULL,-1,Notification(channel=USB shortcut=null contentView=null vibrate=null sound=null tick defaults=0 flags=ONGOING_EVENT|CAN_COLORIZE color=0x00000000 vis=PUBLIC),0,1]
+09-20 21:11:13.628  1557  1557 I sysui_multi_action: [757,1501,758,1,793,34,794,0,795,34,796,32,806,android,857,USB,858,1,947,0,1500,0]
+09-20 21:11:13.628  1557  1557 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:11:13.640  1557  3157 I am_proc_bound: [0,3413,com.google.android.gms]
+09-20 21:11:13.642  3296  3296 I wm_on_top_resumed_gained_called: [73691510,com.android.settings.FallbackHome,topStateChangedWhenResumed]
+09-20 21:11:13.673  1557  1704 I input_focus: [Focus request c4e538a com.android.settings/com.android.settings.FallbackHome,reason=UpdateInputWindows]
+09-20 21:11:13.702  3296  3296 I viewroot_draw_event: [VRI[FallbackHome],reportDrawFinished seqId=0]
+09-20 21:11:13.703  1557  1701 I boot_progress_enable_screen: 22054
+09-20 21:11:13.704  1557  1701 I screen_toggled: 1
+09-20 21:11:13.706  1557  1756 I am_wtf  : [0,1557,system_server,-1,WindowManager,Unexpected pending wakeup group. Requested Group 0 Current Waking up group 0]
+09-20 21:11:13.707  1557  1688 I sysui_multi_action: [319,350,322,348,325,21,757,761,758,7,759,2,806,com.android.settings,871,com.android.settings.FallbackHome,905,0,945,136,1320,8,1321,5]
+09-20 21:11:13.708  1557  1688 I wm_activity_launch_time: [0,73691510,com.android.settings/.FallbackHome,348]
+09-20 21:11:13.782  1557  2654 I am_uid_running: 10326
+09-20 21:11:13.786  1557  2903 I am_uid_running: 10299
+09-20 21:11:13.791  1557  1757 I am_proc_start: [0,3486,10326,com.android.smspush,service,{com.android.smspush/com.android.smspush.WapPushManager}]
+09-20 21:11:13.798  1557  1757 I am_proc_start: [0,3489,10299,com.android.launcher3,service,{com.android.launcher3/com.android.quickstep.TouchInteractionService}]
+09-20 21:11:13.815  1557  2903 I am_proc_bound: [0,3486,com.android.smspush]
+09-20 21:11:13.830  1557  2903 I am_proc_bound: [0,3489,com.android.launcher3]
+09-20 21:11:13.833  3097  3439 I viewroot_draw_event: [VRI[ScreenDecorOverlay],reportDrawFinished seqId=0]
+09-20 21:11:13.840  1557  1599 I am_uid_active: 10326
+09-20 21:11:13.842  1557  2970 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953073842]
+09-20 21:11:13.842  1557  2970 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953073842]
+09-20 21:11:13.857  3097  3439 I viewroot_draw_event: [VRI[ScreenDecorOverlayBottom],reportDrawFinished seqId=0]
+09-20 21:11:13.862  1557  1696 I commit_sys_config_file: [notification-policy,2]
+09-20 21:11:13.867  1557  1598 I am_uid_active: 10299
+09-20 21:11:13.868  3489  3522 I jank_cuj_events_cancel_request: [-1,1789953073863748000,22214227855,22214227959]
+09-20 21:11:14.086  1557  3539 I wm_set_keyguard_shown: [0,1,0,0,0,setKeyguardShown]
+09-20 21:11:14.087  3296  3296 I wm_on_top_resumed_lost_called: [73691510,com.android.settings.FallbackHome,topStateChangedWhenResumed]
+09-20 21:11:14.087  1557  3539 I wm_pause_activity: [0,73691510,com.android.settings/.FallbackHome,userLeaving=false,sleep]
+09-20 21:11:14.088  1557  3539 I wm_add_to_stopping: [0,73691510,com.android.settings/.FallbackHome,makeInvisible]
+09-20 21:11:14.091  3296  3296 I wm_on_paused_called: [73691510,com.android.settings.FallbackHome,performPause,0]
+09-20 21:11:14.093  1557  1688 I sysui_multi_action: [757,803,799,window_time_0,802,8]
+09-20 21:11:14.094  1557  1701 I wm_stop_activity: [0,73691510,com.android.settings/.FallbackHome]
+09-20 21:11:14.102  3296  3296 I viewroot_draw_event: [VRI[FallbackHome],Not drawing due to not visible. Reason=!mAppVisible && !mForceDecorViewVisibility]
+09-20 21:11:14.103  3296  3296 I wm_on_stop_called: [73691510,com.android.settings.FallbackHome,STOP_ACTIVITY_ITEM,0]
+09-20 21:11:14.105  1557  2902 I am_uid_active: 10259
+09-20 21:11:14.107  1557  1756 I am_uid_running: 10332
+09-20 21:11:14.113  1557  1757 I am_proc_start: [0,3581,10332,com.android.permissioncontroller,broadcast,{com.android.permissioncontroller/com.android.permissioncontroller.privacysources.SafetyCenterReceiver}]
+09-20 21:11:14.157  1557  2904 I sysui_multi_action: [757,127,758,2]
+09-20 21:11:14.157  1557  2904 I notification_panel_hidden: 
+09-20 21:11:14.158  1557  2903 I am_proc_bound: [0,3581,com.android.permissioncontroller]
+09-20 21:11:14.182  3275  3275 I service_manager_stats: [100,36,22533]
+09-20 21:11:14.206  1557  1756 I am_wtf  : [0,1557,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1557:system/1000 pkg android]
+09-20 21:11:14.210  3275  3275 I gsm_service_state_change: [1,1,3,3]
+09-20 21:11:14.286  1557  1756 I am_wtf  : [0,1557,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1557:system/1000 pkg android]
+09-20 21:11:14.298  3097  3633 I sysui_multi_action: [757,213,758,4,759,-1]
+09-20 21:11:14.303  3489  3489 I viewroot_draw_event: [VRI[Taskbar],reportDrawFinished seqId=0]
+09-20 21:11:14.308  3489  3489 I viewroot_draw_event: [VRI[Taskbar],reportDrawFinished seqId=0]
+09-20 21:11:14.313  1557  3605 I am_uid_active: 10332
+09-20 21:11:14.313  1557  1756 I am_uid_running: 10330
+09-20 21:11:14.342  1557  1757 I am_proc_start: [0,3652,10330,com.android.cellbroadcastreceiver.module,broadcast,{com.android.cellbroadcastreceiver.module/com.android.cellbroadcastreceiver.CellBroadcastReceiver}]
+09-20 21:11:14.370  1557  3539 I am_proc_bound: [0,3652,com.android.cellbroadcastreceiver.module]
+09-20 21:11:14.457  1557  1557 I notification_cancel_all: [1000,1557,com.android.systemui,0,0,0,20,NULL]
+09-20 21:11:14.483  3097  3439 I viewroot_draw_event: [VRI[ScreenDecorOverlayBottom],reportDrawFinished seqId=0]
+09-20 21:11:14.540  1557  2904 I sysui_multi_action: [757,127,758,1]
+09-20 21:11:14.540  1557  2904 I sysui_multi_action: [757,804,799,note_load,801,0,802,1]
+09-20 21:11:14.540  1557  2904 I notification_panel_revealed: 0
+09-20 21:11:14.540  3097  3097 I sysui_multi_action: [757,196,758,1,759,1]
+09-20 21:11:14.540  3097  3097 I sysui_status_bar_state: [1,1,0,0,1,0]
+09-20 21:11:14.543  3097  3150 I jank_cuj_events_end_request: [88,1789953074543914000,22894392959,22894393323]
+09-20 21:11:14.545  3097  3097 I viewroot_draw_event: [VRI[DisplayBackGestureHandler 0],Not drawing due to not visible. Reason=View.GONE]
+09-20 21:11:14.604  1557  1756 I am_wtf  : [0,1557,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1557:system/1000 pkg android]
+09-20 21:11:14.613  1557  1756 I am_wtf  : [0,1557,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1557:system/1000 pkg android]
+09-20 21:11:14.624  3097  3097 I viewroot_draw_event: [VRI[StatusBar],reportDrawFinished seqId=0]
+09-20 21:11:14.675  1557  1701 I user_activity_timeout_override: 10000
+09-20 21:11:14.676  1557  1704 I input_focus: [Focus request 860fb7f NotificationShade,reason=UpdateInputWindows]
+09-20 21:11:14.685  1557  1704 I wm_wallpaper_surface: [0,1,Window{860fb7f u0 NotificationShade}]
+09-20 21:11:14.691  3097  3097 I viewroot_draw_event: [VRI[NotificationShade],reportDrawFinished seqId=0]
+09-20 21:11:14.773  3097  3097 I viewroot_draw_event: [VRI[StatusBar],reportDrawFinished seqId=0]
+09-20 21:11:14.904  3275  3275 I gsm_service_state_change: [1,1,3,1]
+09-20 21:11:14.915  3275  3275 I gsm_service_state_change: [3,1,1,1]
+09-20 21:11:15.076  3275  3275 I gsm_service_state_change: [1,1,1,1]
+09-20 21:11:15.127  1557  2903 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953075127]
+09-20 21:11:15.127  1557  2903 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953075127]
+09-20 21:11:15.217  1557  1598 I service_manager_stats: [1939,239,5084]
+09-20 21:11:15.236  1557  2904 I configuration_changed: 3
+09-20 21:11:15.460  1557  3719 I am_uid_running: 10306
+09-20 21:11:15.467  1557  1757 I am_proc_start: [0,3723,10306,com.android.carrierconfig,service,{com.android.carrierconfig/com.android.carrierconfig.DefaultCarrierConfigService}]
+09-20 21:11:15.477  1557  1756 I am_uid_running: 10252
+09-20 21:11:15.485  1557  1757 I am_proc_start: [0,3731,10252,com.android.dialer,broadcast,{com.android.dialer/com.android.dialer.app.voicemail.LegacyVoicemailNotificationReceiver}]
+09-20 21:11:15.489  1557  2903 I am_proc_bound: [0,3723,com.android.carrierconfig]
+09-20 21:11:15.508  1557  3719 I am_proc_bound: [0,3731,com.android.dialer]
+09-20 21:11:15.514  1557  2903 I am_uid_active: 10306
+09-20 21:11:15.556  1557  2902 I am_uid_active: 10252
+09-20 21:11:15.796  1557  3755 I am_uid_running: 10214
+09-20 21:11:15.803  1557  1757 I am_proc_start: [0,3758,10214,android.process.acore,content provider,{com.android.providers.blockednumber/com.android.providers.blockednumber.BlockedNumberProvider}]
+09-20 21:11:15.815  1557  3719 I am_proc_bound: [0,3758,android.process.acore]
+09-20 21:11:15.841  1557  1598 I am_uid_active: 10214
+09-20 21:11:15.917  3275  3275 I gsm_service_state_change: [3,1,1,1]
+09-20 21:11:16.104  1557  2971 I commit_sys_config_file: [net-policy,5]
+09-20 21:11:16.191  1375  1375 I auditd  : type=1400 audit(0.0:110): avc:  denied  { read } for  comm="binder:1375_1" name="u:object_r:persist_vendor_debug_wifi_prop:s0" dev="tmpfs" ino=15252 scontext=u:r:hal_wifi_default:s0 tcontext=u:object_r:persist_vendor_debug_wifi_prop:s0 tclass=file permissive=0
+09-20 21:11:17.649  3275  3275 I gsm_service_state_change: [1,1,0,0]
+09-20 21:11:17.649  3275  3275 I gsm_rat_switched_new: [1408771,0,14]
+09-20 21:11:19.126  1557  2401 I commit_sys_config_file: [package,31]
+09-20 21:11:19.129  1557  2394 I commit_sys_config_file: [package-user-0,3]
+09-20 21:11:25.888  3275  3458 I service_manager_stats: [299,19,11705]
+09-20 21:11:26.277  1525  3519 I sf_stop_bootanim: 34627
+09-20 21:11:26.277  1557  1701 I wm_boot_animation_done: 34628
+09-20 21:11:26.335  1557  1557 I notification_enqueue: [1000,1557,android,26,NULL,-1,Notification(channel=DEVELOPER_IMPORTANT shortcut=null contentView=null vibrate=null sound=null tick defaults=0 flags=ONGOING_EVENT|CAN_COLORIZE color=0x00000000 vis=PUBLIC),0,1]
+09-20 21:11:26.336  1557  1557 I sysui_multi_action: [757,1501,758,1,793,1,794,0,795,1,796,26,806,android,857,DEVELOPER_IMPORTANT,858,4,947,0,1500,0]
+09-20 21:11:26.336  1557  1557 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:11:26.336  1557  1557 I sysui_multi_action: [757,199,758,1,759,512,793,1,794,0,795,1,796,26,806,android,857,DEVELOPER_IMPORTANT,858,4,947,0,1500,0,1688,1]
+09-20 21:11:26.336  1557  1557 I notification_alert: [-1|android|26|null|1000,0,0,0,0,512]
+09-20 21:11:26.338  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,No service published for: thread_network]
+09-20 21:11:26.339  1557  1756 I am_wtf  : [0,1557,system_server,-1,SystemServiceRegistry,Manager wrapper not available: thread_network]
+09-20 21:11:26.412  3097  3097 I sysui_heads_up_status: [-1|android|26|null|1000,1]
+09-20 21:11:26.451  1557  2908 I input_focus: [Focus entering 860fb7f NotificationShade,reason=setFocusedWindow]
+09-20 21:11:26.499  1557  1701 I uc_finish_user_boot: 0
+09-20 21:11:26.500  1557  1701 I am_user_state_changed: [0,1]
+09-20 21:11:26.500  1557  1701 I uc_send_user_broadcast: [0,android.intent.action.LOCKED_BOOT_COMPLETED]
+09-20 21:11:26.504  1557  1701 I uc_finish_user_unlocking: 0
+09-20 21:11:26.508  1557  1757 I am_proc_start: [0,3911,10335,android.ext.services,on-hold,]
+09-20 21:11:26.550  1557  1756 I am_uid_running: 10380
+09-20 21:11:26.559  1557  1757 I am_proc_start: [0,3942,10380,com.drdisagree.colorblendr,broadcast,{com.drdisagree.colorblendr/com.drdisagree.colorblendr.service.BroadcastListener}]
+09-20 21:11:26.561  1557  1599 I am_proc_bound: [0,3911,android.ext.services]
+09-20 21:11:26.565  1557  2831 I commit_sys_config_file: [settings-4-0,21]
+09-20 21:11:26.620  1557  3157 I am_proc_bound: [0,3942,com.drdisagree.colorblendr]
+09-20 21:11:26.635  3991  3991 I auditd  : type=1400 audit(0.0:111): avc:  denied  { transition } for  comm="init" path="/system/bin/sh" dev="dm-1" ino=536 scontext=u:r:init:s0 tcontext=u:r:qti-testscripts:s0 tclass=process permissive=0
+09-20 21:11:26.665  1557  2654 I am_uid_active: 10335
+09-20 21:11:26.715  4026  4026 I auditd  : type=1400 audit(0.0:112): avc:  denied  { getattr } for  comm="batterysecret" path="/dev/kmsg" dev="tmpfs" ino=1051 scontext=u:r:batterysecret:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=0
+09-20 21:11:26.733  1557  2831 I commit_sys_config_file: [settings-1-0,1]
+09-20 21:11:26.753  1557  2654 I am_uid_active: 10380
+09-20 21:11:26.754  1557  1756 I am_uid_running: 10273
+09-20 21:11:26.766  1557  1757 I am_proc_start: [0,4047,10273,com.android.deskclock,broadcast,{com.android.deskclock/com.android.deskclock.AlarmInitReceiver}]
+09-20 21:11:26.790  1557  1599 I am_proc_bound: [0,4047,com.android.deskclock]
+09-20 21:11:26.811  4078  4078 I auditd  : type=1400 audit(0.0:113): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:26.837  1557  1599 I am_uid_active: 10273
+09-20 21:11:26.839  1557  1756 I am_uid_running: 10255
+09-20 21:11:26.863  1557  1757 I am_proc_start: [0,4103,10255,com.google.android.apps.wellbeing,broadcast,{com.google.android.apps.wellbeing/com.google.android.apps.wellbeing.common.receiver.coalescedreceivers.LockedBootCompletedCoalescedBroadcast_Receiver}]
+09-20 21:11:26.882  1557  1599 I am_proc_bound: [0,4103,com.google.android.apps.wellbeing]
+09-20 21:11:27.039  1557  3719 I am_uid_active: 10255
+09-20 21:11:27.062  1557  1757 I am_proc_start: [0,4177,1000,io.chaldeaprjkt.gamespace,broadcast,{io.chaldeaprjkt.gamespace/io.chaldeaprjkt.gamespace.BootCompletedReceiver}]
+09-20 21:11:27.081  1557  3719 I am_proc_bound: [0,4177,io.chaldeaprjkt.gamespace]
+09-20 21:11:27.114  1557  3719 I am_wtf  : [0,4177,io.chaldeaprjkt.gamespace,818527821,ContextImpl,Data directory doesn't exist for package io.chaldeaprjkt.gamespace]
+09-20 21:11:27.125  1557  1756 I am_uid_running: 10327
+09-20 21:11:27.133  1557  1757 I am_proc_start: [0,4199,10327,org.lineageos.settingsconfig,broadcast,{org.lineageos.settingsconfig/org.lineageos.settingsconfig.BootReceiver}]
+09-20 21:11:27.153  1557  2654 I am_proc_bound: [0,4199,org.lineageos.settingsconfig]
+09-20 21:11:27.173  1557  1599 I am_uid_active: 10327
+09-20 21:11:27.174  1557  1756 I am_uid_running: 10295
+09-20 21:11:27.194  1557  1757 I am_proc_start: [0,4220,10295,org.protonaosp.deviceconfig,broadcast,{org.protonaosp.deviceconfig/org.protonaosp.deviceconfig.BootReceiver}]
+09-20 21:11:27.212  1557  2654 I am_proc_bound: [0,4220,org.protonaosp.deviceconfig]
+09-20 21:11:27.232  1557  1599 I am_uid_active: 10295
+09-20 21:11:27.456  1557  2831 I commit_sys_config_file: [settings-4-0,12]
+09-20 21:11:27.481  1557  2831 I commit_sys_config_file: [settings-0-0,3]
+09-20 21:11:28.316  1557  1749 I battery_saver_setting: 10
+09-20 21:11:28.721  1557  2984 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953088721]
+09-20 21:11:28.721  1557  2984 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953088721]
+09-20 21:11:28.768  1557  2984 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953088768]
+09-20 21:11:28.769  1557  2984 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953088768]
+09-20 21:11:28.873  1557  1599 I commit_sys_config_file: [overlays,4]
+09-20 21:11:28.902  1557  2654 I commit_sys_config_file: [overlays,3]
+09-20 21:11:28.911  1557  1688 I configuration_changed: -2147483648
+09-20 21:11:28.931  1557  2654 I commit_sys_config_file: [overlays,4]
+09-20 21:11:28.938  1557  3144 I commit_sys_config_file: [overlays,3]
+09-20 21:11:29.081  1557  3435 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.089  1557  3435 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.129  1557  2903 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.169  1557  3605 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.277  1557  3605 I commit_sys_config_file: [overlays,3]
+09-20 21:11:29.282  1557  3605 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.546  1557  1599 I commit_sys_config_file: [overlays,4]
+09-20 21:11:29.550  1557  1599 I commit_sys_config_file: [overlays,1]
+09-20 21:11:29.683  1557  3605 I commit_sys_config_file: [overlays,2]
+09-20 21:11:29.687  1557  3605 I commit_sys_config_file: [overlays,2]
+09-20 21:11:30.307  1557  1756 I am_wtf  : [0,1557,system_server,-1,ActivityManager,Sending non-protected broadcast android.intent.action.UPDATE_CT_LOGS from system uid 1000 pkg android]
+09-20 21:11:30.349  1557  2970 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953090349]
+09-20 21:11:30.349  1557  2970 I netstats_wifi_sample: [328,208,1,3,328,208,1,3,1789953090349]
+09-20 21:11:31.811  4078  4078 I auditd  : type=1400 audit(0.0:114): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:32.113  3097  3097 I sysui_heads_up_status: [-1|android|26|null|1000,0]
+09-20 21:11:33.093  1557  2984 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953093093]
+09-20 21:11:33.093  1557  2984 I netstats_wifi_sample: [1640,483,5,7,328,284,1,4,1789953093093]
+09-20 21:11:33.208  1557  3030 I ntp_success: [time.android.com/216.239.35.4,28,1068]
+09-20 21:11:33.321  1557  1822 I sysui_multi_action: [757,1696,758,6,759,2]
+09-20 21:11:33.394  3413  4015 I c2dm    : [-2,,1,1]
+09-20 21:11:33.472  3413  4015 I gtalk_heartbeat_reset: [65896,173.194.216.188:5228]
+09-20 21:11:33.473  3413  4015 I gtalk_connection: 0
+09-20 21:11:33.506  3275  3275 I gsm_service_state_change: [0,0,0,0]
+09-20 21:11:36.811  4078  4078 I auditd  : type=1400 audit(0.0:115): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:38.240  1557  2831 I commit_sys_config_file: [settings-1-0,5]
+09-20 21:11:39.022  1557  2394 I commit_sys_config_file: [package-user-0,18]
+09-20 21:11:41.811  4078  4078 I auditd  : type=1400 audit(0.0:116): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:42.257  1557  2831 I commit_sys_config_file: [settings-1-0,17]
+09-20 21:11:46.815  4078  4078 I auditd  : type=1400 audit(0.0:117): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:49.553  1557  2831 I commit_sys_config_file: [settings-1-0,6]
+09-20 21:11:51.819  4078  4078 I auditd  : type=1400 audit(0.0:118): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:11:52.655  1557  2831 I commit_sys_config_file: [settings-1-0,7]
+09-20 21:11:56.819  4078  4078 I auditd  : type=1400 audit(0.0:119): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:01.689  1557  3605 I battery_level: [73,8122,330]
+09-20 21:12:01.819  4078  4078 I auditd  : type=1400 audit(0.0:120): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:06.823  4078  4078 I auditd  : type=1400 audit(0.0:121): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:11.823  4078  4078 I auditd  : type=1400 audit(0.0:122): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:14.374  1557  1756 I am_uid_idle: 10330
+09-20 21:12:15.775  1557  1756 I am_uid_idle: 10306
+09-20 21:12:16.827  4078  4078 I auditd  : type=1400 audit(0.0:123): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:21.831  4078  4078 I auditd  : type=1400 audit(0.0:124): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:22.102  1557  1756 I am_uid_idle: 10214
+09-20 21:12:25.780  1557  1756 I am_uid_idle: 10252
+09-20 21:12:26.831  4078  4078 I auditd  : type=1400 audit(0.0:125): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:31.831  4078  4078 I auditd  : type=1400 audit(0.0:126): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:36.835  4078  4078 I auditd  : type=1400 audit(0.0:127): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:41.835  4078  4078 I auditd  : type=1400 audit(0.0:128): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:46.579  1557  1756 I am_uid_idle: 10259
+09-20 21:12:46.760  1557  1756 I am_uid_idle: 10380
+09-20 21:12:46.839  1557  1756 I am_uid_idle: 10273
+09-20 21:12:46.835  4078  4078 I auditd  : type=1400 audit(0.0:129): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:47.046  1557  1756 I am_uid_idle: 10255
+09-20 21:12:47.180  1557  1756 I am_uid_idle: 10327
+09-20 21:12:47.236  1557  1756 I am_uid_idle: 10295
+09-20 21:12:51.839  4078  4078 I auditd  : type=1400 audit(0.0:130): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:12:56.843  4078  4078 I auditd  : type=1400 audit(0.0:131): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:13:01.843  4078  4078 I auditd  : type=1400 audit(0.0:132): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:13:06.843  4078  4078 I auditd  : type=1400 audit(0.0:133): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=15037 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0

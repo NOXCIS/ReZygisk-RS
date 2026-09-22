@@ -28,12 +28,15 @@ fn set_path_name(addr: &mut libc::sockaddr_un, path: &str) -> io::Result<()> {
 }
 
 /// Connect to an abstract-namespace Unix stream socket (daemon.c
-/// `rezygiskd_connect`): `retry` connection attempts, 1s between them.
+/// `rezygiskd_connect`): exactly `retry` attempts, 1s sleep only while
+/// another attempt remains (the C `if (retry)` guard — the final failed
+/// attempt returns immediately, without sleeping).
 pub fn connect_abstract(name: &str, retry: u8) -> io::Result<i32> {
     let mut addr: libc::sockaddr_un = unsafe { std::mem::zeroed() };
     let addr_len = set_abstract_name(&mut addr, name)?;
 
-    let mut attempts = retry as u32 + 1;
+    // daemon.c 31-32: exactly `retry` attempts in total.
+    let mut attempts = retry as u32;
     while attempts > 0 {
         attempts -= 1;
         let fd = unsafe {
@@ -54,13 +57,13 @@ pub fn connect_abstract(name: &str, retry: u8) -> io::Result<i32> {
             return Ok(fd);
         }
 
-        let err = io::Error::last_os_error();
         unsafe { libc::close(fd) };
 
+        // daemon.c 45-49: log + 1s sleep only when a retry remains; the
+        // final failure returns immediately. (The log lives in the callers,
+        // which tag it per binary.)
         if attempts > 0 {
             unsafe { libc::sleep(1) };
-        } else {
-            return Err(err);
         }
     }
 

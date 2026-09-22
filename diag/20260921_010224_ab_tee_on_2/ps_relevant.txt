@@ -1,0 +1,8 @@
+  731     1 keystore     21:00:16 keystore2 /data/misc/keystore
+  997     1 root         21:00:18 logcat -f /data/adb/rezygisk/boot.log -r 4096 -n 2 -v threadtime
+ 1003     1 root         21:00:18 zygisk-ptrace64 monitor
+ 1101  1003 root         21:00:18 zygiskd64
+ 1113  1003 root         21:00:18 zygiskd32
+ 2057     1 root         21:00:21 supervisor ./daemon /data/adb/modules/tricky_store
+ 2073  2057 root         21:00:21 TEESimulator
+ 4069     1 root         21:00:41 ksud truman watchdog

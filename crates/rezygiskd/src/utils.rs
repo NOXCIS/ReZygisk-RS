@@ -7,7 +7,7 @@ use std::sync::Mutex;
 
 use rz_common::plog;
 
-pub const TAG: &str = if cfg!(target_pointer_width = "64") { "zygiskd64" } else { "zygiskd32" };
+pub const TAG: &str = rz_common::LOG_TAG_DAEMON;
 
 /// utils.h LOGx macros write to logcat AND stdout.
 macro_rules! dlogi {
@@ -382,14 +382,22 @@ struct NsFdCache {
 static NS_FD_CACHE: Mutex<NsFdCache> = Mutex::new(NsFdCache { clean: -1, mounted: -1 });
 
 /// utils.c `save_mns_fd`: return a cached fd referring to a clean/mounted
-/// mount namespace derived from `pid`, creating it in a forked child if needed.
-pub fn save_mns_fd(pid: i32, state: rz_ipc::MountNamespaceState, kind: rz_ipc::RootImplKind) -> RawFd {
+/// mount namespace derived from `pid`, creating it in a forked child if
+/// needed. `state` is the raw wire byte (Clean=0 / Mounted=1); any other
+/// value behaves exactly like the C enum cast in utils.c 773-901: no
+/// unshare, no caching.
+pub fn save_mns_fd(pid: i32, state: u8, kind: rz_ipc::RootImplKind) -> RawFd {
+    let clean = rz_ipc::MountNamespaceState::Clean as u8;
+    let mounted = rz_ipc::MountNamespaceState::Mounted as u8;
+
     {
         let cache = NS_FD_CACHE.lock().unwrap();
-        match state {
-            rz_ipc::MountNamespaceState::Clean if cache.clean != -1 => return cache.clean,
-            rz_ipc::MountNamespaceState::Mounted if cache.mounted != -1 => return cache.mounted,
-            _ => {}
+        // utils.c 777-778
+        if state == clean && cache.clean != -1 {
+            return cache.clean;
+        }
+        if state == mounted && cache.mounted != -1 {
+            return cache.mounted;
         }
     }
 
@@ -421,7 +429,7 @@ pub fn save_mns_fd(pid: i32, state: rz_ipc::MountNamespaceState, kind: rz_ipc::R
                 libc::_exit(0);
             }
 
-            if state == rz_ipc::MountNamespaceState::Clean {
+            if state == clean {
                 libc::unshare(libc::CLONE_NEWNS);
                 if !umount_root(kind) {
                     dloge!("Failed to umount root");
@@ -478,13 +486,20 @@ pub fn save_mns_fd(pid: i32, state: rz_ipc::MountNamespaceState, kind: rz_ipc::R
         }
 
         libc::close(parent_sock);
-        libc::waitpid(fork_pid, std::ptr::null_mut(), 0);
+        // utils.c 892-896: C treats a failed waitpid as failure (and leaks
+        // ns_fd); close it here instead.
+        if libc::waitpid(fork_pid, std::ptr::null_mut(), 0) == -1 {
+            dloge!("waitpid: {}", io::Error::last_os_error());
+            libc::close(ns_fd);
+            return -1;
+        }
 
         {
             let mut cache = NS_FD_CACHE.lock().unwrap();
-            match state {
-                rz_ipc::MountNamespaceState::Clean => cache.clean = ns_fd,
-                rz_ipc::MountNamespaceState::Mounted => cache.mounted = ns_fd,
+            if state == clean {
+                cache.clean = ns_fd;
+            } else if state == mounted {
+                cache.mounted = ns_fd;
             }
         }
 

@@ -1,0 +1,20 @@
+{
+  "root": "KernelSU",
+  "monitor": {
+    "state": "0"
+  },
+  "rezygiskd": {
+    "64": {
+      "state": 1,
+      "modules": ["truman"]
+    },
+    "32": {
+      "state": 1,
+      "modules": ["truman"]
+    }
+  },
+  "zygote": {
+    "64": 1,
+    "32": 1
+  }
+}

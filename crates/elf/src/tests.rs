@@ -1,6 +1,8 @@
 use crate::arch::{generic_reloc_type, types, GenericReloc, EM_AARCH64, EM_ARM, EM_X86_64};
 use crate::image::{elf_hash, gnu_hash, ElfImage};
-use crate::reloc::{decode_android_packed, decode_relr, sleb128_decode};
+use crate::reloc::{
+    decode_android_packed, decode_relr, sleb128_decode, RELOCATION_GROUP_HAS_ADDEND_FLAG,
+};
 
 // DT_* tags used by the fixture builder.
 const DT_NULL: u64 = 0;
@@ -64,6 +66,20 @@ fn le_u32(v: u32) -> [u8; 4] {
 
 fn le_u64(v: u64) -> [u8; 8] {
     v.to_le_bytes()
+}
+
+/// Standard SLEB128 encoder (mirrors lld's encodeSLEB128) for APS2 fixtures.
+fn push_sleb(out: &mut Vec<u8>, value: i64) {
+    let mut v = value;
+    loop {
+        let byte = (v & 0x7f) as u8;
+        v >>= 7;
+        if (v == 0 && byte & 0x40 == 0) || (v == -1 && byte & 0x40 != 0) {
+            out.push(byte);
+            break;
+        }
+        out.push(byte | 0x80);
+    }
 }
 
 /// Layout (all vaddrs == file offsets, so bias = 0):
@@ -185,9 +201,10 @@ fn build_elf64() -> Vec<u8> {
             out.push(byte | 0x80);
         }
     };
-    // 1 reloc, one group: size=1, flags=HAS_ADDEND, offset delta=0x800,
-    // r_info=RELATIVE, addend=0x4000
+    // 1 reloc, one group: initial r_offset=0, size=1, flags=HAS_ADDEND,
+    // offset delta=0x800, r_info=RELATIVE, addend=0x4000
     sleb_push(1, &mut packed);
+    sleb_push(0, &mut packed); // ABSOLUTE initial r_offset (linker.c 1843-1845)
     sleb_push(1, &mut packed);
     sleb_push(8, &mut packed); // RELOCATION_GROUP_HAS_ADDEND_FLAG
     sleb_push(0x800, &mut packed);
@@ -416,6 +433,7 @@ fn relr_word32_and_packed_rel() {
         }
     };
     push(2, &mut packed); // 2 relocs
+    push(0x3e0, &mut packed); // ABSOLUTE initial r_offset (linker.c 1843-1845)
     push(2, &mut packed); // group size
     push(2, &mut packed); // flags: GROUPED_BY_OFFSET_DELTA only
     push(0x10, &mut packed); // offset delta
@@ -427,7 +445,56 @@ fn relr_word32_and_packed_rel() {
     assert_eq!(relocs[0].addend, 0);
     assert_eq!(relocs[0].rtype, 23);
     assert_eq!(relocs[0].sym_idx, 0);
-    assert_eq!(relocs[1].offset, relocs[0].offset + 0x10);
+    assert_eq!(relocs[0].offset, 0x3f0);
+    assert_eq!(relocs[1].offset, 0x400);
+}
+
+#[test]
+fn android_packed_consumes_absolute_initial_offset() {
+    // Regression (audit P0 #1): the initial post-count value is the ABSOLUTE
+    // r_offset (linker.c 1843-1845), not the first group header. A nonzero
+    // initial offset desynced the whole stream before the fix.
+    let mut t = b"APS2".to_vec();
+    push_sleb(&mut t, 2); // num_relocs
+    push_sleb(&mut t, 0x3e0); // ABSOLUTE initial r_offset
+    push_sleb(&mut t, 2); // group size
+    push_sleb(&mut t, 0); // flags: nothing grouped, REL (no addends)
+    push_sleb(&mut t, 8); // offset delta
+    push_sleb(&mut t, (1i64 << 32) | 2); // r_info: sym 1, type 2 (64-bit layout)
+    push_sleb(&mut t, 0x10); // offset delta
+    push_sleb(&mut t, (2i64 << 32) | 2); // r_info: sym 2, type 2
+
+    let relocs = decode_android_packed(&t, false, true).unwrap();
+    assert_eq!(relocs.len(), 2);
+    assert_eq!(relocs[0].offset, 0x3e8);
+    assert_eq!(relocs[0].sym_idx, 1);
+    assert_eq!(relocs[0].rtype, 2);
+    assert_eq!(relocs[1].offset, 0x3f8);
+    assert_eq!(relocs[1].sym_idx, 2);
+    assert!(!relocs[1].has_addend);
+
+    // RELA variant: per-reloc addends with a negative first delta exercise
+    // the sleb sign extension feeding the accumulator (linker.c 1903-1904).
+    let mut t = b"APS2".to_vec();
+    push_sleb(&mut t, 2); // num_relocs
+    push_sleb(&mut t, 0x200); // ABSOLUTE initial r_offset
+    push_sleb(&mut t, 2); // group size
+    push_sleb(&mut t, 8); // flags: RELOCATION_GROUP_HAS_ADDEND only
+    push_sleb(&mut t, 0x10); // offset delta
+    push_sleb(&mut t, 1027); // r_info: RELATIVE (aarch64)
+    push_sleb(&mut t, -0x40); // addend delta -> 0xffffffffffffffc0
+    push_sleb(&mut t, 0x10); // offset delta
+    push_sleb(&mut t, 1027); // r_info: RELATIVE (aarch64)
+    push_sleb(&mut t, 0x30); // addend delta -> 0xfffffffffffffff0
+
+    let relocs = decode_android_packed(&t, true, true).unwrap();
+    assert_eq!(relocs.len(), 2);
+    assert_eq!(relocs[0].offset, 0x210);
+    assert_eq!(relocs[0].rtype, 1027);
+    assert!(relocs[0].has_addend);
+    assert_eq!(relocs[0].addend, u64::wrapping_neg(0x40));
+    assert_eq!(relocs[1].offset, 0x220);
+    assert_eq!(relocs[1].addend, u64::wrapping_neg(0x10));
 }
 
 #[test]
@@ -470,4 +537,341 @@ fn real_lib_zygisk_lookup() {
     } else {
         eprintln!("zygisk_companion_entry not exported in this build");
     }
+}
+
+// ---------------------------------------------------------------------------
+// FINDING #5 fixture: GNU hash (symoffset 2, bloom rejects everything) plus a
+// SysV hash whose chain WOULD resolve over_sym. Exercises the exact PLTI
+// chain (elf_util.c elfutil_internal_find_plt_addr):
+//   gnu_lookup -> elf_lookup (skipped when DT_GNU_HASH parsed) ->
+//   linear_lookup (GNU-only, scanning idx < symoffset).
+// ---------------------------------------------------------------------------
+
+fn build_lookup_fixture() -> Vec<u8> {
+    let mut b = Builder::new();
+
+    // ---- dynstr ------------------------------------------------------
+    let _ = b.append_align(16);
+    let strtab_vaddr = b.data.len() as u64;
+    let mut names: Vec<(u64, &str)> = Vec::new();
+    let mut add_name = |s: &'static str| {
+        let off = b.data.len() as u64 - strtab_vaddr;
+        names.push((off, s));
+        b.data.extend_from_slice(s.as_bytes());
+        b.data.push(0);
+    };
+    add_name("");
+    add_name("under_sym"); // idx 1: below symoffset
+    add_name("over_sym"); // idx 2: at symoffset
+    add_name("sysv_only_sym"); // idx 3: above symoffset
+    b.data.push(0);
+
+    // ---- dynsym: 4 entries --------------------------------------------
+    let _ = b.append_align(8);
+    let dynsym_vaddr = b.data.len() as u64;
+    let mut sym = |info: u8, shndx: u16, name_off: u64, value: u64, size: u64| {
+        let mut e = Vec::new();
+        e.extend(le_u32(name_off as u32));
+        e.push(info);
+        e.push(0);
+        e.extend(le_u16(shndx));
+        e.extend(le_u64(value));
+        e.extend(le_u64(size));
+        b.data.extend_from_slice(&e);
+    };
+    sym(0, 0, 0, 0, 0); // null
+    sym(0x12, 1, names[1].0, 0x5100, 64); // GLOBAL FUNC "under_sym"
+    sym(0x12, 1, names[2].0, 0x5200, 64); // GLOBAL FUNC "over_sym"
+    sym(0x12, 1, names[3].0, 0x5300, 64); // GLOBAL FUNC "sysv_only_sym"
+    let dynsym_count = 4u32;
+
+    // ---- SysV hash table (DT_HASH) ------------------------------------
+    // nbucket == 1 so every elf_hash lands in bucket[0]; the chain walks
+    // 1 (under_sym) -> 2 (over_sym) -> 3 (sysv_only_sym) -> 0. ElfLookup
+    // WOULD resolve "over_sym" from this table, which is exactly what the
+    // dynsym_index_by_name chain must refuse to do once DT_GNU_HASH exists.
+    let _ = b.append_align(8);
+    let sysv_hash_vaddr = b.data.len() as u64;
+    let nbucket = 1u32;
+    let nchain = dynsym_count;
+    b.data.extend(le_u32(nbucket));
+    b.data.extend(le_u32(nchain));
+    b.data.extend(le_u32(1)); // bucket[0] -> 1 (under_sym)
+    b.data.extend(le_u32(0)); // chain[0]: null symbol, unused
+    b.data.extend(le_u32(2)); // chain[1] -> 2 (over_sym)
+    b.data.extend(le_u32(3)); // chain[2] -> 3 (sysv_only_sym)
+    b.data.extend(le_u32(0)); // chain[3]: end
+
+    // ---- GNU hash table (DT_GNU_HASH) ---------------------------------
+    // symoffset = 2: the linear fallback may only scan idx < 2. Bloom word 0
+    // rejects every name on the gnu path, so gnu_lookup always fails while
+    // the bucket/chain data below stays present (unreachable).
+    let _ = b.append_align(8);
+    let gnu_hash_vaddr = b.data.len() as u64;
+    b.data.extend(le_u32(1)); // nbucket
+    b.data.extend(le_u32(2)); // symoffset
+    b.data.extend(le_u32(1)); // bloom_size
+    b.data.extend(le_u32(0)); // bloom_shift
+    b.data.extend(le_u64(0)); // bloom word: neither hash bit present
+    b.data.extend(le_u32(2)); // bucket[0] -> 2 (>= symoffset)
+    // Chains for syms 2 and 3 (values would match their names if the bloom
+    // filter let anything through).
+    b.data.extend(le_u32(gnu_hash("over_sym") | 1));
+    b.data.extend(le_u32(gnu_hash("sysv_only_sym") | 1));
+
+    // ---- dynamic --------------------------------------------------------
+    let _ = b.append_align(8);
+    let dynamic_vaddr = b.data.len() as u64;
+    let mut dyn_entry = |tag: u64, val: u64| {
+        b.data.extend(le_u64(tag));
+        b.data.extend(le_u64(val));
+    };
+    dyn_entry(DT_HASH, sysv_hash_vaddr);
+    dyn_entry(DT_GNU_HASH, gnu_hash_vaddr);
+    dyn_entry(DT_STRTAB, strtab_vaddr);
+    dyn_entry(DT_SYMTAB, dynsym_vaddr);
+    dyn_entry(DT_SYMENT, 24);
+    dyn_entry(DT_NULL, 0);
+    let dynamic_size = b.data.len() as u64 - dynamic_vaddr;
+
+    // ---- headers ---------------------------------------------------------
+    let ehdr_size = 64usize;
+    let phdr_size = 56usize;
+    let phoff = ehdr_size;
+    let total = b.data.len() as u64;
+
+    // PT_LOAD (R) covering the whole file at vaddr 0 (bias 0), then PT_DYNAMIC.
+    let mut phdr = Vec::new();
+    phdr.extend(le_u32(PT_LOAD));
+    phdr.extend(le_u32(4)); // R
+    phdr.extend(le_u64(0)); // offset
+    phdr.extend(le_u64(0)); // vaddr
+    phdr.extend(le_u64(0)); // paddr
+    phdr.extend(le_u64(total)); // filesz
+    phdr.extend(le_u64(total)); // memsz
+    phdr.extend(le_u64(0x1000)); // align
+    phdr.extend(le_u32(PT_DYNAMIC));
+    phdr.extend(le_u32(4)); // R
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_size));
+    phdr.extend(le_u64(dynamic_size));
+    phdr.extend(le_u64(8));
+    assert_eq!(phdr.len(), phdr_size * 2);
+
+    let mut ehdr = Vec::new();
+    ehdr.extend_from_slice(&[0x7f, b'E', b'L', b'F']);
+    ehdr.extend_from_slice(&[2, 1, 1, 0]); // 64-bit, LE, v1, SysV
+    ehdr.extend_from_slice(&[0u8; 8]);
+    ehdr.extend(le_u16(3)); // ET_DYN
+    ehdr.extend(le_u16(EM_AARCH64));
+    ehdr.extend(le_u32(1)); // version
+    ehdr.extend(le_u64(0)); // entry
+    ehdr.extend(le_u64(phoff as u64));
+    ehdr.extend(le_u64(0)); // shoff
+    ehdr.extend(le_u32(0)); // flags
+    ehdr.extend(le_u16(ehdr_size as u16));
+    ehdr.extend(le_u16(phdr_size as u16));
+    ehdr.extend(le_u16(2)); // phnum
+    ehdr.extend(le_u16(0)); // shentsize
+    ehdr.extend(le_u16(0)); // shnum
+    ehdr.extend(le_u16(0)); // shstrndx
+    assert_eq!(ehdr.len(), ehdr_size);
+    b.data[0..ehdr_size].copy_from_slice(&ehdr);
+    b.data[phoff..phoff + phdr.len()].copy_from_slice(&phdr);
+
+    b.data
+}
+
+#[test]
+fn dynsym_index_by_name_matches_c_chain() {
+    let data = build_lookup_fixture();
+    let img = ElfImage::parse(&data).unwrap();
+    assert_eq!(img.dynsym_count(), 4);
+
+    // gnu path fails (bloom word 0 rejects the hash), elf path is SKIPPED
+    // because DT_GNU_HASH is present, so only the GNU-gated linear pass
+    // (idx < symoffset == 2) can find it.
+    assert_eq!(img.dynsym_index_by_name("under_sym"), Some(1));
+
+    // idx 2 >= symoffset: the linear pass must not scan it, and the elf pass
+    // must be skipped even though the SysV chain WOULD resolve over_sym
+    // (bucket -> 1 -> 2). Both the GNU-required-for-linear rule and the
+    // symoffset bound are proven by this single assertion.
+    assert_eq!(img.dynsym_index_by_name("over_sym"), None);
+
+    // Same for idx 3: SysV alone would find it, but neither gnu (bloom) nor
+    // linear (idx >= symoffset) may.
+    assert_eq!(img.dynsym_index_by_name("sysv_only_sym"), None);
+
+    // C sentinel: landing on the null symbol (idx 0) must surface as
+    // not-found, never Some(0).
+    assert_eq!(img.dynsym_index_by_name(""), None);
+
+    // symbol_by_name keeps its own chain (gnu -> elf -> symtab-linear):
+    // the elf pass here resolves under_sym through the SysV table. This
+    // asserts the FINDING #5 change does not break the other chain.
+    let s = img.symbol_by_name("under_sym").expect("under_sym via sysv");
+    assert_eq!(s.name, "under_sym");
+    assert_eq!(s.value, 0x5100);
+}
+
+// ---------------------------------------------------------------------------
+// FINDING #6: APS2 decoder guards
+// ---------------------------------------------------------------------------
+
+#[test]
+fn android_packed_zero_group_errors() {
+    // A zero-sized group can never make progress (the C `i += group_size`
+    // loop would spin forever); the Rust port must reject it instead.
+    let mut t = b"APS2".to_vec();
+    push_sleb(&mut t, 1); // num_relocs
+    push_sleb(&mut t, 0); // ABSOLUTE initial r_offset
+    push_sleb(&mut t, 0); // group_size == 0
+    push_sleb(&mut t, 0); // flags
+    assert!(decode_android_packed(&t, false, true).is_err());
+}
+
+#[test]
+fn android_packed_rel_with_addend_errors() {
+    // REL tables must not carry addends (linker.c LOGF "REL relocations
+    // should not have addends"); the Rust port rejects
+    // RELOCATION_GROUP_HAS_ADDEND_FLAG on a REL table.
+    let mut t = b"APS2".to_vec();
+    push_sleb(&mut t, 1); // num_relocs
+    push_sleb(&mut t, 0); // ABSOLUTE initial r_offset
+    push_sleb(&mut t, 1); // group_size
+    push_sleb(&mut t, RELOCATION_GROUP_HAS_ADDEND_FLAG as i64);
+    assert!(decode_android_packed(&t, false, true).is_err());
+
+    // Same header plus a payload that would decode fine WITHOUT the guard
+    // (one RELATIVE REL at offset 0x10): the guard must reject it up front,
+    // not silently misparse the stream as a no-addend group.
+    let mut t = b"APS2".to_vec();
+    push_sleb(&mut t, 1); // num_relocs
+    push_sleb(&mut t, 0); // ABSOLUTE initial r_offset
+    push_sleb(&mut t, 1); // group_size
+    push_sleb(&mut t, RELOCATION_GROUP_HAS_ADDEND_FLAG as i64);
+    push_sleb(&mut t, 0x10); // offset delta
+    push_sleb(&mut t, 1027); // r_info: R_AARCH64_RELATIVE
+    assert!(decode_android_packed(&t, false, true).is_err());
+}
+
+// ---------------------------------------------------------------------------
+// GNU-hash-only images (no DT_HASH, no section headers — the mapped-snapshot
+// shape plti feeds us): the PLTI lookup chain must resolve through DT_SYMTAB
+// alone, exactly like elf_util.c (dyn_sym_ needs no nchain).
+// ---------------------------------------------------------------------------
+
+#[test]
+fn gnu_only_image_resolves_via_dynsym_extent() {
+    let mut b = Builder::new();
+
+    // dynstr: "", "gnu_target", "gnu_other"
+    let strtab_vaddr = b.data.len() as u64;
+    let mut add_name = |s: &'static str| -> u64 {
+        let off = b.data.len() as u64 - strtab_vaddr;
+        b.data.extend_from_slice(s.as_bytes());
+        b.data.push(0);
+        off
+    };
+    add_name("");
+    let n1 = add_name("gnu_target");
+    let n2 = add_name("gnu_other");
+
+    // dynsym: null, gnu_target (GLOBAL FUNC), gnu_other (GLOBAL FUNC)
+    let _ = b.append_align(8);
+    let dynsym_vaddr = b.data.len() as u64;
+    let mut sym = |name_off: u64| {
+        b.data.extend(le_u32(name_off as u32));
+        b.data.push(0x12);
+        b.data.push(0);
+        b.data.extend(le_u16(1));
+        b.data.extend(le_u64(0x6000));
+        b.data.extend(le_u64(32));
+    };
+    sym(0);
+    sym(n1);
+    sym(n2);
+
+    // GNU hash: nbucket 1, symoffset 1, bloom all-ones, bucket[0] = 1,
+    // chains for syms 1..2 end the walk (bit 0 set).
+    let _ = b.append_align(8);
+    let gnu_vaddr = b.data.len() as u64;
+    b.data.extend(le_u32(1));
+    b.data.extend(le_u32(1));
+    b.data.extend(le_u32(1));
+    b.data.extend(le_u32(0));
+    b.data.extend(le_u64(u64::MAX));
+    b.data.extend(le_u32(1));
+    b.data.extend(le_u32(gnu_hash("gnu_target") | 1));
+    b.data.extend(le_u32(gnu_hash("gnu_other") | 1));
+
+    // dynamic: GNU hash only — NO DT_HASH anywhere.
+    let _ = b.append_align(8);
+    let dynamic_vaddr = b.data.len() as u64;
+    let mut dyn_entry = |tag: u64, val: u64| {
+        b.data.extend(le_u64(tag));
+        b.data.extend(le_u64(val));
+    };
+    dyn_entry(DT_GNU_HASH, gnu_vaddr);
+    dyn_entry(DT_STRTAB, strtab_vaddr);
+    dyn_entry(DT_SYMTAB, dynsym_vaddr);
+    dyn_entry(DT_SYMENT, 24);
+    dyn_entry(DT_NULL, 0);
+    let dynamic_size = b.data.len() as u64 - dynamic_vaddr;
+
+    // ehdr + 2 phdrs (PT_LOAD covering everything, PT_DYNAMIC), no section
+    // headers (shoff/shnum = 0).
+    let ehdr_size = 64usize;
+    let phdr_size = 56usize;
+    let phoff = ehdr_size;
+    let total = b.data.len() as u64;
+    let mut phdr = Vec::new();
+    phdr.extend(le_u32(PT_LOAD));
+    phdr.extend(le_u32(4));
+    phdr.extend(le_u64(0));
+    phdr.extend(le_u64(0));
+    phdr.extend(le_u64(0));
+    phdr.extend(le_u64(total));
+    phdr.extend(le_u64(total));
+    phdr.extend(le_u64(0x1000));
+    phdr.extend(le_u32(PT_DYNAMIC));
+    phdr.extend(le_u32(4));
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_vaddr));
+    phdr.extend(le_u64(dynamic_size));
+    phdr.extend(le_u64(dynamic_size));
+    phdr.extend(le_u64(8));
+
+    let mut ehdr = Vec::new();
+    ehdr.extend_from_slice(&[0x7f, b'E', b'L', b'F']);
+    ehdr.extend_from_slice(&[2, 1, 1, 0]);
+    ehdr.extend_from_slice(&[0u8; 8]);
+    ehdr.extend(le_u16(3)); // ET_DYN
+    ehdr.extend(le_u16(EM_AARCH64));
+    ehdr.extend(le_u32(1));
+    ehdr.extend(le_u64(0));
+    ehdr.extend(le_u64(phoff as u64));
+    ehdr.extend(le_u64(0)); // shoff: no section headers
+    ehdr.extend(le_u32(0));
+    ehdr.extend(le_u16(ehdr_size as u16));
+    ehdr.extend(le_u16(phdr_size as u16));
+    ehdr.extend(le_u16(2));
+    ehdr.extend(le_u16(0));
+    ehdr.extend(le_u16(0));
+    ehdr.extend(le_u16(0));
+    b.data[0..ehdr_size].copy_from_slice(&ehdr);
+    b.data[phoff..phoff + phdr.len()].copy_from_slice(&phdr);
+
+    let img = ElfImage::parse(&b.data).unwrap();
+
+    // elf_util.c resolves through dyn_sym_ without any count: the GNU walk
+    // must reach symbol 1 and the no-DT_HASH fallback must supply the
+    // bounds-check count from the containing PT_LOAD's extent.
+    assert_eq!(img.dynsym_index_by_name("gnu_target"), Some(1));
+    assert_eq!(img.dynsym_index_by_name("gnu_other"), None); // not in gnu chain
+    assert_eq!(img.symbol_at(2).map(|s| s.name.clone()), Some("gnu_other".into()));
 }

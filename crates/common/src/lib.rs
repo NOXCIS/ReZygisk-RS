@@ -1,15 +1,17 @@
 //! Shared helpers used by zygiskd, zygisk-ptrace and libzygisk.so:
-//! path constants, /proc parsing, kernel version and logging.
+//! path constants, /proc parsing, kernel version, logging and RAII wrappers.
 
 pub mod consts;
 pub mod fdpass;
 pub mod kversion;
 pub mod maps;
+pub mod owned_fd;
 
 pub use consts::*;
 pub use fdpass::{recv_fd, send_fd};
 pub use kversion::KernelVersion;
 pub use maps::{parse_maps, parse_maps_line, parse_maps_safe, MapEntry, MapPerms};
+pub use owned_fd::OwnedFd;
 
 /// Mirrors C `LP_SELECT(lp32, lp64)` (loader/src/include/misc.h): picks the
 /// first argument on 32-bit builds, the second on 64-bit builds.
@@ -30,6 +32,41 @@ pub fn is_isolated_service(uid: u32) -> bool {
 // Logging: __android_log_print on Android, stderr elsewhere (host tests).
 // ---------------------------------------------------------------------------
 
+/// Central logcat tags, build-time selectable via the `stealth-tag` feature.
+/// The defaults match the C reference ("zygisk*" — C parity, and any
+/// logcat-scanning tooling keeps working); the stealth build swaps in
+/// neutral tags so a log grep cannot fingerprint the framework.
+#[cfg(not(feature = "stealth-tag"))]
+pub const LOG_TAG: &str = "zygisk";
+#[cfg(feature = "stealth-tag")]
+pub const LOG_TAG: &str = "core";
+
+#[cfg(not(feature = "stealth-tag"))]
+pub const LOG_TAG_TRACER: &str = if cfg!(target_pointer_width = "64") {
+    "zygisk-ptrace64"
+} else {
+    "zygisk-ptrace32"
+};
+#[cfg(feature = "stealth-tag")]
+pub const LOG_TAG_TRACER: &str = if cfg!(target_pointer_width = "64") {
+    "core-trace64"
+} else {
+    "core-trace32"
+};
+
+#[cfg(not(feature = "stealth-tag"))]
+pub const LOG_TAG_DAEMON: &str = if cfg!(target_pointer_width = "64") {
+    "zygiskd64"
+} else {
+    "zygiskd32"
+};
+#[cfg(feature = "stealth-tag")]
+pub const LOG_TAG_DAEMON: &str = if cfg!(target_pointer_width = "64") {
+    "cored64"
+} else {
+    "cored32"
+};
+
 pub const ANDROID_LOG_VERBOSE: i32 = 2;
 pub const ANDROID_LOG_DEBUG: i32 = 3;
 pub const ANDROID_LOG_INFO: i32 = 4;
@@ -37,9 +74,33 @@ pub const ANDROID_LOG_WARN: i32 = 5;
 pub const ANDROID_LOG_ERROR: i32 = 6;
 pub const ANDROID_LOG_FATAL: i32 = 7;
 
+/// Central runtime log floor. Defaults to DEBUG (historical behavior); the
+/// daemons raise it to WARN when `$TMP_PATH/.quiet` exists (stealth: fewer
+/// identifying lines in logcat) or drop it to VERBOSE with `.verbose`.
+static MAX_LOG_LEVEL: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI32::new(ANDROID_LOG_DEBUG);
+
+/// Apply the `.quiet` / `.verbose` flag files in `$TMP_PATH`, once at daemon
+/// startup. Fail-soft: absence of both keeps the default level.
+pub fn init_log_level_from_flags() {
+    use std::sync::atomic::Ordering;
+
+    let quiet = std::path::Path::new(TMP_PATH).join(".quiet");
+    let verbose = std::path::Path::new(TMP_PATH).join(".verbose");
+    if quiet.exists() {
+        MAX_LOG_LEVEL.store(ANDROID_LOG_WARN, Ordering::Relaxed);
+    } else if verbose.exists() {
+        MAX_LOG_LEVEL.store(ANDROID_LOG_VERBOSE, Ordering::Relaxed);
+    }
+}
+
 #[cfg(target_os = "android")]
 pub fn log_write(prio: i32, tag: &str, args: std::fmt::Arguments) {
     use std::ffi::CString;
+    use std::sync::atomic::Ordering;
+
+    if prio < MAX_LOG_LEVEL.load(Ordering::Relaxed) {
+        return;
+    }
 
     let msg = std::fmt::format(args);
     let tag = CString::new(tag).unwrap_or_default();
@@ -51,6 +112,12 @@ pub fn log_write(prio: i32, tag: &str, args: std::fmt::Arguments) {
 
 #[cfg(not(target_os = "android"))]
 pub fn log_write(prio: i32, tag: &str, args: std::fmt::Arguments) {
+    use std::sync::atomic::Ordering;
+
+    if prio < MAX_LOG_LEVEL.load(Ordering::Relaxed) {
+        return;
+    }
+
     let name = match prio {
         ANDROID_LOG_VERBOSE => "V",
         ANDROID_LOG_DEBUG => "D",
@@ -101,4 +168,60 @@ macro_rules! plog {
         $crate::log_write($crate::ANDROID_LOG_ERROR, $tag, format_args!($($arg)*));
         $crate::log_write($crate::ANDROID_LOG_ERROR, $tag, format_args!(" failed with {}: {}", err.raw_os_error().unwrap_or(0), err));
     }};
+}
+
+// ---------------------------------------------------------------------------
+// Boot-safe stdio
+// ---------------------------------------------------------------------------
+
+/// Daemon-mode binaries must never keep (or block on) the module-script
+/// stdout/stderr pipes: the C reference never writes there, but the RS ports
+/// emit `println!` diagnostics. Attaching them to `$TMP_PATH/verbose.log`
+/// instead keeps a durable per-boot trace (readable from recovery) and leaves
+/// the script pipe free to reach EOF.
+pub fn redirect_stdio_to_log(tag: &str) {
+    use std::ffi::CString;
+
+    let _ = std::fs::create_dir_all(TMP_PATH);
+    let cpath = CString::new(format!("{TMP_PATH}/verbose.log")).unwrap_or_default();
+    let fd = unsafe { libc::open(cpath.as_ptr(), libc::O_WRONLY | libc::O_CREAT | libc::O_APPEND, 0o666) };
+    if fd < 0 {
+        // Never keep the module-script stdout pipe: ksud reads it to EOF and
+        // a wedged script stalls the boot. Fall back to /dev/null for the
+        // println! diagnostics, but say so on logd first — losing the
+        // durable trace silently is exactly what makes postmortems
+        // impossible.
+        log_write(
+            ANDROID_LOG_ERROR,
+            tag,
+            format_args!("cannot open {TMP_PATH}/verbose.log, stdio diagnostics fall back to /dev/null: {}", std::io::Error::last_os_error()),
+        );
+        let null_fd = unsafe {
+            libc::open(b"/dev/null\0".as_ptr() as *const libc::c_char, libc::O_WRONLY)
+        };
+        if null_fd >= 0 {
+            unsafe {
+                libc::dup2(null_fd, 1);
+                libc::dup2(null_fd, 2);
+                if null_fd > 2 {
+                    libc::close(null_fd);
+                }
+            }
+        }
+        return;
+    }
+
+    unsafe {
+        libc::dup2(fd, 1);
+        libc::dup2(fd, 2);
+        if fd > 2 {
+            libc::close(fd);
+        }
+    }
+
+    let epoch = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    eprintln!("=== [{tag}] pid={} epoch={epoch} stdio redirected ===", unsafe { libc::getpid() });
 }

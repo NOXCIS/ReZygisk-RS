@@ -37,33 +37,145 @@ struct ModuleState {
     api: *mut ReZygiskApi,
 }
 
-// ── logcat (no logging crate — keep the ABI layer thin) ──
-const LOG_TAG: &[u8] = b"truman_ref\0";
-const ANDROID_LOG_INFO: i32 = 4;
+// ── logging (companion-routed; never the host process's logcat buffer) ──
+//
+// STEALTH: a zygisk sub-module's stdout/logd output lands in the host
+// process's OWN logcat buffer — readable by the app itself without any
+// permission — so even dev logging must not go there. With the dev-only
+// `truman-log` feature, `preAppSpecialize` (while the child still runs with
+// zygote privileges) opens the rezygiskd companion socket, and every `tlog!`
+// line is relayed by the module's companion process (root) into
+// /data/adb/truman/module.log — the manager's Logs tab reads it next to the
+// other root-side truman logs, and the host app sees nothing but an
+// unnamed socket fd that dies with the specialize pass. Release builds
+// (no feature) compile the whole channel out, so even format strings and
+// path literals vanish from the shipped binary.
+#[cfg(feature = "truman-log")]
+mod logging {
+    use std::os::raw::c_void;
+    use std::sync::atomic::{AtomicI32, Ordering};
 
-extern "C" {
-    fn __android_log_print(prio: i32, tag: *const u8, fmt: *const u8, ...) -> i32;
+    static LOG_FD: AtomicI32 = AtomicI32::new(-1);
+
+    /// Open the log channel: one companion connection per app child, held
+    /// only between the pre- and post-specialize hooks. The companion acks
+    /// on this socket before [crate::zygisk_companion_entry] starts serving
+    /// it; the loader's `connect_companion` consumes that ack for us.
+    pub fn open(api: *mut super::ReZygiskApi, id: *mut c_void) {
+        let fd = unsafe {
+            match (*api).connect_companion {
+                Some(connect) => connect(id),
+                None => -1,
+            }
+        };
+        LOG_FD.store(fd, Ordering::Relaxed);
+    }
+
+    pub fn close() {
+        let fd = LOG_FD.swap(-1, Ordering::Relaxed);
+        if fd >= 0 {
+            unsafe { libc::close(fd) };
+        }
+    }
+
+    pub fn emit(msg: &str) {
+        let fd = LOG_FD.load(Ordering::Relaxed);
+        if fd < 0 {
+            return;
+        }
+        let payload = msg.as_bytes();
+        // Native-endian length prefix — the same socket_utils convention as
+        // the daemon protocol on this platform.
+        let len = (payload.len() as u32).to_ne_bytes();
+        let send = |buf: &[u8]| unsafe {
+            libc::send(fd, buf.as_ptr().cast(), buf.len(), libc::MSG_NOSIGNAL)
+        };
+        if send(&len) != 4 {
+            close();
+            return;
+        }
+        if !payload.is_empty() && send(payload) != payload.len() as isize {
+            close();
+        }
+    }
 }
 
-pub(crate) fn truman_log(msg: &str) {
-    let fmt = b"%s\0";
-    let cmsg = match std::ffi::CString::new(msg.replace('%', "%%")) {
-        Ok(s) => s,
-        Err(_) => return,
+#[cfg(feature = "truman-log")]
+macro_rules! tlog {
+    ($($arg:tt)*) => { $crate::logging::emit(&format!($($arg)*)) };
+}
+
+#[cfg(not(feature = "truman-log"))]
+macro_rules! tlog {
+    ($($arg:tt)*) => {{}};
+}
+
+pub(crate) use tlog;
+
+/// Root-side log sink, served inside the rezygiskd companion process (one
+/// thread per connecting app child). Protocol: a native-endian u32 length
+/// followed by that many bytes per line; EOF ends the session. Lines are
+/// appended to /data/adb/truman/module.log with a 256 KiB rotate-to-`.old`
+/// cap, so growth is bounded and the manager's Logs tab can read it through
+/// the root shell like the other truman logs. Only compiled into dev builds
+/// together with the `truman-log` feature.
+#[cfg(feature = "truman-log")]
+#[no_mangle]
+pub unsafe extern "C" fn zygisk_companion_entry(fd: i32) {
+    const LOG_PATH: &str = "/data/adb/truman/module.log";
+    const ROTATE_PATH: &str = "/data/adb/truman/module.log.old";
+    const MAX_LOG_BYTES: u64 = 256 * 1024;
+    const MAX_LINE: usize = 4096;
+
+    let _ = std::fs::create_dir_all("/data/adb/truman");
+    if let Ok(meta) = std::fs::metadata(LOG_PATH) {
+        if meta.len() > MAX_LOG_BYTES {
+            let _ = std::fs::rename(LOG_PATH, ROTATE_PATH);
+        }
+    }
+
+    let read_full = |buf: &mut [u8]| -> bool {
+        let mut filled = 0;
+        while filled < buf.len() {
+            let n = unsafe { libc::read(fd, buf[filled..].as_mut_ptr().cast(), buf.len() - filled) };
+            if n <= 0 {
+                return false;
+            }
+            filled += n as usize;
+        }
+        true
     };
-    unsafe {
-        __android_log_print(
-            ANDROID_LOG_INFO,
-            LOG_TAG.as_ptr(),
-            fmt.as_ptr(),
-            cmsg.as_ptr(),
-        );
+
+    loop {
+        let mut len_buf = [0u8; 4];
+        if !read_full(&mut len_buf) {
+            return;
+        }
+        let len = u32::from_ne_bytes(len_buf) as usize;
+        if len == 0 || len > MAX_LINE {
+            return;
+        }
+        let mut buf = vec![0u8; len];
+        if !read_full(&mut buf) {
+            return;
+        }
+        let line = String::from_utf8_lossy(&buf);
+        let secs = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .unwrap_or(0);
+        let Ok(mut file) = std::fs::OpenOptions::new().create(true).append(true).open(LOG_PATH)
+        else {
+            return;
+        };
+        use std::io::Write;
+        let _ = writeln!(file, "[{secs}] {line}");
     }
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn zygisk_module_entry(api: *mut ReZygiskApi, env: *mut jni::sys::JNIEnv) {
-    truman_log("module entry (Phase 7 reflection spoof)");
+    tlog!("module entry (Phase 7 reflection spoof)");
 
     let state = Box::new(ModuleState { env, api });
     let abi = ReZygiskAbi {
@@ -76,8 +188,8 @@ pub unsafe extern "C" fn zygisk_module_entry(api: *mut ReZygiskApi, env: *mut jn
     };
 
     match (*api).register_module {
-        Some(register) if register(api, &abi) => truman_log("registered (api v5)"),
-        _ => truman_log("register_module FAILED — spoof inert this process"),
+        Some(register) if register(api, &abi) => tlog!("registered (api v5)"),
+        _ => tlog!("register_module FAILED — spoof inert this process"),
     }
 }
 
@@ -93,13 +205,37 @@ unsafe fn request_self_unload(state: &ModuleState) {
     }
     match (*api).set_option {
         Some(set_option) => set_option((*api).impl_, DLCLOSE_MODULE_LIBRARY),
-        None => truman_log("set_option unavailable — library stays mapped"),
+        None => tlog!("set_option unavailable — library stays mapped"),
+    }
+}
+
+/// Dev builds: open the root-side log channel while the child still runs
+/// with zygote privileges, so no line ever needs the host's logcat buffer.
+#[cfg(feature = "truman-log")]
+unsafe fn open_log_channel(state: &ModuleState) {
+    let api = state.api;
+    if !api.is_null() {
+        logging::open(api, (*api).impl_);
     }
 }
 
 unsafe extern "C" fn pre_app_specialize(impl_: *mut c_void, _args: *mut c_void) {
     let state = &*(impl_ as *const ModuleState);
+    #[cfg(feature = "truman-log")]
+    open_log_channel(state);
     request_self_unload(state);
+}
+
+/// Closes the companion log channel on every exit path of the specialize
+/// pass — the one-shot module is about to be dlclosed, and the fd must not
+/// outlive it.
+#[cfg(feature = "truman-log")]
+struct LogChannelGuard;
+#[cfg(feature = "truman-log")]
+impl Drop for LogChannelGuard {
+    fn drop(&mut self) {
+        logging::close();
+    }
 }
 
 unsafe extern "C" fn pre_server_specialize(impl_: *mut c_void, _args: *mut c_void) {
@@ -107,7 +243,10 @@ unsafe extern "C" fn pre_server_specialize(impl_: *mut c_void, _args: *mut c_voi
     request_self_unload(state);
 }
 
+#[cfg_attr(not(feature = "truman-log"), allow(unused_variables))]
 unsafe extern "C" fn post_app_specialize(impl_: *mut c_void, args: *const c_void) {
+    #[cfg(feature = "truman-log")]
+    let _log_channel = LogChannelGuard;
     if args.is_null() {
         return;
     }
@@ -140,21 +279,21 @@ unsafe extern "C" fn post_app_specialize(impl_: *mut c_void, args: *const c_void
         return;
     }
 
-    truman_log(&format!("specializing '{pkg}' — applying {} rewrites", entries.len()));
+    tlog!("specializing '{pkg}' — applying {} rewrites", entries.len());
 
     if let Ok(mut env) = unsafe { JNIEnv::from_raw(env_ptr) } {
         for entry in entries {
             if let Err(reason) = jni_glue::apply_entry(&mut env, entry) {
-                truman_log(&format!("skipped {}.{}: {reason}", entry.class, entry.field));
+                tlog!("skipped {}.{}: {reason}", entry.class, entry.field);
                 if jni_glue::clear_pending(&mut env) {
-                    truman_log("pending JNI exception cleared");
+                    tlog!("pending JNI exception cleared");
                 }
             }
         }
         if jni_glue::clear_pending(&mut env) {
-            truman_log("pending JNI exception cleared after rewrite pass");
+            tlog!("pending JNI exception cleared after rewrite pass");
         }
     } else {
-        truman_log("JNIEnv::from_raw failed — spoof skipped");
+        tlog!("JNIEnv::from_raw failed — spoof skipped");
     }
 }

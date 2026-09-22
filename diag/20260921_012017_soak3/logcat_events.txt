@@ -1,0 +1,1167 @@
+--------- beginning of events
+12-31 21:57:39.411   689   689 I auditd  : SELinux: Loaded service context from:
+12-31 21:57:39.411   689   689 I auditd  : 		/system/etc/selinux/plat_service_contexts
+12-31 21:57:39.411   689   689 I auditd  : 		/system_ext/etc/selinux/system_ext_service_contexts
+12-31 21:57:39.411   689   689 I auditd  : 		/product/etc/selinux/product_service_contexts
+12-31 21:57:39.411   689   689 I auditd  : 		/vendor/etc/selinux/vendor_service_contexts
+12-31 21:57:39.411   689   689 I auditd  : 		/odm/etc/selinux/odm_service_contexts
+12-31 19:00:00.147   687   687 I auditd  : type=2000 audit(0.0:1): state=initialized audit_enabled=0 res=1
+12-31 21:57:32.679   687   687 I auditd  : type=1403 audit(0.0:2): auid=4294967295 ses=4294967295 lsm=selinux res=1
+12-31 21:57:32.679   687   687 I auditd  : type=1404 audit(0.0:3): enforcing=1 old_enforcing=0 auid=4294967295 ses=4294967295 enabled=1 old-enabled=1 lsm=selinux res=1
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:4): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=ril.subscription.types pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:5): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=DEVICE_PROVISIONED pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:6): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.dbg.ims_volte_enable pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:7): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.VT_HYBRID_ENABLE pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:8): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.NO_STAPA pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:9): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.radio.dynamic_sar pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:radio_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:32.827     1     1 I auditd  : type=1107 audit(0.0:10): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=qcom.hw.aac.encoder pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+12-31 21:57:39.223   672   672 I auditd  : type=1400 audit(0.0:81): avc:  denied  { write } for  comm="prng_seeder" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:prng_seeder:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.223   672   672 I auditd  : type=1400 audit(0.0:82): avc:  denied  { write } for  comm="prng_seeder" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:prng_seeder:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.223   673   673 I auditd  : type=1400 audit(0.0:83): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.223   673   673 I auditd  : type=1400 audit(0.0:84): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.243   674   674 I auditd  : type=1400 audit(0.0:85): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.243   674   674 I auditd  : type=1400 audit(0.0:86): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:vendor_boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.415   699   699 I auditd  : type=1400 audit(0.0:87): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.415   699   699 I auditd  : type=1400 audit(0.0:88): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.423   700   700 I auditd  : type=1400 audit(0.0:89): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.423   700   700 I auditd  : type=1400 audit(0.0:90): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+12-31 21:57:39.568   730   752 I auditd  : SELinux: Loaded keystore2 context from:
+12-31 21:57:39.568   730   752 I auditd  : 		/system/etc/selinux/plat_keystore2_key_contexts
+12-31 21:57:39.568   730   752 I auditd  : 		/system_ext/etc/selinux/system_ext_keystore2_key_contexts
+12-31 21:57:39.568   730   752 I auditd  : 		/product/etc/selinux/product_keystore2_key_contexts
+12-31 21:57:39.568   730   752 I auditd  : 		/vendor/etc/selinux/vendor_keystore2_key_contexts
+09-20 21:18:18.628   690   690 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:18:19.139  1085  1085 I boot_progress_start: 12489
+09-20 21:18:19.361  1085  1085 I snet_event_log: [200284993,-1,]
+09-20 21:18:19.401  1085  1085 I boot_progress_preload_start: 12750
+09-20 21:18:19.444  1086  1086 I snet_event_log: [200284993,-1,]
+09-20 21:18:19.745   689   689 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:18:19.747   689   689 I auditd  : SELinux: Loaded service context from:
+09-20 21:18:19.747   689   689 I auditd  : 		/system/etc/selinux/plat_service_contexts
+09-20 21:18:19.747   689   689 I auditd  : 		/system_ext/etc/selinux/system_ext_service_contexts
+09-20 21:18:19.747   689   689 I auditd  : 		/product/etc/selinux/product_service_contexts
+09-20 21:18:19.747   689   689 I auditd  : 		/vendor/etc/selinux/vendor_service_contexts
+09-20 21:18:19.747   689   689 I auditd  : 		/odm/etc/selinux/odm_service_contexts
+09-20 21:18:19.847  1382  1382 I auditd  : type=1400 audit(0.0:91): avc:  denied  { read } for  comm="vendor.qti.hard" name="u:object_r:vendor_cap_configstore_dbg_prop:s0" dev="tmpfs" ino=15321 scontext=u:r:vendor_hal_capabilityconfigstore_qti_default:s0 tcontext=u:object_r:vendor_cap_configstore_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:19.971  1270  1270 I auditd  : type=1400 audit(0.0:92): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15266 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:18:19.971  1270  1270 I auditd  : type=1400 audit(0.0:93): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15266 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:18:19.990  1270  1270 I liblog  : 834
+09-20 21:18:19.990  1270  1270 I liblog  : 10
+09-20 21:18:19.990  1270  1270 I liblog  : 20
+09-20 21:18:20.124  1085  1085 I boot_progress_preload_end: 13473
+09-20 21:18:20.339  1270  1270 I auditd  : type=1400 audit(0.0:94): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15266 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:18:20.339  1270  1270 I auditd  : type=1400 audit(0.0:95): avc:  denied  { read } for  comm="android.hardwar" name="u:object_r:system_prop:s0" dev="tmpfs" ino=15266 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=0
+09-20 21:18:20.475  1570  1570 I system_server_start: [1,13823,13823]
+09-20 21:18:20.475  1570  1570 I boot_progress_system_run: 13825
+09-20 21:18:20.539  1761  1761 I auditd  : type=1400 audit(0.0:96): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:18:20.539  1761  1761 I auditd  : type=1400 audit(0.0:97): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:18:20.567  1766  1766 I auditd  : type=1400 audit(0.0:98): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:18:20.567  1766  1766 I auditd  : type=1400 audit(0.0:99): avc:  denied  { write } for  comm="boringssl_self_" path="/dev/kmsg_debug" dev="tmpfs" ino=16409 scontext=u:r:boringssl_self_test:s0 tcontext=u:object_r:tmpfs:s0 tclass=chr_file permissive=0
+09-20 21:18:20.700   690   690 I auditd  : avc:  denied  { find } for interface=vendor.qti.diaghal::Idiag sid=u:r:vendor_dpmd:s0 pid=1793 scontext=u:r:vendor_dpmd:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+09-20 21:18:20.702   690   690 I auditd  : avc:  denied  { find } for interface=vendor.qti.diaghal::Idiag sid=u:r:vendor_dpmd:s0 pid=1806 scontext=u:r:vendor_dpmd:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+09-20 21:18:21.887   689   689 I auditd  : type=1400 audit(0.0:100): avc:  denied  { call } for  comm="servicemanager" scontext=u:r:servicemanager:s0 tcontext=u:r:mediaswcodec:s0 tclass=binder permissive=0
+09-20 21:18:22.596  1570  1570 I boot_progress_pms_start: 15945
+09-20 21:18:22.862  1570  1570 I boot_progress_pms_system_scan_start: 16211
+09-20 21:18:23.503  2008  2008 I auditd  : type=1400 audit(0.0:101): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18455 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:23.507  2044  2044 I auditd  : type=1400 audit(0.0:102): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18455 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:23.515  2008  2008 I auditd  : type=1400 audit(0.0:103): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18455 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:23.523  2044  2044 I auditd  : type=1400 audit(0.0:104): avc:  denied  { read } for  comm="DispatcherModul" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18455 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:23.697  1570  1570 I boot_progress_pms_data_scan_start: 17047
+09-20 21:18:23.785  1570  1570 I service_manager_stats: [100,21,17134]
+09-20 21:18:24.009  1570  1570 I boot_progress_pms_scan_end: 17358
+09-20 21:18:24.151  1270  1270 I auditd  : type=1400 audit(0.0:105): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=16415 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:18:24.359  1570  1570 I commit_sys_config_file: [package,159]
+09-20 21:18:24.359  1570  1570 I boot_progress_pms_ready: 17708
+09-20 21:18:24.440  1570  1570 I am_uid_running: 1000
+09-20 21:18:24.443  1570  2406 I commit_sys_config_file: [package-user-0,84]
+09-20 21:18:24.446  1570  1570 I am_uid_active: 1000
+09-20 21:18:24.876  1570  1570 I commit_sys_config_file: [overlays,4]
+09-20 21:18:24.887   730   730 I auditd  : avc:  op=load_policy lsm=selinux seqno=1 res=1
+09-20 21:18:25.140  1570  2358 I battery_status: [2,2,1,1,Li-poly]
+09-20 21:18:25.142  1570  2358 I battery_level: [76,8036,340]
+09-20 21:18:25.308  1570  1570 I liblog  : 365
+09-20 21:18:25.308  1570  1570 I liblog  : 2
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.308  1570  1570 I liblog  : 5
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.308  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 2
+09-20 21:18:25.309  1570  1570 I liblog  : 1
+09-20 21:18:25.309  1570  1570 I liblog  : 26
+09-20 21:18:25.318  1570  1570 I liblog  : 592
+09-20 21:18:25.546  1570  2781 I commit_sys_config_file: [settings-4-0,84]
+09-20 21:18:25.568  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: virtualdevice]
+09-20 21:18:25.779  1570  1570 I wm_task_created: 1
+09-20 21:18:25.788  1570  1800 I am_wtf  : [0,1570,system_server,-1,LineageHardwareManager,Unable to get LineageHardwareService. The service either crashed, was not started, or the interface has been called to early in SystemServer init]
+09-20 21:18:25.793  1570  1782 I sysui_multi_action: [757,1594,758,4,759,0,806,NULL]
+09-20 21:18:25.799  1570  1800 I service_manager_slow: [10,ax_sandbox]
+09-20 21:18:25.986  1570  1570 I configuration_changed: 536894968
+09-20 21:18:25.992  1570  1570 I sysui_multi_action: [757,1659,758,4,759,1,1660,0]
+09-20 21:18:26.057  1570  1570 I device_idle: [0,boot]
+09-20 21:18:26.057  1570  1570 I device_idle_light: [0,boot]
+09-20 21:18:26.439  1570  1570 I am_uid_running: 10335
+09-20 21:18:26.463  1570  2930 I storage_state: [41217664-9172-527a-b3d5-edabb50a7d69,0,0,446841204736,497077432320]
+09-20 21:18:26.473  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: trust]
+09-20 21:18:26.473  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,Manager wrapper not available: keyguard]
+09-20 21:18:26.483  1570  1800 I am_wtf  : [0,1570,system_server,-1,AS.AudioService,AudioPolicy not available on AudioService start!]
+09-20 21:18:26.628  1570  2781 I snet_event_log: [35028827,-1,account:Account {name=nemo@noxcis.com, type=com.google} provider:subscribedfeeds user:0]
+09-20 21:18:26.628  1570  2781 I snet_event_log: [26513719,-1,Malformed authority]
+09-20 21:18:26.632  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: jobscheduler]
+09-20 21:18:26.632  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,Manager wrapper not available: jobscheduler]
+09-20 21:18:26.632  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: jobscheduler]
+09-20 21:18:26.633  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,Manager wrapper not available: jobscheduler]
+09-20 21:18:26.633  1570  2781 I commit_sys_config_file: [settings-0-0,1]
+09-20 21:18:26.655  1570  1781 I commit_sys_config_file: [notification-policy,3]
+09-20 21:18:27.011  1270  1270 I auditd  : type=1400 audit(0.0:106): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=16415 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:18:27.011  1270  1270 I auditd  : type=1400 audit(0.0:107): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=16415 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:18:27.011  1270  1270 I auditd  : type=1400 audit(0.0:108): avc:  denied  { search } for  comm="android.hardwar" name="vendor" dev="tmpfs" ino=16415 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+09-20 21:18:28.566  1570  1800 I am_wtf  : [0,1570,system_server,-1,PowerManagerService,Tried to acquire wake lock for invalid display: 0]
+09-20 21:18:28.589  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: usb]
+09-20 21:18:28.590  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,Manager wrapper not available: usb]
+09-20 21:18:28.694  1570  3049 I stream_devices_changed: [4,0,2]
+09-20 21:18:28.695  1570  3049 I stream_devices_changed: [3,0,2]
+09-20 21:18:28.695  1570  3049 I stream_devices_changed: [5,0,2]
+09-20 21:18:28.696  1570  3049 I stream_devices_changed: [2,0,2]
+09-20 21:18:28.696  1570  3049 I stream_devices_changed: [0,0,1]
+09-20 21:18:28.785  1570  1570 I service_manager_stats: [1086,147,5001]
+09-20 21:18:28.951  1570  1815 I commit_sys_config_file: [batterystats,1]
+09-20 21:18:28.952  1570  1815 I commit_sys_config_file: [batterystats,0]
+09-20 21:18:28.955  1570  1570 I configuration_changed: 512
+09-20 21:18:28.970  1570  1570 I sysui_multi_action: [757,803,799,dnd_mode_0,802,2569]
+09-20 21:18:28.970  1570  1570 I sysui_multi_action: [757,803,799,dnd_type_0,802,2569]
+09-20 21:18:28.994  1570  1570 I configuration_changed: 32
+09-20 21:18:29.006  1570  1570 I commit_sys_config_file: [package-session,1]
+09-20 21:18:29.022  1570  1570 I rescue_note: [0,1,22370]
+09-20 21:18:29.097  1570  1570 I boot_progress_ams_ready: 22447
+09-20 21:18:29.099  1570  1570 I configuration_changed: 268468480
+09-20 21:18:29.108  1570  1570 I thermal_changed: [socd,8,-274000.000000,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [battery,2,34.000000,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [nsp0,9,52.599998,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [GPU0,1,55.299999,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU5,0,65.599998,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [ibat,7,-0.234000,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU7,0,70.599998,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [vbat,6,4.035000,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [nsp2,9,51.900002,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [GPU1,1,54.299999,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU4,0,66.900002,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU1,0,61.599998,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU3,0,63.299999,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU2,0,60.299999,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [nsp1,9,52.299999,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU6,0,68.300003,0,0]
+09-20 21:18:29.108  1570  1570 I thermal_changed: [CPU0,0,63.599998,0,0]
+09-20 21:18:29.178  1570  2781 I commit_sys_config_file: [settings-0-0,5]
+09-20 21:18:29.181  1570  1782 I configuration_changed: 256
+09-20 21:18:29.192  1570  1570 I am_uid_running: 10312
+09-20 21:18:29.204  1570  1801 I am_proc_start: [0,3132,10312,com.android.systemui,service,{com.android.systemui/com.android.systemui.wallpapers.GradientColorWallpaper}]
+09-20 21:18:29.221  1570  1748 I am_proc_bound: [0,3132,com.android.systemui]
+09-20 21:18:29.227  1570  1748 I am_uid_active: 10312
+09-20 21:18:29.227  1570  1781 I commit_sys_config_file: [notification-policy,7]
+09-20 21:18:29.280  1570  2895 I commit_sys_config_file: [net-policy,4]
+09-20 21:18:29.312  1570  2773 I am_uid_running: 1037
+09-20 21:18:29.399  1570  2894 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953509399]
+09-20 21:18:29.399  1570  2894 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953509399]
+09-20 21:18:29.403  1332  1332 I auditd  : type=1400 audit(0.0:109): avc:  denied  { read } for  comm="Loc_hal_worker" name="u:object_r:vendor_pd_locater_dbg_prop:s0" dev="tmpfs" ino=18455 scontext=u:r:vendor_hal_gnss_qti:s0 tcontext=u:object_r:vendor_pd_locater_dbg_prop:s0 tclass=file permissive=0
+09-20 21:18:29.415  3132  3159 I wm_shell_desktop_mode_task_update: [4,0,0,0,0,0,0,0,0,0,0,0]
+09-20 21:18:29.420  1570  1801 I am_proc_start: [0,3217,1037,WebViewLoader-armeabi-v7a,,]
+09-20 21:18:29.422  1570  3181 I wm_task_created: 2
+09-20 21:18:29.425  1570  1801 I am_proc_start: [0,3218,1037,WebViewLoader-arm64-v8a,,]
+09-20 21:18:29.425  1570  3181 I wm_task_created: 3
+09-20 21:18:29.428  1570  3181 I wm_task_created: 4
+09-20 21:18:29.432  1570  2894 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953509432]
+09-20 21:18:29.432  1570  2894 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953509432]
+09-20 21:18:29.449  1570  3209 I am_proc_bound: [0,3217,WebViewLoader-armeabi-v7a]
+09-20 21:18:29.452  1570  3209 I am_uid_active: 1037
+09-20 21:18:29.454  1570  3210 I am_proc_bound: [0,3218,WebViewLoader-arm64-v8a]
+09-20 21:18:29.457  1570  3210 I wm_task_removed: [3,3,0,reParentTask:sanitizeAndApplyHierarchyOp]
+09-20 21:18:29.458  1570  3210 I wm_task_moved: [3,2,0,1,2147483647]
+09-20 21:18:29.458  1570  3210 I wm_task_removed: [4,4,0,reParentTask:sanitizeAndApplyHierarchyOp]
+09-20 21:18:29.458  1570  3210 I wm_task_moved: [4,2,0,1,2147483647]
+09-20 21:18:29.461  3132  3159 I viewroot_draw_event: [VRI[ShellDropTarget],Not drawing due to not visible. Reason=View.INVISIBLE]
+09-20 21:18:29.473  1570  1570 I am_uid_running: 1073
+09-20 21:18:29.477  1570  1570 I ssm_user_starting: 0
+09-20 21:18:29.478  1570  1801 I am_proc_start: [0,3250,1073,com.android.networkstack.process,service,{com.android.networkstack/com.android.server.NetworkStackService}]
+09-20 21:18:29.482  1570  1570 I commit_sys_config_file: [supervision,0]
+09-20 21:18:29.494  1570  1748 I am_proc_died: [0,3217,WebViewLoader-armeabi-v7a,-700,0]
+09-20 21:18:29.495  1570  1748 I am_low_memory: 3
+09-20 21:18:29.495  1570  1795 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953509495]
+09-20 21:18:29.495  1570  1795 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953509495]
+09-20 21:18:29.496  1570  3155 I am_proc_died: [0,3218,WebViewLoader-arm64-v8a,-700,0]
+09-20 21:18:29.497  1570  3155 I am_uid_stopped: 1037
+09-20 21:18:29.498  1570  3155 I am_low_memory: 2
+09-20 21:18:29.503  1570  1570 I um_user_visibility_changed: [0,1]
+09-20 21:18:29.504  1570  1570 I am_uid_running: 1001
+09-20 21:18:29.504  1570  1570 I am_uid_running: 10245
+09-20 21:18:29.505  1570  1570 I am_uid_running: 10308
+09-20 21:18:29.506  1570  1570 I am_uid_running: 1027
+09-20 21:18:29.507  1570  1570 I am_uid_running: 10293
+09-20 21:18:29.507  1570  1570 I am_uid_running: 1068
+09-20 21:18:29.532  1570  1570 I wm_task_created: 5
+09-20 21:18:29.534  1570  1570 I wm_task_moved: [5,1,0,1,2147483647]
+09-20 21:18:29.535  1570  1570 I wm_task_moved: [1,1,0,1,1]
+09-20 21:18:29.535  1570  1570 I wm_task_to_front: [0,5,0]
+09-20 21:18:29.535  1570  1570 I wm_create_task: [0,5,1,0]
+09-20 21:18:29.535  1570  1570 I wm_create_activity: [0,27773889,5,com.android.settings/.FallbackHome,android.intent.action.MAIN,NULL,NULL,276824320]
+09-20 21:18:29.535  1570  1570 I wm_task_moved: [1,1,0,1,1]
+09-20 21:18:29.535  1570  1570 I wm_task_moved: [5,1,0,1,2147483647]
+09-20 21:18:29.536  1570  1570 I uc_send_user_broadcast: [0,android.intent.action.USER_STARTED]
+09-20 21:18:29.536  1570  1570 I uc_send_user_broadcast: [0,android.intent.action.USER_STARTING]
+09-20 21:18:29.536  1570  1570 I uc_send_user_broadcast: [0,android.intent.action.USER_FOREGROUND]
+09-20 21:18:29.537  1570  1570 I uc_send_user_broadcast: [0,android.intent.action.USER_SWITCHED]
+09-20 21:18:29.540  1570  3209 I am_drop_process: 3250
+09-20 21:18:29.544  1570  1801 I am_proc_start: [0,3276,1000,com.android.axion.quicklook,added application,com.android.axion.quicklook]
+09-20 21:18:29.544  1570  3210 I am_proc_bound: [0,3276,com.android.axion.quicklook]
+09-20 21:18:29.550  1570  1801 I am_proc_start: [0,3297,1001,.dataservices,added application,.dataservices]
+09-20 21:18:29.559  1570  1801 I am_proc_start: [0,3298,10245,.qtidataservices,added application,.qtidataservices]
+09-20 21:18:29.564  1570  1801 I am_proc_start: [0,3299,10308,com.qti.phone,added application,com.qti.phone]
+09-20 21:18:29.568  1570  1801 I am_proc_start: [0,3305,1073,com.android.networkstack.process,added application,com.android.networkstack.process]
+09-20 21:18:29.573  1570  1801 I am_proc_start: [0,3309,1027,com.android.nfc,added application,com.android.nfc]
+09-20 21:18:29.573  1570  1570 I notification_cancel_all: [1000,1570,android,0,0,0,20,NULL]
+09-20 21:18:29.573  1570  1570 I notification_cancel_all: [1000,1570,android,0,0,0,20,NULL]
+09-20 21:18:29.573  1570  1570 I notification_cancel_all: [1000,1570,android,0,0,0,20,NULL]
+09-20 21:18:29.573  1570  1570 I notification_cancel_all: [1000,1570,android,0,0,0,20,NULL]
+09-20 21:18:29.575  1570  3181 I am_proc_bound: [0,3297,.dataservices]
+09-20 21:18:29.577  1570  3181 I am_uid_active: 1001
+09-20 21:18:29.579  1570  1801 I am_proc_start: [0,3311,10293,org.codeaurora.ims,added application,org.codeaurora.ims]
+09-20 21:18:29.595  1570  3181 I am_proc_bound: [0,3309,com.android.nfc]
+09-20 21:18:29.597  1570  2781 I commit_sys_config_file: [settings-0-0,6]
+09-20 21:18:29.597  1570  3181 I am_uid_active: 1027
+09-20 21:18:29.598  1570  1801 I am_proc_start: [0,3342,1068,com.android.se,added application,com.android.se]
+09-20 21:18:29.598  1570  3155 I am_proc_bound: [0,3299,com.qti.phone]
+09-20 21:18:29.600  1570  3155 I am_uid_active: 10308
+09-20 21:18:29.600  1570  3209 I am_proc_bound: [0,3305,com.android.networkstack.process]
+09-20 21:18:29.602  1570  3209 I am_uid_active: 1073
+09-20 21:18:29.612  1570  1801 I am_proc_start: [0,3355,1001,com.android.phone,added application,com.android.phone]
+09-20 21:18:29.613  1570  1748 I am_wtf  : [0,3276,com.android.axion.quicklook,814333517,ContextImpl,Data directory doesn't exist for package com.android.axion.quicklook]
+09-20 21:18:29.616  1570  2358 I am_proc_bound: [0,3298,.qtidataservices]
+09-20 21:18:29.618  1570  2358 I am_uid_active: 10245
+09-20 21:18:29.627  1570  1801 I am_proc_start: [0,3375,1000,org.protonaosp.columbus,added application,org.protonaosp.columbus]
+09-20 21:18:29.631  1570  2358 I am_proc_bound: [0,3311,org.codeaurora.ims]
+09-20 21:18:29.633  1570  2358 I am_uid_active: 10293
+09-20 21:18:29.633  1570  3209 I am_proc_bound: [0,3355,com.android.phone]
+09-20 21:18:29.640  1570  3181 I am_proc_bound: [0,3342,com.android.se]
+09-20 21:18:29.641  1570  3181 I am_uid_active: 1068
+09-20 21:18:29.642  1570  1801 I am_proc_start: [0,3388,1000,com.android.settings,top-activity,{com.android.settings/com.android.settings.FallbackHome}]
+09-20 21:18:29.704  1570  3155 I am_proc_bound: [0,3375,org.protonaosp.columbus]
+09-20 21:18:29.709  1570  3209 I am_proc_bound: [0,3388,com.android.settings]
+09-20 21:18:29.755  1570  1800 I am_uid_running: 10259
+09-20 21:18:29.761  1570  1801 I am_proc_start: [0,3456,10259,com.google.android.gms,broadcast,{com.google.android.gms/com.google.android.gms.chimera.GmsIntentOperationService$PersistentTrustedReceiver}]
+09-20 21:18:29.791  1570  3209 I wm_restart_activity: [0,27773889,5,com.android.settings/.FallbackHome]
+09-20 21:18:29.792  1570  3209 I wm_set_resumed_activity: [0,com.android.settings/.FallbackHome,realStartActivityLocked - onActivityStateChanged]
+09-20 21:18:29.796  1570  1570 I notification_enqueue: [1000,1570,android,32,NULL,-1,Notification(channel=USB shortcut=null contentView=null vibrate=null sound=null tick defaults=0 flags=ONGOING_EVENT|CAN_COLORIZE color=0x00000000 vis=PUBLIC),0,1]
+09-20 21:18:29.799  1570  1570 I sysui_multi_action: [757,1501,758,1,793,26,794,0,795,26,796,32,806,android,857,USB,858,1,947,0,1500,0]
+09-20 21:18:29.799  1570  1570 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:18:29.802  1570  1749 I am_proc_bound: [0,3456,com.google.android.gms]
+09-20 21:18:29.848  3388  3388 I wm_on_create_called: [27773889,com.android.settings.FallbackHome,performCreate,5]
+09-20 21:18:29.848  3388  3388 I wm_on_start_called: [27773889,com.android.settings.FallbackHome,handleStartActivity,0]
+09-20 21:18:29.855  3388  3388 I wm_on_resume_called: [27773889,com.android.settings.FallbackHome,RESUME_ACTIVITY,4]
+09-20 21:18:29.874  3388  3388 I wm_on_top_resumed_gained_called: [27773889,com.android.settings.FallbackHome,topStateChangedWhenResumed]
+09-20 21:18:29.878  1570  1783 I input_focus: [Focus request 986e820 com.android.settings/com.android.settings.FallbackHome,reason=UpdateInputWindows]
+09-20 21:18:29.907  1570  3210 I am_uid_running: 10299
+09-20 21:18:29.914  1570  1801 I am_proc_start: [0,3534,10299,com.android.launcher3,service,{com.android.launcher3/com.android.quickstep.TouchInteractionService}]
+09-20 21:18:29.915  3388  3388 I viewroot_draw_event: [VRI[FallbackHome],reportDrawFinished seqId=0]
+09-20 21:18:29.917  1570  1782 I boot_progress_enable_screen: 23266
+09-20 21:18:29.920  1570  1778 I sysui_multi_action: [319,404,322,403,325,22,757,761,758,7,759,2,806,com.android.settings,871,com.android.settings.FallbackHome,905,0,945,196,1320,8,1321,5]
+09-20 21:18:29.920  1570  1782 I screen_toggled: 1
+09-20 21:18:29.920  1570  1800 I am_wtf  : [0,1570,system_server,-1,WindowManager,Unexpected pending wakeup group. Requested Group 0 Current Waking up group 0]
+09-20 21:18:29.921  1570  1778 I wm_activity_launch_time: [0,27773889,com.android.settings/.FallbackHome,403]
+09-20 21:18:29.949  1570  3474 I am_proc_bound: [0,3534,com.android.launcher3]
+09-20 21:18:29.968  1570  3209 I am_uid_running: 10326
+09-20 21:18:29.974  1570  1801 I am_proc_start: [0,3555,10326,com.android.smspush,service,{com.android.smspush/com.android.smspush.WapPushManager}]
+09-20 21:18:29.979  3132  3463 I viewroot_draw_event: [VRI[ScreenDecorOverlay],reportDrawFinished seqId=0]
+09-20 21:18:29.985  1570  3209 I am_uid_active: 10299
+09-20 21:18:29.987  3132  3463 I viewroot_draw_event: [VRI[ScreenDecorOverlayBottom],reportDrawFinished seqId=0]
+09-20 21:18:29.987  3534  3556 I jank_cuj_events_cancel_request: [-1,1789953509979143000,23328711187,23328711344]
+09-20 21:18:30.010  1570  1749 I am_proc_bound: [0,3555,com.android.smspush]
+09-20 21:18:30.024  1570  2894 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953510024]
+09-20 21:18:30.024  1570  2894 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953510024]
+09-20 21:18:30.029  1570  1781 I commit_sys_config_file: [notification-policy,9]
+09-20 21:18:30.043  1570  1749 I am_uid_active: 10326
+09-20 21:18:30.208  1570  3589 I wm_set_keyguard_shown: [0,1,0,0,0,setKeyguardShown]
+09-20 21:18:30.211  1570  3589 I wm_pause_activity: [0,27773889,com.android.settings/.FallbackHome,userLeaving=false,sleep]
+09-20 21:18:30.212  3388  3388 I wm_on_top_resumed_lost_called: [27773889,com.android.settings.FallbackHome,topStateChangedWhenResumed]
+09-20 21:18:30.212  1570  3589 I wm_add_to_stopping: [0,27773889,com.android.settings/.FallbackHome,makeInvisible]
+09-20 21:18:30.216  3388  3388 I wm_on_paused_called: [27773889,com.android.settings.FallbackHome,performPause,0]
+09-20 21:18:30.219  1570  1778 I sysui_multi_action: [757,803,799,window_time_0,802,9]
+09-20 21:18:30.220  1570  1782 I wm_stop_activity: [0,27773889,com.android.settings/.FallbackHome]
+09-20 21:18:30.224  3388  3388 I viewroot_draw_event: [VRI[FallbackHome],Not drawing due to not visible. Reason=!mAppVisible && !mForceDecorViewVisibility]
+09-20 21:18:30.226  3388  3388 I wm_on_stop_called: [27773889,com.android.settings.FallbackHome,STOP_ACTIVITY_ITEM,0]
+09-20 21:18:30.270  1570  3474 I sysui_multi_action: [757,127,758,2]
+09-20 21:18:30.271  1570  3474 I notification_panel_hidden: 
+09-20 21:18:30.286  1570  3155 I am_uid_active: 10259
+09-20 21:18:30.287  1570  1800 I am_uid_running: 10332
+09-20 21:18:30.300  1570  1801 I am_proc_start: [0,3641,10332,com.android.permissioncontroller,broadcast,{com.android.permissioncontroller/com.android.permissioncontroller.privacysources.SafetyCenterReceiver}]
+09-20 21:18:30.347  1570  2358 I am_proc_bound: [0,3641,com.android.permissioncontroller]
+09-20 21:18:30.372  3132  3665 I sysui_multi_action: [757,213,758,4,759,-1]
+09-20 21:18:30.393  3355  3355 I service_manager_stats: [100,32,23742]
+09-20 21:18:30.405  3534  3534 I viewroot_draw_event: [VRI[Taskbar],reportDrawFinished seqId=0]
+09-20 21:18:30.413  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1570:system/1000 pkg android]
+09-20 21:18:30.413  3534  3534 I viewroot_draw_event: [VRI[Taskbar],reportDrawFinished seqId=0]
+09-20 21:18:30.425  3355  3355 I gsm_service_state_change: [1,1,3,3]
+09-20 21:18:30.474  1570  1748 I am_uid_active: 10332
+09-20 21:18:30.475  1570  1800 I am_uid_running: 10330
+09-20 21:18:30.483  1570  1801 I am_proc_start: [0,3702,10330,com.android.cellbroadcastreceiver.module,broadcast,{com.android.cellbroadcastreceiver.module/com.android.cellbroadcastreceiver.CellBroadcastReceiver}]
+09-20 21:18:30.491  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1570:system/1000 pkg android]
+09-20 21:18:30.539  1570  1570 I notification_cancel_all: [1000,1570,com.android.systemui,0,0,0,20,NULL]
+09-20 21:18:30.539  1570  3164 I am_proc_bound: [0,3702,com.android.cellbroadcastreceiver.module]
+09-20 21:18:30.571  3132  3463 I viewroot_draw_event: [VRI[ScreenDecorOverlayBottom],reportDrawFinished seqId=0]
+09-20 21:18:30.621  1570  2358 I sysui_multi_action: [757,127,758,1]
+09-20 21:18:30.621  1570  2358 I sysui_multi_action: [757,804,799,note_load,801,0,802,1]
+09-20 21:18:30.621  1570  2358 I notification_panel_revealed: 0
+09-20 21:18:30.622  3132  3132 I sysui_multi_action: [757,196,758,1,759,1]
+09-20 21:18:30.622  3132  3132 I sysui_status_bar_state: [1,1,0,0,1,0]
+09-20 21:18:30.626  3132  3179 I jank_cuj_events_end_request: [88,1789953510626209000,23975774416,23975774677]
+09-20 21:18:30.628  3132  3132 I viewroot_draw_event: [VRI[DisplayBackGestureHandler 0],Not drawing due to not visible. Reason=View.GONE]
+09-20 21:18:30.720  3132  3132 I viewroot_draw_event: [VRI[StatusBar],reportDrawFinished seqId=0]
+09-20 21:18:30.766  1570  1782 I user_activity_timeout_override: 10000
+09-20 21:18:30.767  1570  1783 I input_focus: [Focus request 52287fc NotificationShade,reason=UpdateInputWindows]
+09-20 21:18:30.779  3132  3132 I viewroot_draw_event: [VRI[NotificationShade],reportDrawFinished seqId=0]
+09-20 21:18:30.782  1570  1783 I wm_wallpaper_surface: [0,1,Window{52287fc u0 NotificationShade}]
+09-20 21:18:30.834  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1570:system/1000 pkg android]
+09-20 21:18:30.840  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Sending non-protected broadcast org.codeaurora.intent.action.RADIO_POWER_STATE from system 1570:system/1000 pkg android]
+09-20 21:18:30.903  3132  3132 I viewroot_draw_event: [VRI[StatusBar],reportDrawFinished seqId=0]
+09-20 21:18:31.133  3355  3355 I gsm_service_state_change: [3,1,1,1]
+09-20 21:18:31.148  3355  3355 I gsm_service_state_change: [1,1,3,1]
+09-20 21:18:31.369  3355  3355 I gsm_service_state_change: [1,1,1,1]
+09-20 21:18:31.384  1570  3164 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953511384]
+09-20 21:18:31.384  1570  3164 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953511384]
+09-20 21:18:31.651  1352  1352 I auditd  : type=1400 audit(0.0:110): avc:  denied  { read } for  comm="binder:1352_1" name="u:object_r:persist_vendor_debug_wifi_prop:s0" dev="tmpfs" ino=15208 scontext=u:r:hal_wifi_default:s0 tcontext=u:object_r:persist_vendor_debug_wifi_prop:s0 tclass=file permissive=0
+09-20 21:18:31.752  1570  2358 I configuration_changed: 3
+09-20 21:18:31.828  1570  3792 I am_uid_running: 10306
+09-20 21:18:31.836  1570  1801 I am_proc_start: [0,3815,10306,com.android.carrierconfig,service,{com.android.carrierconfig/com.android.carrierconfig.DefaultCarrierConfigService}]
+09-20 21:18:31.845  1570  1800 I am_uid_running: 10252
+09-20 21:18:31.851  1570  1801 I am_proc_start: [0,3816,10252,com.android.dialer,broadcast,{com.android.dialer/com.android.dialer.app.voicemail.LegacyVoicemailNotificationReceiver}]
+09-20 21:18:31.869  1570  1748 I force_gc: Binder
+09-20 21:18:31.877  1570  1748 I am_proc_bound: [0,3815,com.android.carrierconfig]
+09-20 21:18:31.879  1570  1749 I am_proc_bound: [0,3816,com.android.dialer]
+09-20 21:18:31.913  1570  3164 I am_uid_active: 10306
+09-20 21:18:31.943  1570  3164 I am_uid_active: 10252
+09-20 21:18:32.016  3355  3355 I gsm_service_state_change: [1,1,0,0]
+09-20 21:18:32.016  3355  3355 I gsm_rat_switched_new: [1408771,0,14]
+09-20 21:18:32.307  1570  3850 I am_uid_running: 10214
+09-20 21:18:32.327  1570  1801 I am_proc_start: [0,3851,10214,android.process.acore,content provider,{com.android.providers.blockednumber/com.android.providers.blockednumber.BlockedNumberProvider}]
+09-20 21:18:32.353  3355  3355 I gsm_service_state_change: [3,1,1,1]
+09-20 21:18:32.358  1570  3792 I am_proc_bound: [0,3851,android.process.acore]
+09-20 21:18:32.410  1570  2895 I commit_sys_config_file: [net-policy,4]
+09-20 21:18:32.428  1570  3589 I am_uid_active: 10214
+09-20 21:18:32.829  1570  2440 I commit_sys_config_file: [package,38]
+09-20 21:18:32.831  1570  2406 I commit_sys_config_file: [package-user-0,3]
+09-20 21:18:38.696  3355  3514 I service_manager_stats: [288,24,8303]
+09-20 21:18:41.306  1500  2822 I sf_stop_bootanim: 34655
+09-20 21:18:41.306  1570  1782 I wm_boot_animation_done: 34656
+09-20 21:18:41.308  1570  1782 I service_manager_stats: [893,156,12522]
+09-20 21:18:41.367  1570  1570 I notification_enqueue: [1000,1570,android,26,NULL,-1,Notification(channel=DEVELOPER_IMPORTANT shortcut=null contentView=null vibrate=null sound=null tick defaults=0 flags=ONGOING_EVENT|CAN_COLORIZE color=0x00000000 vis=PUBLIC),0,1]
+09-20 21:18:41.368  1570  1570 I sysui_multi_action: [757,1501,758,1,793,5,794,0,795,5,796,26,806,android,857,DEVELOPER_IMPORTANT,858,4,947,0,1500,0]
+09-20 21:18:41.368  1570  1570 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:18:41.369  1570  1570 I sysui_multi_action: [757,199,758,1,759,512,793,6,794,0,795,6,796,26,806,android,857,DEVELOPER_IMPORTANT,858,4,947,0,1500,1,1688,1]
+09-20 21:18:41.369  1570  1570 I notification_alert: [-1|android|26|null|1000,0,0,0,0,512]
+09-20 21:18:41.372  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,No service published for: thread_network]
+09-20 21:18:41.374  1570  1800 I am_wtf  : [0,1570,system_server,-1,SystemServiceRegistry,Manager wrapper not available: thread_network]
+09-20 21:18:41.428  3132  3132 I sysui_heads_up_status: [-1|android|26|null|1000,1]
+09-20 21:18:41.457  1570  2834 I input_focus: [Focus entering 52287fc NotificationShade,reason=setFocusedWindow]
+09-20 21:18:41.480  1570  1782 I uc_finish_user_boot: 0
+09-20 21:18:41.484  1570  1782 I am_user_state_changed: [0,1]
+09-20 21:18:41.484  1570  1782 I uc_send_user_broadcast: [0,android.intent.action.LOCKED_BOOT_COMPLETED]
+09-20 21:18:41.486  1570  1782 I uc_finish_user_unlocking: 0
+09-20 21:18:41.495  1570  1801 I am_proc_start: [0,3967,10335,android.ext.services,on-hold,]
+09-20 21:18:41.523  1570  1800 I am_uid_running: 10380
+09-20 21:18:41.532  1570  1801 I am_proc_start: [0,3981,10380,com.drdisagree.colorblendr,broadcast,{com.drdisagree.colorblendr/com.drdisagree.colorblendr.service.BroadcastListener}]
+09-20 21:18:41.568  1570  3792 I am_proc_bound: [0,3967,android.ext.services]
+09-20 21:18:41.573  1570  3209 I am_proc_bound: [0,3981,com.drdisagree.colorblendr]
+09-20 21:18:41.587  1570  2781 I commit_sys_config_file: [settings-4-0,10]
+09-20 21:18:41.615  4041  4041 I auditd  : type=1400 audit(0.0:111): avc:  denied  { transition } for  comm="init" path="/system/bin/sh" dev="dm-1" ino=536 scontext=u:r:init:s0 tcontext=u:r:qti-testscripts:s0 tclass=process permissive=0
+09-20 21:18:41.685  1570  3155 I am_uid_active: 10335
+09-20 21:18:41.698  1570  3164 I am_uid_active: 10380
+09-20 21:18:41.700  1570  1800 I am_uid_running: 10273
+09-20 21:18:41.707  4067  4067 I auditd  : type=1400 audit(0.0:112): avc:  denied  { getattr } for  comm="batterysecret" path="/dev/kmsg" dev="tmpfs" ino=16408 scontext=u:r:batterysecret:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=0
+09-20 21:18:41.713  1570  2781 I commit_sys_config_file: [settings-1-0,1]
+09-20 21:18:41.715  1570  1801 I am_proc_start: [0,4075,10273,com.android.deskclock,broadcast,{com.android.deskclock/com.android.deskclock.AlarmInitReceiver}]
+09-20 21:18:41.740  1570  3164 I am_proc_bound: [0,4075,com.android.deskclock]
+09-20 21:18:41.821  1570  1749 I am_uid_active: 10273
+09-20 21:18:41.822  1570  1800 I am_uid_running: 10255
+09-20 21:18:41.830  1570  1801 I am_proc_start: [0,4135,10255,com.google.android.apps.wellbeing,broadcast,{com.google.android.apps.wellbeing/com.google.android.apps.wellbeing.common.receiver.coalescedreceivers.LockedBootCompletedCoalescedBroadcast_Receiver}]
+09-20 21:18:41.842  1570  3164 I am_proc_bound: [0,4135,com.google.android.apps.wellbeing]
+09-20 21:18:41.863  4157  4157 I auditd  : type=1400 audit(0.0:113): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:18:42.000  1570  3155 I am_uid_active: 10255
+09-20 21:18:42.027  1570  1801 I am_proc_start: [0,4222,1000,io.chaldeaprjkt.gamespace,broadcast,{io.chaldeaprjkt.gamespace/io.chaldeaprjkt.gamespace.BootCompletedReceiver}]
+09-20 21:18:42.054  1570  3155 I am_proc_bound: [0,4222,io.chaldeaprjkt.gamespace]
+09-20 21:18:42.091  1570  1749 I am_wtf  : [0,4222,io.chaldeaprjkt.gamespace,818527821,ContextImpl,Data directory doesn't exist for package io.chaldeaprjkt.gamespace]
+09-20 21:18:42.128  1570  1800 I am_uid_running: 10327
+09-20 21:18:42.137  1570  1801 I am_proc_start: [0,4258,10327,org.lineageos.settingsconfig,broadcast,{org.lineageos.settingsconfig/org.lineageos.settingsconfig.BootReceiver}]
+09-20 21:18:42.158  1570  1749 I am_proc_bound: [0,4258,org.lineageos.settingsconfig]
+09-20 21:18:42.180  1570  1749 I am_uid_active: 10327
+09-20 21:18:42.180  1570  1800 I am_uid_running: 10295
+09-20 21:18:42.208  1570  1801 I am_proc_start: [0,4276,10295,org.protonaosp.deviceconfig,broadcast,{org.protonaosp.deviceconfig/org.protonaosp.deviceconfig.BootReceiver}]
+09-20 21:18:42.238  1570  1749 I am_proc_bound: [0,4276,org.protonaosp.deviceconfig]
+09-20 21:18:42.262  1570  3155 I am_uid_active: 10295
+09-20 21:18:42.421  1570  2781 I commit_sys_config_file: [settings-0-0,4]
+09-20 21:18:42.489  1570  2781 I commit_sys_config_file: [settings-4-0,11]
+09-20 21:18:43.345  1570  1795 I battery_saver_setting: 10
+09-20 21:18:43.662  1570  1749 I commit_sys_config_file: [overlays,2]
+09-20 21:18:43.679  1570  2917 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953523679]
+09-20 21:18:43.679  1570  2917 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953523679]
+09-20 21:18:43.691  1570  3589 I commit_sys_config_file: [overlays,4]
+09-20 21:18:43.700  1570  1778 I configuration_changed: -2147483648
+09-20 21:18:43.717  1570  3589 I commit_sys_config_file: [overlays,3]
+09-20 21:18:43.722  1570  3589 I commit_sys_config_file: [overlays,2]
+09-20 21:18:43.733  1570  2917 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953523733]
+09-20 21:18:43.734  1570  2917 I netstats_wifi_sample: [0,0,0,0,0,0,0,0,1789953523733]
+09-20 21:18:43.875  1570  3181 I commit_sys_config_file: [overlays,6]
+09-20 21:18:43.884  1570  3704 I commit_sys_config_file: [overlays,2]
+09-20 21:18:43.934  1570  3209 I commit_sys_config_file: [overlays,2]
+09-20 21:18:43.974  1570  3210 I commit_sys_config_file: [overlays,3]
+09-20 21:18:44.077  1570  3181 I commit_sys_config_file: [overlays,2]
+09-20 21:18:44.082  1570  3181 I commit_sys_config_file: [overlays,1]
+09-20 21:18:44.326  1570  2358 I commit_sys_config_file: [overlays,3]
+09-20 21:18:44.330  1570  3210 I commit_sys_config_file: [overlays,1]
+09-20 21:18:44.471  1570  3210 I commit_sys_config_file: [overlays,3]
+09-20 21:18:44.476  1570  3210 I commit_sys_config_file: [overlays,1]
+09-20 21:18:46.482  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Sending non-protected broadcast android.intent.action.UPDATE_CT_LOGS from system uid 1000 pkg android]
+09-20 21:18:46.511  1570  2894 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953526511]
+09-20 21:18:46.511  1570  2894 I netstats_wifi_sample: [328,284,1,4,328,284,1,4,1789953526511]
+09-20 21:18:46.863  4157  4157 I auditd  : type=1400 audit(0.0:114): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:18:47.130  3132  3132 I sysui_heads_up_status: [-1|android|26|null|1000,0]
+09-20 21:18:47.227  1570  2917 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953527227]
+09-20 21:18:47.227  1570  2917 I netstats_wifi_sample: [1312,483,4,7,328,348,1,5,1789953527227]
+09-20 21:18:47.310  1570  3062 I ntp_success: [time.android.com/216.239.35.12,25,898]
+09-20 21:18:47.521  3456  4245 I c2dm    : [-2,,1,1]
+09-20 21:18:47.610  3355  3355 I gsm_service_state_change: [0,0,0,0]
+09-20 21:18:47.644  3456  4245 I gtalk_heartbeat_reset: [65896,74.125.141.188:5228]
+09-20 21:18:47.645  3456  4245 I gtalk_connection: 0
+09-20 21:18:48.355  1570  1880 I sysui_multi_action: [757,1696,758,6,759,2]
+09-20 21:18:51.863  4157  4157 I auditd  : type=1400 audit(0.0:115): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:18:53.795  1570  2406 I commit_sys_config_file: [package-user-0,11]
+09-20 21:18:54.248  1570  2781 I commit_sys_config_file: [settings-1-0,5]
+09-20 21:18:56.867  4157  4157 I auditd  : type=1400 audit(0.0:116): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:18:58.273  1570  2781 I commit_sys_config_file: [settings-1-0,5]
+09-20 21:19:01.867  4157  4157 I auditd  : type=1400 audit(0.0:117): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:02.246  1570  2781 I commit_sys_config_file: [settings-1-0,4]
+09-20 21:19:05.136  1570  2781 I commit_sys_config_file: [settings-1-0,7]
+09-20 21:19:06.867  4157  4157 I auditd  : type=1400 audit(0.0:118): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:07.357  1570  2834 I input_interaction: Interaction with: [52287fc NotificationShade,PointerEventDispatcher0,[Gesture Monitor] swipe-up,[Gesture Monitor] edge-swipe], on displayId 0
+09-20 21:19:07.367  1570  1880 I sysui_multi_action: [757,1696,758,6,759,3]
+09-20 21:19:07.376  3132  3179 I jank_cuj_events_begin_request: [0,1789953547376036000,60725602267,60725602684,Collapse]
+09-20 21:19:07.458  3132  3179 I jank_cuj_events_begin_request: [19,1789953547458800000,60808365652,60808366069,]
+09-20 21:19:07.482  3132  3132 I sysui_multi_action: [757,186,758,4,826,1,827,10]
+09-20 21:19:07.482  3132  3132 I sysui_lockscreen_gesture: [1,1,10]
+09-20 21:19:07.483  3132  3179 I jank_cuj_events_begin_request: [0,1789953547483477000,60833043100,60833043465,Collapse]
+09-20 21:19:07.903  3132  3132 I sysui_multi_action: [757,197,758,1,759,1]
+09-20 21:19:07.903  3132  3132 I sysui_status_bar_state: [1,1,0,1,1,0]
+09-20 21:19:07.903  3132  3179 I jank_cuj_events_end_request: [0,1789953547903533000,61253099663,61253100079]
+09-20 21:19:07.912  1570  2358 I sysui_multi_action: [757,127,758,2]
+09-20 21:19:07.912  1570  2358 I notification_panel_hidden: 
+09-20 21:19:08.123  3132  3179 I jank_cuj_events_end_request: [19,1789953548123326000,61472892110,61472892319]
+09-20 21:19:10.256  3132  3132 I sysui_multi_action: [757,197,758,10]
+09-20 21:19:10.256  3132  3132 I sysui_multi_action: [757,197,758,5,759,1]
+09-20 21:19:10.272  3132  3179 I jank_cuj_events_begin_request: [22,1789953550272501000,63622066849,63622066953,]
+09-20 21:19:10.279  1570  3210 I uc_unlock_user: 0
+09-20 21:19:10.279  1570  3210 I uc_finish_user_unlocking: 0
+09-20 21:19:10.467  1570  1778 I am_user_state_changed: [0,2]
+09-20 21:19:10.468  1570  1800 I ssm_user_unlocking: 0
+09-20 21:19:10.500  1570  2866 I am_uid_running: 10348
+09-20 21:19:10.501  3132  3179 I jank_cuj_events_end_request: [22,1789953550501583000,63851148359,63851148464]
+09-20 21:19:10.502  1570  3155 I wm_set_keyguard_shown: [0,1,0,1,0,keyguardGoingAway]
+09-20 21:19:10.508  1570  3155 I wm_set_resumed_activity: [0,com.android.settings/.FallbackHome,resumeTopActivity - onActivityStateChanged]
+09-20 21:19:10.509  1570  3155 I wm_relaunch_resume_activity: [0,27773889,5,com.android.settings/.FallbackHome,80000003]
+09-20 21:19:10.520  3388  3388 I wm_on_destroy_called: [27773889,com.android.settings.FallbackHome,performDestroy,8]
+09-20 21:19:10.520  1570  1800 I am_uid_running: 10262
+09-20 21:19:10.529  1570  1570 I am_uid_running: 10325
+09-20 21:19:10.539  3388  3388 I wm_on_create_called: [27773889,com.android.settings.FallbackHome,performCreate,5]
+09-20 21:19:10.541  3388  3388 I wm_on_start_called: [27773889,com.android.settings.FallbackHome,handleStartActivity,0]
+09-20 21:19:10.543  1570  1801 I am_proc_start: [0,4919,10348,com.android.providers.media.module,service,{com.android.providers.media.module/com.android.providers.media.fuse.ExternalStorageServiceImpl}]
+09-20 21:19:10.545  3388  3388 I wm_on_resume_called: [27773889,com.android.settings.FallbackHome,RESUME_ACTIVITY,4]
+09-20 21:19:10.545  3388  3388 I wm_on_top_resumed_gained_called: [27773889,com.android.settings.FallbackHome,topWhenResuming]
+09-20 21:19:10.551  1570  1801 I am_proc_start: [0,4922,10262,com.google.android.googlequicksearchbox:interactor,service,{com.google.android.googlequicksearchbox/com.google.android.voiceinteraction.GsaVoiceInteractionService}]
+09-20 21:19:10.556  1570  1800 I uc_finish_user_unlocked: 0
+09-20 21:19:10.556  1570  1800 I am_user_state_changed: [0,3]
+09-20 21:19:10.566  1570  1800 I am_uid_running: 10298
+09-20 21:19:10.571  1570  1800 I am_uid_running: 10248
+09-20 21:19:10.574  3388  3388 I viewroot_draw_event: [VRI[FallbackHome],reportDrawFinished seqId=0]
+09-20 21:19:10.578  1570  1800 I am_uid_running: 10304
+09-20 21:19:10.588  1570  1800 I am_uid_running: 10247
+09-20 21:19:10.590  1570  1778 I wm_task_created: 7839
+09-20 21:19:10.590  3132  3179 I jank_cuj_events_cancel_request: [23,1789953550590936000,63940502630,63940503099]
+09-20 21:19:10.591  1570  1778 I wm_task_created: 7804
+09-20 21:19:10.591  3132  3179 I jank_cuj_events_begin_request: [29,1789953550591513000,63941089141,63941089349,DismissPanel]
+09-20 21:19:10.592  1570  1778 I wm_task_created: 7836
+09-20 21:19:10.592  1570  1778 I wm_task_created: 7834
+09-20 21:19:10.593  1570  1778 I wm_task_created: 7814
+09-20 21:19:10.593  1570  1778 I wm_task_created: 7820
+09-20 21:19:10.594  1570  1778 I wm_task_created: 7837
+09-20 21:19:10.594  1570  1778 I wm_task_created: 7851
+09-20 21:19:10.594  1570  1778 I wm_task_created: 7843
+09-20 21:19:10.594  1570  1778 I wm_task_created: 7847
+09-20 21:19:10.595  1570  1800 I am_uid_running: 10316
+09-20 21:19:10.603  1570  1800 I uc_send_user_broadcast: [0,android.intent.action.USER_UNLOCKED]
+09-20 21:19:10.603  1570  1795 I am_uid_running: 10232
+09-20 21:19:10.606  1570  1801 I am_proc_start: [0,4935,10325,org.lineageos.profiles,service,{org.lineageos.profiles/org.lineageos.profiles.ProfilesTrustAgent}]
+09-20 21:19:10.609  1570  3704 I am_proc_bound: [0,4919,com.android.providers.media.module]
+09-20 21:19:10.615  1570  1749 I am_proc_bound: [0,4935,org.lineageos.profiles]
+09-20 21:19:10.622  1570  1800 I uc_finish_user_unlocked_completed: 0
+09-20 21:19:10.623  1570  4324 I am_proc_bound: [0,4922,com.google.android.googlequicksearchbox:interactor]
+09-20 21:19:10.632  1570  1801 I am_proc_start: [0,4966,1000,com.libremobileos.sidebar,added application,com.libremobileos.sidebar]
+09-20 21:19:10.635  1570  1800 I ssm_user_unlocked: 0
+09-20 21:19:10.642  1570  1801 I am_proc_start: [0,4983,1000,com.libremobileos.freeform,added application,com.libremobileos.freeform]
+09-20 21:19:10.654  1570  3589 I am_proc_bound: [0,4966,com.libremobileos.sidebar]
+09-20 21:19:10.670  1570  3474 I am_uid_active: 10325
+09-20 21:19:10.672  1570  1801 I am_proc_start: [0,4991,10298,com.qualcomm.qti.services.systemhelper:systemhelper_service,added application,com.qualcomm.qti.services.systemhelper:systemhelper_service]
+09-20 21:19:10.691  1570  3210 I wm_finish_activity: [0,27773889,5,com.android.settings/.FallbackHome,app-request]
+09-20 21:19:10.697  1570  3155 I am_proc_bound: [0,4991,com.qualcomm.qti.services.systemhelper:systemhelper_service]
+09-20 21:19:10.697  1570  3210 I wm_pause_activity: [0,27773889,com.android.settings/.FallbackHome,userLeaving=false,finish]
+09-20 21:19:10.709  3388  3388 I wm_on_top_resumed_lost_called: [27773889,com.android.settings.FallbackHome,topStateChangedWhenResumed]
+09-20 21:19:10.713  3388  3388 I wm_on_paused_called: [27773889,com.android.settings.FallbackHome,performPause,0]
+09-20 21:19:10.723  1570  3209 I wm_task_created: 7852
+09-20 21:19:10.724  1570  3209 I wm_task_moved: [7852,1,0,1,2147483647]
+09-20 21:19:10.726  1570  3209 I wm_task_moved: [1,1,0,1,1]
+09-20 21:19:10.726  1570  3209 I wm_task_to_front: [0,7852,0]
+09-20 21:19:10.726  1570  3209 I wm_create_task: [0,7852,1,0]
+09-20 21:19:10.726  1570  3209 I wm_create_activity: [0,242884315,7852,com.android.launcher3/.uioverrides.QuickstepLauncher,android.intent.action.MAIN,NULL,NULL,268435712]
+09-20 21:19:10.726  1570  3209 I wm_task_moved: [1,1,0,1,1]
+09-20 21:19:10.726  1570  3209 I wm_task_moved: [7852,1,0,1,2147483647]
+09-20 21:19:10.729  1570  3209 I wm_restart_activity: [0,242884315,7852,com.android.launcher3/.uioverrides.QuickstepLauncher]
+09-20 21:19:10.730  1570  3209 I wm_set_resumed_activity: [0,com.android.launcher3/.uioverrides.QuickstepLauncher,realStartActivityLocked - onActivityStateChanged]
+09-20 21:19:10.733  1570  3155 I am_uid_active: 10298
+09-20 21:19:10.737  1570  1801 I am_proc_start: [0,4997,1000,org.ifaa.aidl.manager,added application,org.ifaa.aidl.manager]
+09-20 21:19:10.738  1570  3164 I am_proc_bound: [0,4983,com.libremobileos.freeform]
+09-20 21:19:10.749  1570  4344 I am_proc_bound: [0,4997,org.ifaa.aidl.manager]
+09-20 21:19:10.762  1570  1778 I uc_send_user_broadcast: [0,android.intent.action.BOOT_COMPLETED]
+09-20 21:19:10.765  1570  1800 I am_uid_running: 10253
+09-20 21:19:10.803  1570  1801 I am_proc_start: [0,5040,10248,com.tencent.soter.soterserver,added application,com.tencent.soter.soterserver]
+09-20 21:19:10.806  1570  1778 I sysui_multi_action: [757,803,799,window_time_0,802,41]
+09-20 21:19:10.817  1570  3715 I am_proc_bound: [0,5040,com.tencent.soter.soterserver]
+09-20 21:19:10.818  1570  3715 I am_uid_active: 10248
+09-20 21:19:10.841  1570  1801 I am_proc_start: [0,5059,10304,org.lineageos.audiofx,added application,org.lineageos.audiofx]
+09-20 21:19:10.843   689   689 I auditd  : avc:  denied  { find } for pid=3355 uid=1001 name=vendor.qti.hardware.radio.atfwd.IAtFwd/AtFwdAidl scontext=u:r:radio:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+09-20 21:19:10.872  1570  1801 I am_proc_start: [0,5066,10247,org.mipay.android.manager,added application,org.mipay.android.manager]
+09-20 21:19:10.880  1570  4326 I am_proc_bound: [0,5059,org.lineageos.audiofx]
+09-20 21:19:10.883  1570  4326 I am_uid_active: 10304
+09-20 21:19:10.889  1570  3164 I am_proc_bound: [0,5066,org.mipay.android.manager]
+09-20 21:19:10.890  1570  3164 I am_uid_active: 10247
+09-20 21:19:10.894  1570  1801 I am_proc_start: [0,5094,10316,com.qualcomm.location,added application,com.qualcomm.location]
+09-20 21:19:10.903  1570  1801 I am_proc_start: [0,5098,1000,org.lineageos.settings,added application,org.lineageos.settings]
+09-20 21:19:10.914  1570  1801 I am_proc_start: [0,5102,10232,com.android.printspooler,service,{com.android.printspooler/com.android.printspooler.model.PrintSpoolerService}]
+09-20 21:19:10.922   689   689 I auditd  : avc:  denied  { find } for pid=3299 uid=10308 name=vendor.qti.hardware.radio.atfwd.IAtFwd/AtFwdAidl scontext=u:r:vendor_qtelephony:s0:c52,c257,c512,c768 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+09-20 21:19:10.948  1570  1801 I am_proc_start: [0,5108,1000,com.android.keychain,service,{com.android.keychain/com.android.keychain.KeyChainService}]
+09-20 21:19:10.952  1570  3589 I am_proc_bound: [0,5098,org.lineageos.settings]
+09-20 21:19:10.965  1570  1801 I am_proc_start: [0,5137,10253,com.google.android.partnersetup,broadcast,{com.google.android.partnersetup/com.google.android.partnersetup.PhoneStateReceiver}]
+09-20 21:19:10.969  1570  3715 I am_proc_bound: [0,5094,com.qualcomm.location]
+09-20 21:19:10.970  1570  3715 I am_uid_active: 10316
+09-20 21:19:10.973  1570  3792 I am_proc_bound: [0,5102,com.android.printspooler]
+09-20 21:19:10.979  3132  3179 I jank_cuj_events_end_request: [29,1789953550979276000,64328841328,64328841588]
+09-20 21:19:10.982  1570  2895 I commit_sys_config_file: [net-policy,6]
+09-20 21:19:10.997  1865  3000 I liblog  : 39
+09-20 21:19:11.002  1570  2358 I wm_set_keyguard_shown: [0,0,0,1,0,setKeyguardShown]
+09-20 21:19:11.015  1570  3589 I am_proc_bound: [0,5137,com.google.android.partnersetup]
+09-20 21:19:11.022  1570  4324 I am_uid_active: 10348
+09-20 21:19:11.024  1570  4326 I am_proc_bound: [0,5108,com.android.keychain]
+09-20 21:19:11.033  3132  3132 I sysui_multi_action: [757,196,758,2,759,1]
+09-20 21:19:11.033  3132  3132 I sysui_status_bar_state: [0,0,0,0,1,0]
+09-20 21:19:11.059  1570  1782 I user_activity_timeout_override: -1
+09-20 21:19:11.067  1570  1783 I input_focus: [Requesting to set focus to null window,reason=UpdateInputWindows]
+09-20 21:19:11.072  1570  4344 I am_uid_active: 10232
+09-20 21:19:11.087  1570  2834 I input_focus: [Focus leaving 52287fc NotificationShade,reason=Waiting for window because NO_WINDOW]
+09-20 21:19:11.096  1570  5154 I commit_sys_config_file: [log-files,6]
+09-20 21:19:11.102  1570  5154 I am_uid_running: 10215
+09-20 21:19:11.146  1570  1801 I am_proc_start: [0,5190,10215,android.process.media,content provider,{com.android.providers.downloads/com.android.providers.downloads.DownloadProvider}]
+09-20 21:19:11.151  3534  3534 I wm_on_create_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,performCreate,383]
+09-20 21:19:11.153  3534  3534 I wm_on_start_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,handleStartActivity,0]
+09-20 21:19:11.153  1570  4324 I wm_set_requested_orientation: [5,com.android.launcher3/.uioverrides.QuickstepLauncher]
+09-20 21:19:11.153  1570  1801 I am_proc_start: [0,5196,10262,com.google.android.googlequicksearchbox:googleapp,service,{com.google.android.googlequicksearchbox/com.google.android.apps.gsa.nowoverlayservice.DrawerOverlayService}]
+09-20 21:19:11.158  3534  3534 I wm_on_resume_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,RESUME_ACTIVITY,4]
+09-20 21:19:11.164  1570  1801 I am_proc_start: [0,5199,10262,com.google.android.googlequicksearchbox:search,broadcast,{com.google.android.googlequicksearchbox/com.google.android.apps.gsa.staticplugins.smartspace.widget.SmartspaceWidgetProvider}]
+09-20 21:19:11.170  3534  3534 I wm_on_top_resumed_gained_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,topStateChangedWhenResumed]
+09-20 21:19:11.180  1570  3589 I am_uid_active: 10253
+09-20 21:19:11.181  1570  3209 I am_proc_bound: [0,5190,android.process.media]
+09-20 21:19:11.216  3456  3456 I gms_unknown: 2369
+09-20 21:19:11.216  3456  3456 I gms_unknown: 571522
+09-20 21:19:11.222  1570  3792 I am_proc_bound: [0,5196,com.google.android.googlequicksearchbox:googleapp]
+09-20 21:19:11.224  3132  3132 I viewroot_draw_event: [VRI[NotificationShade],Not drawing due to not visible. Reason=View.INVISIBLE]
+09-20 21:19:11.237  1570  1783 I input_focus: [Focus request 75e5605 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=UpdateInputWindows]
+09-20 21:19:11.240  3534  3534 I viewroot_draw_event: [VRI[QuickstepLauncher],Canceling draw. cancelDueToPreDrawListener=true cancelDueToSync=false]
+09-20 21:19:11.261  1570  1749 I am_uid_active: 10262
+09-20 21:19:11.264  1570  4324 I am_proc_bound: [0,5199,com.google.android.googlequicksearchbox:search]
+09-20 21:19:11.361  1570  1801 I am_proc_start: [0,5311,1000,co.aospa.sense,service,{co.aospa.sense/co.aospa.sense.SenseService}]
+09-20 21:19:11.383  1570  3589 I am_uid_active: 10215
+09-20 21:19:11.428  1570  4344 I am_proc_bound: [0,5311,co.aospa.sense]
+09-20 21:19:11.512  1570  1783 I input_focus: [Focus request 21d8cde GoogleDiscoverWindow,reason=UpdateInputWindows]
+09-20 21:19:11.559  5196  5196 I viewroot_draw_event: [VRI[GoogleDiscoverWindow],reportDrawFinished seqId=0]
+09-20 21:19:11.576   690   690 I auditd  : avc:  denied  { find } for interface=vendor.qti.hardware.systemhelper::ISystemEvent sid=u:r:platform_app:s0:c512,c768 pid=4991 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:vendor_hal_systemhelper_hwservice:s0 tclass=hwservice_manager permissive=0
+09-20 21:19:11.622  1570  1800 I am_uid_running: 10250
+09-20 21:19:11.624  1570  3210 I am_uid_active: 10330
+09-20 21:19:11.644  1570  1801 I am_proc_start: [0,5438,10250,com.android.imsserviceentitlement,broadcast,{com.android.imsserviceentitlement/com.android.imsserviceentitlement.ImsEntitlementReceiver}]
+09-20 21:19:11.668  3534  3534 I viewroot_draw_event: [VRI[QuickstepLauncher],Draw frame after cancel]
+09-20 21:19:11.679  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: com.drdisagree.colorblendr; callingUid: 10380; uidState: CEM ; uidBFSL: n/a; intent: Intent { xflg=0x4 cmp=com.drdisagree.colorblendr/.service.AutoStartService }; code:SYSTEM_ALLOW_LISTED; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:0; bindFromPackage:null: isBindService:false]]
+09-20 21:19:11.681  1570  3792 I am_foreground_service_start: [0,com.drdisagree.colorblendr/.service.AutoStartService,0,SYSTEM_ALLOW_LISTED,36,36,0,0,0,1,UNKNOWN,1073741824]
+09-20 21:19:11.689  3534  3534 I viewroot_draw_event: [VRI[QuickstepLauncher],reportDrawFinished seqId=0]
+09-20 21:19:11.694  1570  1778 I sysui_multi_action: [319,978,322,975,325,64,757,761,758,8,759,2,806,com.android.launcher3,871,com.android.launcher3.uioverrides.QuickstepLauncher,905,0,1320,9,1321,23]
+09-20 21:19:11.695  1570  1778 I wm_activity_launch_time: [0,242884315,com.android.launcher3/.uioverrides.QuickstepLauncher,975]
+09-20 21:19:11.697  1570  1782 I wm_destroy_activity: [0,27773889,5,com.android.settings/.FallbackHome,finish-transit]
+09-20 21:19:11.700  1570  1801 I am_proc_start: [0,5456,10259,com.google.android.gms.unstable,service,{com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}]
+09-20 21:19:11.704  3388  3388 I wm_on_stop_called: [27773889,com.android.settings.FallbackHome,LIFECYCLER_STOP_ACTIVITY,1]
+09-20 21:19:11.706  3388  3388 I wm_on_destroy_called: [27773889,com.android.settings.FallbackHome,performDestroy,1]
+09-20 21:19:11.708  1570  4324 I am_proc_bound: [0,5438,com.android.imsserviceentitlement]
+09-20 21:19:11.723  1570  3792 I am_proc_bound: [0,5456,com.google.android.gms.unstable]
+09-20 21:19:11.723  1570  2942 I sync    : [com.google.android.gms.people,0,0,-147988688]
+09-20 21:19:11.737  1570  2834 I input_focus: [Focus entering 21d8cde GoogleDiscoverWindow,reason=Window became focusable. Previous reason: NOT_VISIBLE]
+09-20 21:19:11.758  1570  2942 I commit_sys_config_file: [sync-accounts,5]
+09-20 21:19:11.796  1570  3474 I battery_level: [77,8100,350]
+09-20 21:19:11.804  1570  2358 I am_uid_running: 10226
+09-20 21:19:11.834  3456  3456 I gms_unknown: 2369
+09-20 21:19:11.834  3456  3456 I gms_unknown: 571522
+09-20 21:19:11.861  1570  1783 I input_focus: [Focus request 75e5605 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=UpdateInputWindows]
+09-20 21:19:11.872  1570  1801 I am_proc_start: [0,5491,10226,com.android.providers.calendar,content provider,{com.android.providers.calendar/com.android.providers.calendar.CalendarProvider2}]
+09-20 21:19:11.871  4157  4157 I auditd  : type=1400 audit(0.0:119): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:11.877  1570  2834 I input_focus: [Focus leaving 21d8cde GoogleDiscoverWindow,reason=setFocusedWindow]
+09-20 21:19:11.877  1570  2834 I input_focus: [Focus entering 75e5605 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=setFocusedWindow]
+09-20 21:19:11.880  1570  2859 I service_manager_stats: [100,13,30572]
+09-20 21:19:11.924  1570  2859 I am_uid_running: 10279
+09-20 21:19:11.932  1570  3210 I am_proc_bound: [0,5491,com.android.providers.calendar]
+09-20 21:19:11.956  1570  1801 I am_proc_start: [0,5524,10279,com.android.inputmethod.latin,service,{com.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME}]
+09-20 21:19:11.970  1570  5031 I am_uid_active: 10250
+09-20 21:19:12.015  1570  2942 I sync    : [subscribedfeeds,0,0,-147988688]
+09-20 21:19:12.016  1570  1801 I am_proc_start: [0,5533,1000,org.lineageos.lineageparts,broadcast,{org.lineageos.lineageparts/org.lineageos.lineageparts.BootReceiver}]
+09-20 21:19:12.018  1570  2942 I sync    : [com.google.android.gms.fitness,0,0,-147988688]
+09-20 21:19:12.034  1570  2942 I sync    : [com.google.android.gms.games,0,0,-147988688]
+09-20 21:19:12.035  1570  2942 I sync    : [com.google.android.gms.games.background,0,0,-147988688]
+09-20 21:19:12.040  1570  4326 I commit_sys_config_file: [sync-accounts,2]
+09-20 21:19:12.042  1570  3181 I wm_task_removed: [5,1,0,removeChild, last child = ActivityRecord{27773889 u0 com.android.settings/.FallbackHome t-1 f}} in Task{16ee243 #5 type=home A=1000:com.android.settings.FallbackHome nonResizable}]
+09-20 21:19:12.049  1570  3181 I wm_set_keyguard_occluded: [0,0,0,setOccluded]
+09-20 21:19:12.059  1570  4344 I am_uid_active: 10226
+09-20 21:19:12.059  3132  3132 I sysui_keyguard: [0,0]
+09-20 21:19:12.061  3132  3179 I jank_cuj_events_cancel_request: [23,1789953552059986000,65409552265,65409552369]
+09-20 21:19:12.078  1570  4326 I am_proc_bound: [0,5533,org.lineageos.lineageparts]
+09-20 21:19:12.082  1570  2942 I sync    : [subscribedfeeds,1,0,-147988688]
+09-20 21:19:12.090  1570  2942 I commit_sys_config_file: [sync-status,8]
+09-20 21:19:12.107  1570  1748 I am_proc_bound: [0,5524,com.android.inputmethod.latin]
+09-20 21:19:12.125  1570  2942 I sync    : [com.google.android.gms.people,1,0,-147988688]
+09-20 21:19:12.151  1570  2942 I sync    : [com.google.android.gms.games,1,0,-147988688]
+09-20 21:19:12.163  1570  2942 I sync    : [com.google.android.gms.games.background,1,0,-147988688]
+09-20 21:19:12.177  1570  1800 I am_uid_active: 10279
+09-20 21:19:12.262  1570  2942 I sync    : [com.google.android.gms.fitness,1,0,-147988688]
+09-20 21:19:12.308  1570  1800 I am_uid_running: 10385
+09-20 21:19:12.326  1570  1801 I am_proc_start: [0,5613,10385,pan.alexander.tordnscrypt.stable,broadcast,{pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.BootCompleteReceiver}]
+09-20 21:19:12.380  1570  4326 I am_proc_bound: [0,5613,pan.alexander.tordnscrypt.stable]
+09-20 21:19:12.503  1570  3127 I commit_sys_config_file: [input-subtypes,5]
+09-20 21:19:12.524  1570  1781 I commit_sys_config_file: [jobs,41]
+09-20 21:19:12.632  1570  5562 I am_uid_active: 10385
+09-20 21:19:12.611  5456  5456 I auditd  : type=1400 audit(0.0:120): avc:  denied  { read } for  comm="binder:5456_3" name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=14967 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+09-20 21:19:12.669  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: RCVR; uidBFSL: n/a; intent: Intent { act=pan.alexander.tordnscrypt.action.STOP_SERVICE_FOREGROUND xflg=0x4 cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService (has extras) }; code:SYSTEM_ALLOW_LISTED; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:0; bindFromPackage:null: isBindService:false]]
+09-20 21:19:12.688  1570  1800 I am_uid_running: 10371
+09-20 21:19:12.690  1570  3589 I am_foreground_service_start: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService,0,SYSTEM_ALLOW_LISTED,36,36,0,0,0,1,UNKNOWN,1073741824]
+09-20 21:19:12.691  1570  3589 I am_foreground_service_stop: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService,0,SYSTEM_ALLOW_LISTED,36,36,1,0,2,1,STOP_FOREGROUND,1073741824]
+09-20 21:19:12.696  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: SVC ; uidBFSL: n/a; intent: Intent { act=pan.alexander.tordnscrypt.action.STOP_SERVICE_FOREGROUND cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService }; code:SYSTEM_ALLOW_LISTED; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:1; bindFromPackage:null: isBindService:false]]
+09-20 21:19:12.696  1570  3715 I am_foreground_service_start: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService,0,SYSTEM_ALLOW_LISTED,36,36,0,0,0,2,UNKNOWN,1073741824]
+09-20 21:19:12.697  1570  3155 I am_foreground_service_stop: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService,0,SYSTEM_ALLOW_LISTED,36,36,0,0,2,2,STOP_FOREGROUND,1073741824]
+09-20 21:19:12.712  1570  1801 I am_proc_start: [0,5687,10371,dev.ukanth.ufirewall,broadcast,{dev.ukanth.ufirewall/dev.ukanth.ufirewall.broadcast.OnBootReceiver}]
+09-20 21:19:12.715  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: SVC ; uidBFSL: n/a; intent: Intent { act=pan.alexander.tordnscrypt.action.STOP_SERVICE_FOREGROUND cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService }; code:SYSTEM_ALLOW_LISTED; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:2; bindFromPackage:null: isBindService:false]]
+09-20 21:19:12.715  1570  3155 I am_foreground_service_start: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.modules.ModulesService,0,SYSTEM_ALLOW_LISTED,36,36,0,0,0,3,UNKNOWN,1073741824]
+09-20 21:19:12.747  5524  5524 I viewroot_draw_event: [VRI[InputMethod],Not drawing due to not visible. Reason=View.INVISIBLE]
+09-20 21:19:12.751  5692  5692 I auditd  : type=1400 audit(0.0:121): avc:  denied  { search } for  comm="libdnscrypt-pro" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.751  5692  5692 I auditd  : type=1400 audit(0.0:122): avc:  denied  { search } for  comm="libdnscrypt-pro" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.751  5692  5692 I auditd  : type=1400 audit(0.0:123): avc:  denied  { search } for  comm="libdnscrypt-pro" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.751  5692  5692 I auditd  : type=1400 audit(0.0:124): avc:  denied  { search } for  comm="libdnscrypt-pro" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.763  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: FGS ; uidBFSL: [BFSL]; intent: Intent { act=pan.alexander.tordnscrypt.action.RUN_COMMAND xflg=0x4 cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService (has extras) }; code:PROC_STATE_FGS; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:0; bindFromPackage:null: isBindService:false]]
+09-20 21:19:12.766  1570  1748 I am_proc_bound: [0,5687,dev.ukanth.ufirewall]
+09-20 21:19:12.795  5692  5692 I auditd  : type=1400 audit(0.0:125): avc:  denied  { search } for  comm="libdnscrypt-pro" name="/" dev="cgroup" ino=1 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:cgroup:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.806  1570  1748 I am_foreground_service_start: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService,0,PROC_STATE_FGS,36,36,0,0,0,1,UNKNOWN,2048]
+09-20 21:19:12.823  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),0,1]
+09-20 21:19:12.815  5713  5713 I auditd  : type=1400 audit(0.0:126): avc:  denied  { search } for  comm="libdnscrypt-pro" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:12.827  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: FGS ; uidBFSL: [BFSL]; intent: Intent { act=pan.alexander.tordnscrypt.action.RUN_COMMAND cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService }; code:PROC_STATE_FGS; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:1; bindFromPackage:null: isBindService:false] (Called on SHORT_SERVICE)]
+09-20 21:19:12.831  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),0,1]
+09-20 21:19:13.003  1570  4326 I am_uid_active: 10371
+09-20 21:19:13.005  1570  1800 I am_uid_running: 10258
+09-20 21:19:13.026  1570  1570 I sysui_multi_action: [757,1501,758,1,793,216,794,0,795,216,796,102,806,pan.alexander.tordnscrypt.stable,857,ROOT_COMMANDS_INVIZIBLE,858,2,947,0,1500,0,1641,progress,1688,1]
+09-20 21:19:13.026  1570  1570 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:19:13.036  1570  1801 I am_proc_start: [0,5769,10258,com.google.android.projection.gearhead:shared,broadcast,{com.google.android.projection.gearhead/com.google.android.apps.auto.wireless.bluetooth.WifiBluetoothReceiver}]
+09-20 21:19:13.080  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.096  1570  3210 I am_proc_bound: [0,5769,com.google.android.projection.gearhead:shared]
+09-20 21:19:13.136  1570  5651 I am_foreground_service_start: [0,dev.ukanth.ufirewall/.service.FirewallService,0,BOOT_COMPLETED,36,36,0,0,0,1,UNKNOWN,1073741824]
+09-20 21:19:13.318  1570  4326 I am_uid_active: 10258
+09-20 21:19:13.332  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.351  1570  1801 I am_proc_start: [0,5849,10335,.adservices,broadcast,{android.ext.services/com.android.adservices.service.common.AdExtBootCompletedReceiver}]
+09-20 21:19:13.358  1570  2834 I input_interaction: Interaction with: [75e5605 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,ac1eeb0 com.android.systemui.wallpapers.ImageWallpaper,PointerEventDispatcher0,[Gesture Monitor] swipe-up,[Gesture Monitor] edge-swipe], on displayId 0
+09-20 21:19:13.359  3534  3556 I jank_cuj_events_begin_request: [25,1789953553358964000,66708529504,66708529817,swipe]
+09-20 21:19:13.359  3534  3556 I jank_cuj_events_begin_request: [67,1789953553359052000,66708618254,66708618358,]
+09-20 21:19:13.371  1570  2358 I commit_sys_config_file: [overlays,2]
+09-20 21:19:13.373  1570  3474 I am_proc_bound: [0,5849,.adservices]
+09-20 21:19:13.383  3534  3556 I jank_cuj_events_cancel_request: [67,1789953553383832000,66733398046,66733398306]
+09-20 21:19:13.403  1570  1778 I configuration_changed: -2147483648
+09-20 21:19:13.405  1570  3155 I commit_sys_config_file: [overlays,23]
+09-20 21:19:13.428  3534  3556 I jank_cuj_events_cancel_request: [66,1789953553428789000,66778355233,66778355285]
+09-20 21:19:13.431  1570  2358 I commit_sys_config_file: [overlays,2]
+09-20 21:19:13.439  1570  2358 I commit_sys_config_file: [overlays,1]
+09-20 21:19:13.455  1570  1778 I wm_relaunch_resume_activity: [0,242884315,7852,com.android.launcher3/.uioverrides.QuickstepLauncher,80000000]
+09-20 21:19:13.519  1570  1800 I am_uid_running: 10301
+09-20 21:19:13.541  1570  1801 I am_proc_start: [0,5904,10301,com.android.camera,broadcast,{com.android.camera/com.android.camera.PreloadReceiver}]
+09-20 21:19:13.551  3534  3534 I wm_on_top_resumed_lost_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,pausing]
+09-20 21:19:13.552  3534  3534 I wm_on_paused_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,performPause,2]
+09-20 21:19:13.559  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.567  3534  3534 I wm_on_stop_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,handleRelaunchActivity,15]
+09-20 21:19:13.630  1570  5480 I am_proc_bound: [0,5904,com.android.camera]
+09-20 21:19:13.632  3132  3463 I viewroot_draw_event: [VRI[ScreenDecorOverlay],reportDrawFinished seqId=0]
+09-20 21:19:13.635  3132  3463 I viewroot_draw_event: [VRI[ScreenDecorOverlayBottom],reportDrawFinished seqId=0]
+09-20 21:19:13.660  1570  4921 I backup_transport_lifecycle: [com.android.localtransport/.LocalTransportService,1]
+09-20 21:19:13.662  3534  3534 I wm_on_destroy_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,performDestroy,95]
+09-20 21:19:13.672  1570  1801 I am_proc_start: [0,5932,1000,com.android.localtransport,service,{com.android.localtransport/com.android.localtransport.LocalTransportService}]
+09-20 21:19:13.673  1570  1783 I input_focus: [Requesting to set focus to null window,reason=UpdateInputWindows]
+09-20 21:19:13.713  5199  5391 I service_manager_stats: [200,97,67063]
+09-20 21:19:13.729  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.768  1570  5031 I am_proc_bound: [0,5932,com.android.localtransport]
+09-20 21:19:13.784  1570  3181 I wm_set_requested_orientation: [5,com.android.launcher3/.uioverrides.QuickstepLauncher]
+09-20 21:19:13.784  3534  3534 I wm_on_create_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,performCreate,102]
+09-20 21:19:13.785  3534  3534 I wm_on_start_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,handleStartActivity,1]
+09-20 21:19:13.785  3534  3534 I wm_on_resume_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,RESUME_ACTIVITY,0]
+09-20 21:19:13.786  3534  3534 I wm_on_top_resumed_gained_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,topWhenResuming]
+09-20 21:19:13.802  3534  3534 I viewroot_draw_event: [VRI[Taskbar],reportDrawFinished seqId=0]
+09-20 21:19:13.887  1570  1783 I input_focus: [Focus request 465c4ce com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=UpdateInputWindows]
+09-20 21:19:13.889   689   689 I auditd  : avc:  denied  { find } for pid=5904 uid=10301 name=netstats scontext=u:r:miuicamera_app:s0:c45,c257,c512,c768 tcontext=u:object_r:netstats_service:s0 tclass=service_manager permissive=0
+09-20 21:19:13.904  1570  1783 I input_focus: [Focus request 6611424 GoogleDiscoverWindow,reason=UpdateInputWindows]
+09-20 21:19:13.905  1570  1749 I commit_sys_config_file: [overlays,1]
+09-20 21:19:13.913  5196  5196 I viewroot_draw_event: [VRI[GoogleDiscoverWindow],reportDrawFinished seqId=0]
+09-20 21:19:13.942  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.951  1570  3125 I service_manager_slow: [12,user]
+09-20 21:19:13.961  1570  3155 I commit_sys_config_file: [overlays,47]
+09-20 21:19:13.963  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:13.973  3132  3132 I viewroot_draw_event: [VRI[StatusBar],reportDrawFinished seqId=0]
+09-20 21:19:13.975  1570  1783 I input_focus: [Focus request 465c4ce com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=UpdateInputWindows]
+09-20 21:19:14.015  1570  2834 I input_interaction: Interaction with: [PointerEventDispatcher0], on displayId 0
+09-20 21:19:14.020  1570  1570 I backup_transport_connection: [com.android.localtransport/.LocalTransportService,1]
+09-20 21:19:14.047  1570  4921 I backup_transport_lifecycle: [com.android.localtransport/.LocalTransportService,0]
+09-20 21:19:14.047  1570  4921 I backup_transport_connection: [com.android.localtransport/.LocalTransportService,0]
+09-20 21:19:14.058  1570  4921 I am_uid_running: 10257
+09-20 21:19:14.060  1570  4921 I backup_transport_lifecycle: [com.google.android.apps.restore/.transport.BackupTransportService,1]
+09-20 21:19:14.091  1570  1801 I am_proc_start: [0,6012,10257,com.google.android.apps.restore,service,{com.google.android.apps.restore/com.google.android.apps.restore.transport.BackupTransportService}]
+09-20 21:19:14.132  1570  5480 I commit_sys_config_file: [overlays,7]
+09-20 21:19:14.137  1570  3474 I am_proc_bound: [0,6012,com.google.android.apps.restore]
+09-20 21:19:14.142  1570  1800 I am_uid_active: 10257
+09-20 21:19:14.170   689   689 I auditd  : avc:  denied  { find } for pid=5904 uid=10301 name=isub scontext=u:r:miuicamera_app:s0:c45,c257,c512,c768 tcontext=u:object_r:radio_service:s0 tclass=service_manager permissive=0
+09-20 21:19:14.170   689   689 I auditd  : avc:  denied  { find } for pid=5904 uid=10301 name=isub scontext=u:r:miuicamera_app:s0:c45,c257,c512,c768 tcontext=u:object_r:radio_service:s0 tclass=service_manager permissive=0
+09-20 21:19:14.170   689   689 I auditd  : avc:  denied  { find } for pid=5904 uid=10301 name=phone scontext=u:r:miuicamera_app:s0:c45,c257,c512,c768 tcontext=u:object_r:radio_service:s0 tclass=service_manager permissive=0
+09-20 21:19:14.171  1570  5031 I am_foreground_service_stop: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService,0,PROC_STATE_FGS,36,36,0,0,1366,1,STOP_FOREGROUND,2048]
+09-20 21:19:14.179  1570  1570 I sysui_multi_action: [757,128,758,5,759,8,793,1349,794,0,795,232,796,102,806,pan.alexander.tordnscrypt.stable,857,ROOT_COMMANDS_INVIZIBLE,858,2,947,0,1500,232,1641,progress,1688,1]
+09-20 21:19:14.179  1570  1570 I notification_canceled: [0|pan.alexander.tordnscrypt.stable|102|null|10385,8,1349,232,0,-1,-1,NULL]
+09-20 21:19:14.187  1570  5480 I am_uid_active: 10301
+09-20 21:19:14.194  1570  1800 I am_uid_running: 10260
+09-20 21:19:14.206  1570  1801 I am_proc_start: [0,6044,10260,com.android.contacts,broadcast,{com.android.contacts/com.android.contacts.interactions.OnBootOrUpgradeReceiver}]
+09-20 21:19:14.214  3534  3534 I viewroot_draw_event: [VRI[QuickstepLauncher],reportDrawFinished seqId=0]
+09-20 21:19:14.234  1570  1748 I commit_sys_config_file: [overlays,1]
+09-20 21:19:14.248  1570  2834 I input_focus: [Focus entering 465c4ce com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=Window became focusable. Previous reason: NOT_VISIBLE]
+09-20 21:19:14.255  3534  3556 I jank_cuj_events_end_request: [25,1789953554255296000,67604863566,67604863983]
+09-20 21:19:14.255  3534  3556 I jank_cuj_events_cancel_request: [25,1789953554255336000,67604901118,67604901327]
+09-20 21:19:14.255  3534  3556 I jank_cuj_events_cancel_request: [67,1789953554255351000,67604916848,67604917004]
+09-20 21:19:14.257  1570  5480 I am_proc_bound: [0,6044,com.android.contacts]
+09-20 21:19:14.356  1570  3155 I am_uid_active: 10260
+09-20 21:19:14.359  1570  1800 I am_uid_running: 10223
+09-20 21:19:14.385  1570  5480 I netstats_mobile_sample: [0,0,0,0,0,0,0,0,1789953555282]
+09-20 21:19:14.385  1570  5480 I netstats_wifi_sample: [15742,7129,47,55,14569,7041,42,54,1789953555282]
+09-20 21:19:14.386  1570  1801 I am_proc_start: [0,6077,10223,com.android.devicediagnostics,broadcast,{com.android.devicediagnostics/com.android.devicediagnostics.BootCompleteReceiver}]
+09-20 21:19:14.443  1570  5480 I am_proc_bound: [0,6077,com.android.devicediagnostics]
+09-20 21:19:14.435  5713  5713 I auditd  : type=1400 audit(0.0:147): avc:  denied  { read } for  comm="libdnscrypt-pro" name="somaxconn" dev="proc" ino=48005 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:proc_net:s0 tclass=file permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:14.495  1570  1570 I backup_transport_connection: [com.google.android.apps.restore/.transport.BackupTransportService,1]
+09-20 21:19:14.527  1570  3074 I sysui_multi_action: [757,1717,758,1,759,0]
+09-20 21:19:14.527  1570  3074 I sysui_multi_action: [757,1717,758,2,759,5]
+09-20 21:19:14.527  1570  3074 I sysui_multi_action: [757,1717,758,3,759,1]
+09-20 21:19:14.593  1570  3155 I am_uid_active: 10223
+09-20 21:19:14.639  1570  1801 I am_proc_start: [0,6120,1000,com.android.dynsystem,broadcast,{com.android.dynsystem/com.android.dynsystem.BootCompletedReceiver}]
+09-20 21:19:14.690  1570  4326 I am_proc_bound: [0,6120,com.android.dynsystem]
+09-20 21:19:14.696  1570  2781 I commit_sys_config_file: [settings-1-0,12]
+09-20 21:19:14.702  1570  4921 I backup_transport_lifecycle: [com.google.android.apps.restore/.transport.BackupTransportService,0]
+09-20 21:19:14.702  1570  4921 I backup_transport_connection: [com.google.android.apps.restore/.transport.BackupTransportService,0]
+09-20 21:19:14.739  1570  4921 I backup_transport_lifecycle: [com.google.android.gms/.backup.component.D2dTransportService,1]
+09-20 21:19:14.743  1570  1800 I am_uid_running: 10345
+09-20 21:19:14.781  1570  1801 I am_proc_start: [0,6139,10345,com.android.federatedcompute.services,broadcast,{com.android.federatedcompute.services/com.android.federatedcompute.services.FederatedComputeBroadcastReceiver}]
+09-20 21:19:14.790  1570  1801 I am_proc_start: [0,6144,1000,com.android.dynsystem:dynsystem,service,{com.android.dynsystem/com.android.dynsystem.DynamicSystemInstallationService}]
+09-20 21:19:14.846  1570  2834 I input_interaction: Interaction with: [465c4ce com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,ac1eeb0 com.android.systemui.wallpapers.ImageWallpaper,PointerEventDispatcher0,[Gesture Monitor] swipe-up,[Gesture Monitor] edge-swipe], on displayId 0
+09-20 21:19:14.850  1570  5474 I am_proc_bound: [0,6144,com.android.dynsystem:dynsystem]
+09-20 21:19:14.855  1570  3155 I am_proc_bound: [0,6139,com.android.federatedcompute.services]
+09-20 21:19:14.893  1570  5651 I commit_sys_config_file: [overlays,2]
+09-20 21:19:14.899  3534  3556 I jank_cuj_events_begin_request: [25,1789953554899084000,68248652889,68248653306,swipe]
+09-20 21:19:14.899  3534  3556 I jank_cuj_events_begin_request: [67,1789953554899174000,68248739504,68248739660,]
+09-20 21:19:14.923  3534  3556 I jank_cuj_events_begin_request: [26,1789953554922425000,68271991118,68271991222,]
+09-20 21:19:14.933  1570  3164 I commit_sys_config_file: [overlays,27]
+09-20 21:19:14.989  1570  1749 I am_uid_active: 10345
+09-20 21:19:14.991  1570  1800 I am_uid_running: 10338
+09-20 21:19:15.004  1570  1801 I am_proc_start: [0,6180,10338,com.android.healthconnect.controller,broadcast,{com.android.healthconnect.controller/com.android.healthconnect.controller.safetycenter.SafetySourceBroadcastReceiver}]
+09-20 21:19:15.085  1570  3155 I am_proc_bound: [0,6180,com.android.healthconnect.controller]
+09-20 21:19:15.178  3534  3556 I jank_cuj_events_end_request: [26,1789953555176304000,68525872160,68525872368]
+09-20 21:19:15.222  1570  4324 I am_uid_active: 10338
+09-20 21:19:15.222  1570  1800 I am_uid_running: 10261
+09-20 21:19:15.247  1570  1801 I am_proc_start: [0,6202,10261,com.android.hotwordenrollment.okgoogle,broadcast,{com.android.hotwordenrollment.okgoogle/com.android.hotwordenrollment.okgoogle.StartupReceiver}]
+09-20 21:19:15.296  1570  1781 I commit_sys_config_file: [notification-policy,5]
+09-20 21:19:15.298  1570  5480 I am_proc_bound: [0,6202,com.android.hotwordenrollment.okgoogle]
+09-20 21:19:15.403  1570  4326 I am_uid_active: 10261
+09-20 21:19:15.411  1570  1800 I am_uid_running: 10251
+09-20 21:19:15.427  1570  1801 I am_proc_start: [0,6225,10251,com.android.hotwordenrollment.xgoogle,broadcast,{com.android.hotwordenrollment.xgoogle/com.android.hotwordenrollment.xgoogle.StartupReceiver}]
+09-20 21:19:15.456  1570  1570 I backup_transport_connection: [com.google.android.gms/.backup.component.D2dTransportService,1]
+09-20 21:19:15.482  1570  5480 I am_proc_bound: [0,6225,com.android.hotwordenrollment.xgoogle]
+09-20 21:19:15.492  1570  4921 I backup_transport_lifecycle: [com.google.android.gms/.backup.component.D2dTransportService,0]
+09-20 21:19:15.492  1570  4921 I backup_transport_connection: [com.google.android.gms/.backup.component.D2dTransportService,0]
+09-20 21:19:15.515  1570  4921 I backup_transport_lifecycle: [com.google.android.gms/.backup.BackupTransportService,1]
+09-20 21:19:15.573  1570  3589 I am_uid_active: 10251
+09-20 21:19:15.575  1570  1800 I am_uid_running: 10228
+09-20 21:19:15.593  1570  1801 I am_proc_start: [0,6263,10228,com.android.managedprovisioning,broadcast,{com.android.managedprovisioning/com.android.managedprovisioning.BootReminder}]
+09-20 21:19:15.628  1570  3589 I am_proc_bound: [0,6263,com.android.managedprovisioning]
+09-20 21:19:15.678  1570  1800 I ssm_user_completed_event: [0,2]
+09-20 21:19:15.707  1570  3589 I am_uid_active: 10228
+09-20 21:19:15.722  1570  1800 I am_uid_running: 10269
+09-20 21:19:15.739  1570  2781 I commit_sys_config_file: [settings-1-0,6]
+09-20 21:19:15.742  1570  1801 I am_proc_start: [0,6293,10269,com.android.messaging,broadcast,{com.android.messaging/com.android.messaging.receiver.BootAndPackageReplacedReceiver}]
+09-20 21:19:15.777  1570  1800 I am_wtf  : [0,1570,system_server,-1,ActivityManager,Background started FGS: Allowed [callingPackage: pan.alexander.tordnscrypt.stable; callingUid: 10385; uidState: FGS ; uidBFSL: [BFSL]; intent: Intent { act=pan.alexander.tordnscrypt.action.RUN_COMMAND xflg=0x4 cmp=pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService (has extras) }; code:PROC_STATE_FGS; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; allowWiu:-1; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:1; bindFromPackage:null: isBindService:false]]
+09-20 21:19:15.783  1570  3209 I am_proc_bound: [0,6293,com.android.messaging]
+09-20 21:19:15.792  1570  3155 I am_foreground_service_start: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService,0,PROC_STATE_FGS,36,36,0,0,0,2,UNKNOWN,2048]
+09-20 21:19:15.797  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),0,1]
+09-20 21:19:15.928  1570  1570 I backup_transport_connection: [com.google.android.gms/.backup.BackupTransportService,1]
+09-20 21:19:15.942  1570  4326 I am_uid_active: 10269
+09-20 21:19:15.942  1570  1800 I am_uid_running: 10344
+09-20 21:19:15.950  1570  3164 I commit_sys_config_file: [overlays,2]
+09-20 21:19:15.967  1570  4324 I commit_sys_config_file: [overlays,3]
+09-20 21:19:15.983  1570  1801 I am_proc_start: [0,6375,10344,com.android.ondevicepersonalization.services,broadcast,{com.android.ondevicepersonalization.services/com.android.ondevicepersonalization.services.OnDevicePersonalizationBroadcastReceiver}]
+09-20 21:19:15.996  3534  3556 I jank_cuj_events_begin_request: [25,1789953555995356000,69344923982,69344924503,swipe]
+09-20 21:19:15.996  3534  3556 I jank_cuj_events_begin_request: [67,1789953555995471000,69345036534,69345036795,]
+09-20 21:19:16.005  1570  1570 I sysui_multi_action: [757,1501,758,1,793,209,794,0,795,209,796,102,806,pan.alexander.tordnscrypt.stable,857,ROOT_COMMANDS_INVIZIBLE,858,2,947,0,1500,0,1641,progress,1688,1]
+09-20 21:19:16.005  1570  1570 I sysui_multi_action: [757,804,799,note_interruptive,801,0,802,1]
+09-20 21:19:16.039  1570  5031 I am_proc_bound: [0,6375,com.android.ondevicepersonalization.services]
+09-20 21:19:16.056  1570  4921 I backup_transport_lifecycle: [com.google.android.gms/.backup.BackupTransportService,0]
+09-20 21:19:16.056  1570  4921 I backup_transport_connection: [com.google.android.gms/.backup.BackupTransportService,0]
+09-20 21:19:16.065  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:16.075  1570  4921 I am_uid_running: 10287
+09-20 21:19:16.076  1570  4921 I backup_transport_lifecycle: [com.stevesoltys.seedvault/.transport.ConfigurableBackupTransportService,1]
+09-20 21:19:16.088  1570  1801 I am_proc_start: [0,6404,10287,com.stevesoltys.seedvault,service,{com.stevesoltys.seedvault/com.stevesoltys.seedvault.transport.ConfigurableBackupTransportService}]
+09-20 21:19:16.124  1570  1749 I am_uid_active: 10344
+09-20 21:19:16.128  1570  1800 I am_uid_running: 10218
+09-20 21:19:16.139  1570  5031 I am_proc_bound: [0,6404,com.stevesoltys.seedvault]
+09-20 21:19:16.156  3355  3679 I service_manager_stats: [100,7,37460]
+09-20 21:19:16.163  1570  1801 I am_proc_start: [0,6423,10218,com.android.packageinstaller,broadcast,{com.android.packageinstaller/com.android.packageinstaller.common.TemporaryFileManager}]
+09-20 21:19:16.170  3534  3556 I jank_cuj_events_cancel_request: [25,1789953556170779000,69520344503,69520344607]
+09-20 21:19:16.170  3534  3556 I jank_cuj_events_cancel_request: [67,1789953556170799000,69520363982,69520364034]
+09-20 21:19:16.187  1570  5480 I wm_task_created: 7853
+09-20 21:19:16.191  1570  5480 I wm_task_moved: [7853,7853,0,1,2]
+09-20 21:19:16.191  1570  5480 I wm_task_to_front: [0,7853,0]
+09-20 21:19:16.191  1570  5480 I wm_create_task: [0,7853,7853,0]
+09-20 21:19:16.191  1570  5480 I wm_create_activity: [0,75653625,7853,com.nox.nox/.ui.MainActivity,android.intent.action.MAIN,NULL,NULL,271056896]
+09-20 21:19:16.191  1570  5480 I wm_task_moved: [7853,7853,0,1,2]
+09-20 21:19:16.192  1570  5480 I wm_pause_activity: [0,242884315,com.android.launcher3/.uioverrides.QuickstepLauncher,userLeaving=true,pauseBackTasks]
+09-20 21:19:16.195  3534  3534 I wm_on_top_resumed_lost_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,topStateChangedWhenResumed]
+09-20 21:19:16.196  1570  1782 I am_uid_running: 10354
+09-20 21:19:16.197  3534  3534 I wm_on_paused_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,performPause,1]
+09-20 21:19:16.198  1570  4324 I wm_add_to_stopping: [0,242884315,com.android.launcher3/.uioverrides.QuickstepLauncher,makeInvisible]
+09-20 21:19:16.198  1570  1778 I sysui_multi_action: [757,803,799,window_time_0,802,5]
+09-20 21:19:16.212  1570  2834 I input_focus: [Focus leaving 465c4ce com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher,reason=NO_WINDOW]
+09-20 21:19:16.214  1570  1801 I am_proc_start: [0,6438,10354,com.nox.nox,next-top-activity,{com.nox.nox/com.nox.nox.ui.MainActivity}]
+09-20 21:19:16.259  1570  5651 I am_proc_bound: [0,6438,com.nox.nox]
+09-20 21:19:16.262  1570  5651 I am_uid_active: 10354
+09-20 21:19:16.264  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:16.277  1570  3474 I am_proc_bound: [0,6423,com.android.packageinstaller]
+09-20 21:19:16.286  3132  3192 I service_manager_slow: [62,uimode]
+09-20 21:19:16.350  3456  5417 I gms_unknown: [5,0,0]
+09-20 21:19:16.351  3456  5417 I gms_unknown: [CheckinTask:SentRequest,69701]
+09-20 21:19:16.360  3132  3192 I viewroot_draw_event: [VRI[nox],reportDrawFinished seqId=0]
+09-20 21:19:16.367  6467  6467 I auditd  : type=1400 audit(0.0:148): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.367  6467  6467 I auditd  : type=1400 audit(0.0:149): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.367  6467  6467 I auditd  : type=1400 audit(0.0:150): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.367  6467  6467 I auditd  : type=1400 audit(0.0:151): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.381  1570  1781 I commit_sys_config_file: [jobs,2]
+09-20 21:19:16.382  3534  3556 I jank_cuj_events_begin_request: [8,1789953556382743000,69732309972,69732310284,]
+09-20 21:19:16.455  6503  6503 I auditd  : type=1400 audit(0.0:152): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.455  6503  6503 I auditd  : type=1400 audit(0.0:153): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.455  6503  6503 I auditd  : type=1400 audit(0.0:154): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.455  6503  6503 I auditd  : type=1400 audit(0.0:155): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.459  6508  6508 I auditd  : type=1400 audit(0.0:156): avc:  denied  { search } for  comm="libksud.so" name="tests" dev="dm-41" ino=115 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:shell_test_data_file:s0 tclass=dir permissive=0 app=com.nox.nox
+09-20 21:19:16.475  1570  3589 I am_uid_active: 10218
+09-20 21:19:16.477  1570  1800 I am_uid_running: 10346
+09-20 21:19:16.506  1570  1801 I am_proc_start: [0,6515,10346,com.android.rkpdapp,broadcast,{com.android.rkpdapp/com.android.rkpdapp.BootReceiver}]
+09-20 21:19:16.519  3456  5417 I gms_unknown: [CheckinTask:ReceivedFailedResponse,69869]
+09-20 21:19:16.519  3456  5417 I gms_unknown: 7
+09-20 21:19:16.527  3456  5417 I gms_unknown: 8
+09-20 21:19:16.527  3456  5417 I gms_unknown: [CheckinTask:duration,4914]
+09-20 21:19:16.532  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:16.537  1570  3209 I wm_restart_activity: [0,75653625,7853,com.nox.nox/.ui.MainActivity]
+09-20 21:19:16.538  1570  3209 I wm_set_resumed_activity: [0,com.nox.nox/.ui.MainActivity,realStartActivityLocked - onActivityStateChanged]
+09-20 21:19:16.552  1570  1748 I am_uid_active: 10287
+09-20 21:19:16.559  1570  3209 I am_proc_bound: [0,6515,com.android.rkpdapp]
+09-20 21:19:16.562  1570  1570 I backup_transport_connection: [com.stevesoltys.seedvault/.transport.ConfigurableBackupTransportService,1]
+09-20 21:19:16.573  1570  4326 I commit_sys_config_file: [overlays,3]
+09-20 21:19:16.579  1570  4326 I commit_sys_config_file: [overlays,4]
+09-20 21:19:16.651  1570  4921 I backup_transport_lifecycle: [com.stevesoltys.seedvault/.transport.ConfigurableBackupTransportService,0]
+09-20 21:19:16.651  1570  4921 I backup_transport_connection: [com.stevesoltys.seedvault/.transport.ConfigurableBackupTransportService,0]
+09-20 21:19:16.760  6438  6438 I wm_on_create_called: [75653625,com.nox.nox.ui.MainActivity,performCreate,208]
+09-20 21:19:16.760  6438  6438 I wm_on_start_called: [75653625,com.nox.nox.ui.MainActivity,handleStartActivity,0]
+09-20 21:19:16.765  6438  6438 I wm_on_resume_called: [75653625,com.nox.nox.ui.MainActivity,RESUME_ACTIVITY,4]
+09-20 21:19:16.799  1570  5968 I am_uid_active: 10346
+09-20 21:19:16.800  1570  1800 I am_uid_running: 2000
+09-20 21:19:16.809  6438  6438 I wm_on_top_resumed_gained_called: [75653625,com.nox.nox.ui.MainActivity,topStateChangedWhenResumed]
+09-20 21:19:16.831  1570  1801 I am_proc_start: [0,6581,2000,com.android.shell,broadcast,{com.android.shell/com.android.shell.HeapDumpReceiver}]
+09-20 21:19:16.867  1570  1783 I input_focus: [Focus request d1965e5 com.nox.nox/com.nox.nox.ui.MainActivity,reason=UpdateInputWindows]
+09-20 21:19:16.868  6581  6581 I service_manager_slow: [10,activity]
+09-20 21:19:16.868  1570  1748 I am_proc_bound: [0,6581,com.android.shell]
+09-20 21:19:16.881  3534  3556 I jank_cuj_events_end_request: [8,1789953556876702000,70226271534,70226271795]
+09-20 21:19:16.881  1570  1748 I battery_level: [76,8090,350]
+09-20 21:19:16.896  6438  6438 I viewroot_draw_event: [VRI[MainActivity],Canceling draw. cancelDueToPreDrawListener=true cancelDueToSync=false]
+09-20 21:19:16.899  1570  1783 I wm_wallpaper_surface: [0,0,Window{465c4ce u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}]
+09-20 21:19:16.910  5196  5196 I viewroot_draw_event: [VRI[GoogleDiscoverWindow],Not drawing due to not visible. Reason=!mAppVisible && !mForceDecorViewVisibility]
+09-20 21:19:16.931  3534  3534 I viewroot_draw_event: [VRI[QuickstepLauncher],Not drawing due to not visible. Reason=!mAppVisible && !mForceDecorViewVisibility]
+09-20 21:19:16.994  1570  3209 I am_uid_active: 2000
+09-20 21:19:16.996  1570  1800 I am_uid_running: 10297
+09-20 21:19:17.023  1570  1801 I am_proc_start: [0,6625,10297,com.android.statementservice,broadcast,{com.android.statementservice/com.android.statementservice.domain.BootCompletedReceiver}]
+09-20 21:19:17.053  1570  5968 I am_proc_bound: [0,6625,com.android.statementservice]
+09-20 21:19:17.086  3456  5417 I gms_unknown: [CheckinTask:duration,25]
+09-20 21:19:17.192  1570  5031 I am_uid_active: 10297
+09-20 21:19:17.193  1570  1800 I am_uid_running: 10270
+09-20 21:19:17.232  1570  1801 I am_proc_start: [0,6680,10270,com.google.android.gm.exchange,broadcast,{com.google.android.gm.exchange/com.google.android.gm.exchange.UpgradeReceiver}]
+09-20 21:19:17.260  1570  3209 I am_proc_bound: [0,6680,com.google.android.gm.exchange]
+09-20 21:19:17.306  1570  1749 I am_uid_active: 10270
+09-20 21:19:17.328  1570  1801 I am_proc_start: [0,6754,10258,com.google.android.projection.gearhead:car,broadcast,{com.google.android.projection.gearhead/com.google.android.apps.auto.carservice.frx.FrxReceiver}]
+09-20 21:19:17.355  6438  6438 I viewroot_draw_event: [VRI[MainActivity],Draw frame after cancel]
+09-20 21:19:17.358  1570  1748 I am_proc_bound: [0,6754,com.google.android.projection.gearhead:car]
+09-20 21:19:17.429  1570  1800 I am_uid_running: 10309
+09-20 21:19:17.473  1570  1801 I am_proc_start: [0,6817,10309,com.google.android.setupwizard,broadcast,{com.google.android.setupwizard/com.google.android.setupwizard.pairing.PairingBootReceiver}]
+09-20 21:19:17.532  1570  1748 I am_proc_bound: [0,6817,com.google.android.setupwizard]
+09-20 21:19:17.537  6438  6438 I viewroot_draw_event: [VRI[MainActivity],reportDrawFinished seqId=0]
+09-20 21:19:17.542  1570  1778 I sysui_multi_action: [319,182,321,178,322,1360,325,69,757,761,758,7,759,1,806,com.nox.nox,871,com.nox.nox.ui.MainActivity,904,com.android.launcher3,905,0,945,77,1320,4,1321,4]
+09-20 21:19:17.545  1570  1778 I wm_activity_launch_time: [0,75653625,com.nox.nox/.ui.MainActivity,1360]
+09-20 21:19:17.545  3132  3179 I jank_cuj_events_begin_request: [39,1789953557545474000,70895042628,70895042888,]
+09-20 21:19:17.562  1570  2834 I input_focus: [Focus entering d1965e5 com.nox.nox/com.nox.nox.ui.MainActivity,reason=Window became focusable. Previous reason: NOT_VISIBLE]
+09-20 21:19:17.655  1570  5031 I wm_stop_activity: [0,242884315,com.android.launcher3/.uioverrides.QuickstepLauncher]
+09-20 21:19:17.662  3534  3534 I wm_on_stop_called: [242884315,com.android.launcher3.uioverrides.QuickstepLauncher,STOP_ACTIVITY_ITEM,5]
+09-20 21:19:17.670  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:17.739  1570  5480 I am_uid_active: 10309
+09-20 21:19:17.740  1570  1800 I am_uid_running: 10271
+09-20 21:19:17.754  1570  1801 I am_proc_start: [0,6890,10271,com.google.android.syncadapters.calendar,broadcast,{com.google.android.syncadapters.calendar/com.google.android.libraries.notifications.platform.entrypoints.restart.RestartReceiver}]
+09-20 21:19:17.821  1570  5480 I am_proc_bound: [0,6890,com.google.android.syncadapters.calendar]
+09-20 21:19:17.851  6438  6438 I auditd  : type=1400 audit(0.0:182): avc:  denied  { read } for  comm="DefaultDispatch" name="u:object_r:incremental_prop:s0" dev="tmpfs" ino=15143 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:incremental_prop:s0 tclass=file permissive=0 app=com.nox.nox
+09-20 21:19:17.851  6438  6438 I auditd  : type=1400 audit(0.0:183): avc:  denied  { ioctl } for  comm="DefaultDispatch" path="/data/app/~~k_5u7br2RpI5ytyWLT8eqQ==/co.leanremote.universalremotecontrol.remotecontrol-7XMuI-KwvBWYT6R_1wCrug==/base.apk" dev="incremental-fs" ino=139075 ioctlcmd=0x6722 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:apk_data_file:s0 tclass=file permissive=0 app=com.nox.nox
+09-20 21:19:17.851  6438  6438 I auditd  : type=1400 audit(0.0:184): avc:  denied  { ioctl } for  comm="DefaultDispatch" path="/data/app/~~k_5u7br2RpI5ytyWLT8eqQ==/co.leanremote.universalremotecontrol.remotecontrol-7XMuI-KwvBWYT6R_1wCrug==/split_config.en.apk" dev="incremental-fs" ino=139083 ioctlcmd=0x6722 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:apk_data_file:s0 tclass=file permissive=0 app=com.nox.nox
+09-20 21:19:17.851  6438  6438 I auditd  : type=1400 audit(0.0:185): avc:  denied  { ioctl } for  comm="DefaultDispatch" path="/data/app/~~k_5u7br2RpI5ytyWLT8eqQ==/co.leanremote.universalremotecontrol.remotecontrol-7XMuI-KwvBWYT6R_1wCrug==/split_config.xxhdpi.apk" dev="incremental-fs" ino=139085 ioctlcmd=0x6722 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:apk_data_file:s0 tclass=file permissive=0 app=com.nox.nox
+09-20 21:19:17.895  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:17.917  3132  3179 I jank_cuj_events_end_request: [39,1789953557917440000,71267005909,71267006013]
+09-20 21:19:17.926  3132  3192 I viewroot_draw_event: [VRI[nox],Not drawing due to not visible. Reason=View.GONE]
+09-20 21:19:17.959  6438  6438 I auditd  : type=1400 audit(0.0:186): avc:  denied  { ioctl } for  comm="DefaultDispatch" path="/data/app/~~-p9Epe36sGSqs2y8-vo3LA==/com.duokan.phone.remotecontroller-GqiCMkUkRNUTh0IPN6vDsg==/base.apk" dev="incremental-fs" ino=114153 ioctlcmd=0x6722 scontext=u:r:untrusted_app:s0:c98,c257,c512,c768 tcontext=u:object_r:apk_data_file:s0 tclass=file permissive=0 app=com.nox.nox
+09-20 21:19:18.013  1570  3164 I am_uid_active: 10271
+09-20 21:19:18.017  1570  1800 I am_uid_running: 10277
+09-20 21:19:18.029  1570  1801 I am_proc_start: [0,6970,10277,com.google.android.tts,broadcast,{com.google.android.tts/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:18.077  1570  5480 I am_proc_bound: [0,6970,com.google.android.tts]
+09-20 21:19:18.085  1570  3715 I am_uid_running: 10256
+09-20 21:19:18.096  1570  1801 I am_proc_start: [0,6992,10256,com.android.vending,service,{com.android.vending/com.google.android.finsky.contentfilterui.ContentFiltersService}]
+09-20 21:19:18.118  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:18.126  1570  5968 I am_proc_bound: [0,6992,com.android.vending]
+09-20 21:19:18.127  3456  3456 I service_manager_stats: [200,126,71477]
+09-20 21:19:18.254  1570  2834 I input_interaction: Interaction with: [d1965e5 com.nox.nox/com.nox.nox.ui.MainActivity,PointerEventDispatcher0,[Gesture Monitor] swipe-up,[Gesture Monitor] edge-swipe], on displayId 0
+09-20 21:19:18.343  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:18.355  1570  3164 I am_uid_active: 10277
+09-20 21:19:18.362  1570  1800 I am_uid_running: 10296
+09-20 21:19:18.387  1570  1801 I am_proc_start: [0,7085,10296,com.quicinc.voice.activation,broadcast,{com.quicinc.voice.activation/com.quicinc.voice.activation.receiver.VoiceAssistReceiver}]
+09-20 21:19:18.437  1570  5031 I am_proc_bound: [0,7085,com.quicinc.voice.activation]
+09-20 21:19:18.571  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:18.656  3456  5492 I gms_unknown: 112786
+09-20 21:19:18.666  1570  5651 I am_uid_active: 10296
+09-20 21:19:18.672  1570  1800 I am_uid_running: 10329
+09-20 21:19:18.678  1570  4344 I am_uid_active: 10256
+09-20 21:19:18.700  1570  1801 I am_proc_start: [0,7193,10329,org.calyxos.backup.contacts,broadcast,{org.calyxos.backup.contacts/org.calyxos.backup.contacts.StartBroadcastReceiver}]
+09-20 21:19:18.720  1570  2942 I sync    : [com.google.android.gms.chromesync,0,3,-147988688]
+09-20 21:19:18.732  1570  5651 I am_proc_bound: [0,7193,org.calyxos.backup.contacts]
+09-20 21:19:18.750  1570  1781 I commit_sys_config_file: [notification-policy,6]
+09-20 21:19:18.757  1570  3715 I am_proc_died: [0,7085,com.quicinc.voice.activation,0,10]
+09-20 21:19:18.762  1570  3715 I am_uid_stopped: 10296
+09-20 21:19:18.804  1570  1748 I am_uid_active: 10329
+09-20 21:19:18.804  1570  1800 I am_uid_running: 10288
+09-20 21:19:18.857  1570  1801 I am_proc_start: [0,7225,10288,org.lineageos.updater,broadcast,{org.lineageos.updater/org.lineageos.updater.UpdaterReceiver}]
+09-20 21:19:18.861  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:18.876  1570  3164 I am_proc_bound: [0,7225,org.lineageos.updater]
+09-20 21:19:18.889  1570  2942 I sync    : [com.google.android.gms.chromesync,1,3,-147988688]
+09-20 21:19:18.919  3456  5605 I gtalk_conn_close: [286,31]
+09-20 21:19:18.968  1570  3155 I am_uid_active: 10288
+09-20 21:19:18.972  1570  1800 I am_uid_running: 10317
+09-20 21:19:19.008  1570  1801 I am_proc_start: [0,7276,10317,org.omnirom.omnijaws,broadcast,{org.omnirom.omnijaws/org.omnirom.omnijaws.SystemReceiver}]
+09-20 21:19:19.028  1570  3155 I am_proc_bound: [0,7276,org.omnirom.omnijaws]
+09-20 21:19:19.097  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:19.245  1570  1801 I am_proc_start: [0,7340,10256,com.android.vending:background,service,{com.android.vending/com.google.frameworks.client.data.android.server.play.BackgroundProcessEndpointService}]
+09-20 21:19:19.264  1570  3181 I am_uid_active: 10317
+09-20 21:19:19.265  1570  1800 I am_uid_running: 10364
+09-20 21:19:19.299  1570  1801 I am_proc_start: [0,7345,10364,com.aurora.store,broadcast,{com.aurora.store/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:19.307  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:19.343  1570  3704 I am_proc_bound: [0,7340,com.android.vending:background]
+09-20 21:19:19.354  1570  1781 I commit_sys_config_file: [notification-policy,3]
+09-20 21:19:19.360  1570  2781 I commit_sys_config_file: [settings-1-0,7]
+09-20 21:19:19.361  1570  3704 I am_proc_bound: [0,7345,com.aurora.store]
+09-20 21:19:19.411  1570  1570 I notification_enqueue: [10385,5613,pan.alexander.tordnscrypt.stable,102,NULL,0,Notification(channel=ROOT_COMMANDS_INVIZIBLE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONLY_ALERT_ONCE|FOREGROUND_SERVICE|SILENT color=0x00000000 category=progress vis=PRIVATE),1,1]
+09-20 21:19:19.527  5687  5687 I auditd  : type=1400 audit(0.0:190): avc:  granted  { execute } for  comm="kanth.ufirewall" name="busybox" dev="dm-41" ino=161346 scontext=u:r:untrusted_app:s0:c115,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c115,c257,c512,c768 tclass=file app=dev.ukanth.ufirewall
+09-20 21:19:19.531  7428  7428 I auditd  : type=1400 audit(0.0:191): avc:  granted  { execute } for  comm="kanth.ufirewall" name="busybox" dev="dm-41" ino=161346 scontext=u:r:untrusted_app:s0:c115,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c115,c257,c512,c768 tclass=file
+09-20 21:19:19.531  7428  7428 I auditd  : type=1400 audit(0.0:192): avc:  denied  { execute_no_trans } for  comm="kanth.ufirewall" path="/data/data/dev.ukanth.ufirewall/app_bin/busybox" dev="dm-41" ino=161346 scontext=u:r:untrusted_app:s0:c115,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c115,c257,c512,c768 tclass=file permissive=0
+09-20 21:19:19.531  5687  5687 I auditd  : type=1400 audit(0.0:193): avc:  granted  { execute } for  comm="kanth.ufirewall" name="iptables" dev="dm-41" ino=161355 scontext=u:r:untrusted_app:s0:c115,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c115,c257,c512,c768 tclass=file app=dev.ukanth.ufirewall
+09-20 21:19:19.531  5687  5687 I auditd  : type=1400 audit(0.0:194): avc:  granted  { execute } for  comm="kanth.ufirewall" name="iptables" dev="dm-41" ino=161355 scontext=u:r:untrusted_app:s0:c115,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c115,c257,c512,c768 tclass=file app=dev.ukanth.ufirewall
+09-20 21:19:19.615  1570  4326 I am_foreground_service_stop: [0,pan.alexander.tordnscrypt.stable/pan.alexander.tordnscrypt.utils.root.RootExecService,0,PROC_STATE_FGS,36,36,0,0,3823,2,STOP_FOREGROUND,2048]
+09-20 21:19:19.619  1570  1570 I sysui_multi_action: [757,128,758,5,759,8,793,3823,794,0,795,208,796,102,806,pan.alexander.tordnscrypt.stable,857,ROOT_COMMANDS_INVIZIBLE,858,2,947,0,1500,208,1641,progress,1688,1]
+09-20 21:19:19.620  1570  1570 I notification_canceled: [0|pan.alexander.tordnscrypt.stable|102|null|10385,8,3823,208,0,-1,-1,NULL]
+09-20 21:19:19.713  1570  1570 I notification_cancel_all: [1000,1570,com.aurora.store,0,0,0,20,NULL]
+09-20 21:19:19.714  1570  1570 I notification_cancel_all: [1000,1570,com.aurora.store,0,0,0,20,NULL]
+09-20 21:19:19.714  1570  1570 I notification_cancel_all: [1000,1570,com.aurora.store,0,0,0,20,NULL]
+09-20 21:19:19.717  1570  3474 I am_uid_active: 10364
+09-20 21:19:19.718  1570  1800 I am_uid_running: 10381
+09-20 21:19:19.743  1570  1801 I am_proc_start: [0,7483,10381,com.ebay.mobile,broadcast,{com.ebay.mobile/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:19.779  1570  3589 I am_proc_bound: [0,7483,com.ebay.mobile]
+09-20 21:19:19.789  1570  1781 I commit_sys_config_file: [notification-policy,22]
+09-20 21:19:19.930  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.gms,0,0,0,20,NULL]
+09-20 21:19:19.932  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.gms,0,0,0,20,NULL]
+09-20 21:19:19.932  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.gms,0,0,0,20,NULL]
+09-20 21:19:19.933  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.gms,0,0,0,20,NULL]
+09-20 21:19:19.934  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.gms,0,0,0,20,NULL]
+09-20 21:19:20.108  1570  1781 I commit_sys_config_file: [jobs,6]
+09-20 21:19:20.111  1570  1781 I commit_sys_config_file: [jobs,3]
+09-20 21:19:20.149  3456  3636 I c2dm    : [-2,,1,1]
+09-20 21:19:20.237  3456  3636 I gtalk_heartbeat_reset: [65896,74.125.141.188:5228]
+09-20 21:19:20.237  3456  3636 I gtalk_connection: 0
+09-20 21:19:20.409  1570  3715 I am_uid_active: 10381
+09-20 21:19:20.410  1570  1800 I am_uid_running: 10368
+09-20 21:19:20.432  1570  1801 I am_proc_start: [0,7694,10368,com.google.android.apps.translate,broadcast,{com.google.android.apps.translate/com.google.android.apps.translate.RebootReceiver}]
+09-20 21:19:20.435  1570  1781 I commit_sys_config_file: [notification-policy,6]
+09-20 21:19:20.450  1570  3715 I am_proc_bound: [0,7694,com.google.android.apps.translate]
+09-20 21:19:20.831  1570  1781 I commit_sys_config_file: [notification-policy,5]
+09-20 21:19:20.991  1570  3474 I am_uid_active: 10368
+09-20 21:19:20.998  1570  1800 I am_uid_running: 10398
+09-20 21:19:21.016  1570  1801 I am_proc_start: [0,7992,10398,com.google.android.apps.walletnfcrel,broadcast,{com.google.android.apps.walletnfcrel/com.google.android.apps.wallet.infrastructure.account.receiver.RefreshActiveAccountReceiver}]
+09-20 21:19:21.038  1570  1749 I am_proc_bound: [0,7992,com.google.android.apps.walletnfcrel]
+09-20 21:19:21.063  5456  5456 I auditd  : type=1400 audit(0.0:197): avc:  denied  { read } for  comm="lowpool[3]" name="bin" dev="dm-41" ino=81664 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_data_file:s0 tclass=dir permissive=0 bug=b/146166941 app=com.google.android.gms
+09-20 21:19:21.267  1570  2406 I commit_sys_config_file: [package-user-0,41]
+09-20 21:19:21.270  1570  3181 I am_uid_active: 10398
+09-20 21:19:21.271  1570  1800 I am_uid_running: 10386
+09-20 21:19:21.320  1570  1801 I am_proc_start: [0,8098,10386,com.google.android.youtube,broadcast,{com.google.android.youtube/com.google.android.libraries.youtube.mdx.background.MdxBackgroundScanBootReceiver}]
+09-20 21:19:21.331  5456  5456 I auditd  : type=1400 audit(0.0:198): avc:  denied  { read } for  comm="lowpool[3]" name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=14967 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+09-20 21:19:21.347  1570  4324 I am_proc_bound: [0,8098,com.google.android.youtube]
+09-20 21:19:21.724  1570  3181 I am_uid_active: 10386
+09-20 21:19:21.726  1570  1800 I am_uid_running: 10394
+09-20 21:19:21.749  1570  1801 I am_proc_start: [0,8259,10394,com.spotify.music,broadcast,{com.spotify.music/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:21.823  1570  4324 I am_proc_bound: [0,8259,com.spotify.music]
+09-20 21:19:21.869  1570  4324 I battery_level: [77,8118,350]
+09-20 21:19:21.871  4157  4157 I auditd  : type=1400 audit(0.0:199): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:22.095  1570  4324 I am_uid_active: 10394
+09-20 21:19:22.096  1570  1800 I am_uid_running: 10370
+09-20 21:19:22.132  1570  1801 I am_proc_start: [0,8338,10370,com.termux,broadcast,{com.termux/com.termux.app.TermuxBootReceiver}]
+09-20 21:19:22.195  1570  1749 I am_proc_bound: [0,8338,com.termux]
+09-20 21:19:22.237  1570  1749 I am_uid_active: 10370
+09-20 21:19:22.248  1570  1800 I am_uid_running: 10377
+09-20 21:19:22.275  1570  1801 I am_proc_start: [0,8365,10377,com.twitter.android,broadcast,{com.twitter.android/com.x.android.ComponentStateRepairReceiver}]
+09-20 21:19:22.297  1570  1749 I am_proc_bound: [0,8365,com.twitter.android]
+09-20 21:19:22.553  1570  3181 I am_uid_active: 10377
+09-20 21:19:22.557  1570  1800 I am_uid_running: 10379
+09-20 21:19:22.588  1570  1801 I am_proc_start: [0,8429,10379,io.element.android.x,broadcast,{io.element.android.x/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:22.617  1570  3155 I am_proc_bound: [0,8429,io.element.android.x]
+09-20 21:19:22.934  1570  3181 I am_uid_active: 10379
+09-20 21:19:22.937  1570  1800 I am_uid_running: 10359
+09-20 21:19:23.000  1570  1801 I am_proc_start: [0,8482,10359,me.kavishdevar.librepods,broadcast,{me.kavishdevar.librepods/me.kavishdevar.librepods.receivers.BootReceiver}]
+09-20 21:19:23.025  1570  1749 I am_proc_bound: [0,8482,me.kavishdevar.librepods]
+09-20 21:19:23.072  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.073  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.118  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.118  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.119  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.120  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.120  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.120  1570  1570 I notification_cancel_all: [1000,1570,com.twitter.android,0,0,0,20,NULL]
+09-20 21:19:23.160  1570  3181 I am_uid_active: 10359
+09-20 21:19:23.164  1570  1800 I am_uid_running: 10388
+09-20 21:19:23.186  1570  1801 I am_proc_start: [0,8510,10388,net.thunderbird.android,broadcast,{net.thunderbird.android/androidx.work.impl.background.systemalarm.RescheduleReceiver}]
+09-20 21:19:23.201  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.201  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.201  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.201  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.202  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.202  1570  3181 I sysui_multi_action: [757,856,758,1,806,me.kavishdevar.librepods,857,librepods_fgs_bootstrap,858,2]
+09-20 21:19:23.203  1570  4324 I am_foreground_service_start: [0,me.kavishdevar.librepods/.services.AirPodsService,0,BOOT_COMPLETED,36,36,0,0,0,1,UNKNOWN,16]
+09-20 21:19:23.204  1570  3181 I am_foreground_service_stop: [0,me.kavishdevar.librepods/.services.AirPodsService,0,BOOT_COMPLETED,36,36,0,0,1,1,STOP_FOREGROUND,16]
+09-20 21:19:23.206  1570  1570 I notification_enqueue: [10359,8482,me.kavishdevar.librepods,1,NULL,0,Notification(channel=librepods_fgs_bootstrap shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=SILENT color=0x00000000 category=service vis=PRIVATE),0,1]
+09-20 21:19:23.208  1570  1570 I sysui_multi_action: [757,128,758,5,759,8,793,2,794,0,795,2,796,1,806,me.kavishdevar.librepods,857,librepods_fgs_bootstrap,858,2,947,0,1500,2,1641,service]
+09-20 21:19:23.208  1570  1570 I notification_canceled: [0|me.kavishdevar.librepods|1|null|10359,8,2,2,0,-1,-1,NULL]
+09-20 21:19:23.208  1570  3589 I sysui_multi_action: [757,856,758,2,806,me.kavishdevar.librepods,857,librepods_fgs_bootstrap,858,2]
+09-20 21:19:23.208  1570  1570 I notification_cancel_all: [1000,1570,me.kavishdevar.librepods,0,0,0,20,NULL]
+09-20 21:19:23.209  1570  3589 I am_proc_bound: [0,8510,net.thunderbird.android]
+09-20 21:19:23.338  1570  1781 I commit_sys_config_file: [notification-policy,17]
+09-20 21:19:23.425  1570  3181 I am_uid_active: 10388
+09-20 21:19:23.427  1570  1800 I am_uid_running: 10367
+09-20 21:19:23.459  1570  1801 I am_proc_start: [0,8565,10367,org.adaway,broadcast,{org.adaway/org.adaway.broadcast.BootReceiver}]
+09-20 21:19:23.484  1570  1749 I am_proc_bound: [0,8565,org.adaway]
+09-20 21:19:23.586  1570  3589 I am_uid_active: 10367
+09-20 21:19:23.587  1570  1800 I am_uid_running: 10399
+09-20 21:19:23.597  1570  1801 I am_proc_start: [0,8600,10399,org.telegram.messenger,broadcast,{org.telegram.messenger/org.telegram.messenger.AppStartReceiver}]
+09-20 21:19:23.612  1570  3181 I am_proc_bound: [0,8600,org.telegram.messenger]
+09-20 21:19:23.683  1570  1781 I commit_sys_config_file: [notification-policy,3]
+09-20 21:19:23.756  1570  3181 I am_uid_active: 10399
+09-20 21:19:23.756  1570  1800 I am_uid_running: 10347
+09-20 21:19:23.779  1570  1801 I am_proc_start: [0,8657,10347,com.android.photopicker,broadcast,{com.android.photopicker/com.android.photopicker.PhotopickerDeviceConfigReceiver}]
+09-20 21:19:23.780  1570  2781 I commit_sys_config_file: [settings-1-0,1]
+09-20 21:19:23.805  1570  5474 I am_proc_bound: [0,8657,com.android.photopicker]
+09-20 21:19:23.850  1570  1800 I am_uid_running: 10213
+09-20 21:19:23.891  1570  1801 I am_proc_start: [0,8680,10213,com.android.externalstorage,broadcast,{com.android.externalstorage/com.android.externalstorage.MountReceiver}]
+09-20 21:19:23.909  1570  5474 I am_proc_bound: [0,8680,com.android.externalstorage]
+09-20 21:19:23.935  1570  1800 I am_uid_running: 10373
+09-20 21:19:23.945  1570  1801 I am_proc_start: [0,8701,10373,com.whatsapp,broadcast,{com.whatsapp/com.whatsapp.media.ExternalMediaManager$ExternalMediaStateReceiver}]
+09-20 21:19:23.959  1570  3589 I am_proc_bound: [0,8701,com.whatsapp]
+09-20 21:19:24.075  8098  8098 I auditd  : type=1400 audit(0.0:200): avc:  granted  { execute } for  comm=42472054687265616420233132 path="/data/data/com.google.android.youtube/app_pccache2/5/A9034062055425FE7CC6E280FCDFE0636725932D/pcam.jar" dev="dm-41" ino=151907 scontext=u:r:untrusted_app:s0:c130,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c130,c257,c512,c768 tclass=file app=com.google.android.youtube
+09-20 21:19:24.119  8701  8701 I auditd  : type=1400 audit(0.0:201): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libwa_log.so" dev="dm-41" ino=274474 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.123  8701  8701 I auditd  : type=1400 audit(0.0:202): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libc++_shared.so" dev="dm-41" ino=274475 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.127  8701  8701 I auditd  : type=1400 audit(0.0:203): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libglog.so" dev="dm-41" ino=274468 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.127  8701  8701 I auditd  : type=1400 audit(0.0:204): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libfbjni.so" dev="dm-41" ino=274461 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.127  8701  8701 I auditd  : type=1400 audit(0.0:205): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libfbsofterror.so" dev="dm-41" ino=274464 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.127  8701  8701 I auditd  : type=1400 audit(0.0:206): avc:  granted  { execute } for  comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libfb.so" dev="dm-41" ino=274463 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:24.187  1570  1800 I am_uid_running: 10372
+09-20 21:19:24.228  1570  1801 I am_proc_start: [0,8749,10372,com.yandex.browser,broadcast,{com.yandex.browser/com.yandex.browser.externalcache.ExternalStorageStateReceiver}]
+09-20 21:19:24.260  1570  3589 I am_proc_bound: [0,8749,com.yandex.browser]
+09-20 21:19:24.296  1570  3589 I am_uid_active: 10373
+09-20 21:19:24.598  1570  1801 I am_proc_start: [0,8808,10372,com.yandex.browser:AppMetrica,service,{com.yandex.browser/io.appmetrica.analytics.internal.AppMetricaService}]
+09-20 21:19:24.608  1570  1800 I am_uid_running: 10356
+09-20 21:19:24.615  1570  3155 I am_uid_active: 10372
+09-20 21:19:24.627  1570  1801 I am_proc_start: [0,8814,10356,org.fdroid.fdroid,broadcast,{org.fdroid.fdroid/org.fdroid.fdroid.nearby.UsbDeviceMediaMountedReceiver}]
+09-20 21:19:24.632  1570  1749 I am_proc_bound: [0,8808,com.yandex.browser:AppMetrica]
+09-20 21:19:24.650  1570  3155 I am_proc_bound: [0,8814,org.fdroid.fdroid]
+09-20 21:19:24.742  1570  1801 I am_proc_start: [0,8855,10372,com.yandex.browser:passport,content provider,{com.yandex.browser/com.yandex.passport.internal.provider.InternalProvider}]
+09-20 21:19:24.766  1570  3589 I am_proc_bound: [0,8855,com.yandex.browser:passport]
+09-20 21:19:24.868  1570  1749 I am_uid_active: 10356
+09-20 21:19:25.061  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.youtube,0,0,0,20,NULL]
+09-20 21:19:25.064  1570  1570 I notification_cancel_all: [1000,1570,com.google.android.youtube,0,0,0,20,NULL]
+09-20 21:19:25.555  8701  8701 I auditd  : type=1400 audit(0.0:236): avc:  granted  { execute } for  comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libtigon-ue-reporter.so" dev="dm-41" ino=274817 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:25.619  8701  8701 I auditd  : type=1400 audit(0.0:237): avc:  granted  { execute } for  comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libfbsocketthreadlocalscope.so" dev="dm-41" ino=274813 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:25.635  8701  8701 I auditd  : type=1400 audit(0.0:238): avc:  granted  { execute } for  comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libfb_sqlite_3530200.so" dev="dm-41" ino=274552 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:25.635  8701  8701 I auditd  : type=1400 audit(0.0:239): avc:  granted  { execute } for  comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libffsingletonmerged.so" dev="dm-41" ino=274509 scontext=u:r:untrusted_app:s0:c117,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c117,c257,c512,c768 tclass=file app=com.whatsapp
+09-20 21:19:25.931  5613  5613 I auditd  : type=1400 audit(0.0:240): avc:  denied  { read } for  comm="DefaultDispatch" name="u:object_r:incremental_prop:s0" dev="tmpfs" ino=15143 scontext=u:r:untrusted_app:s0:c129,c257,c512,c768 tcontext=u:object_r:incremental_prop:s0 tclass=file permissive=0 app=pan.alexander.tordnscrypt.stable
+09-20 21:19:26.871  4157  4157 I auditd  : type=1400 audit(0.0:248): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:27.582  1570  2781 I commit_sys_config_file: [settings-1-0,5]
+09-20 21:19:30.893  1570  1570 I notification_cancel_all: [1000,1570,com.android.vending,0,0,0,20,NULL]
+09-20 21:19:30.894  1570  1570 I notification_cancel_all: [1000,1570,com.android.vending,0,0,0,20,NULL]
+09-20 21:19:30.894  1570  1570 I notification_cancel_all: [1000,1570,com.android.vending,0,0,0,20,NULL]
+09-20 21:19:30.894  1570  1570 I notification_cancel_all: [1000,1570,com.android.vending,0,0,0,20,NULL]
+09-20 21:19:30.895  1570  1570 I notification_cancel_all: [1000,1570,com.android.vending,0,0,0,20,NULL]
+09-20 21:19:31.167  1570  1781 I commit_sys_config_file: [notification-policy,20]
+09-20 21:19:31.875  4157  4157 I auditd  : type=1400 audit(0.0:249): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:35.175  1570  2440 I commit_sys_config_file: [package,74]
+09-20 21:19:35.185  1570  2406 I commit_sys_config_file: [package-user-0,11]
+09-20 21:19:36.875  4157  4157 I auditd  : type=1400 audit(0.0:250): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:41.875  4157  4157 I auditd  : type=1400 audit(0.0:251): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:46.875  4157  4157 I auditd  : type=1400 audit(0.0:252): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:50.831  5456  5456 I auditd  : type=1400 audit(0.0:253): avc:  denied  { read } for  comm="binder:5456_5" name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=14967 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+09-20 21:19:51.875  4157  4157 I auditd  : type=1400 audit(0.0:254): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:19:56.875  4157  4157 I auditd  : type=1400 audit(0.0:255): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:20:01.879  4157  4157 I auditd  : type=1400 audit(0.0:256): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:20:02.184  1570  1800 I am_uid_idle: 10327
+09-20 21:20:02.267  1570  1800 I am_uid_idle: 10295
+09-20 21:20:06.879  4157  4157 I auditd  : type=1400 audit(0.0:257): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:20:11.278  1570  1800 I am_uid_idle: 10306
+09-20 21:20:11.879  4157  4157 I auditd  : type=1400 audit(0.0:258): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:20:13.616  1570  1800 I am_uid_idle: 10232
+09-20 21:20:16.524  3534  3534 I viewroot_draw_event: [VRI[FloatingRotationButton],reportDrawFinished seqId=0]
+09-20 21:20:16.654  1570  1800 I am_uid_idle: 10287
+09-20 21:20:16.879  4157  4157 I auditd  : type=1400 audit(0.0:259): avc:  denied  { read } for  comm="odin-color" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=14993 scontext=u:r:odin_color:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=0
+09-20 21:20:17.347  3132  3179 I jank_cuj_events_cancel_request: [88,1789953617347565000,130697133126,130697133542]
+09-20 21:20:17.348  3132  3179 I jank_cuj_events_begin_request: [88,1789953617347750000,130697316719,130697317136,]
+09-20 21:20:17.365  3132  3132 I viewroot_draw_event: [VRI[DisplayBackGestureHandler 0],Start draw after previous draw not visible]
+09-20 21:20:17.370  3132  3132 I viewroot_draw_event: [VRI[DisplayBackGestureHandler 0],reportDrawFinished seqId=0]
+09-20 21:20:17.717  3132  3179 I jank_cuj_events_end_request: [88,1789953617717215000,131066784584,131066785105]
+09-20 21:20:17.728  3132  3132 I viewroot_draw_event: [VRI[DisplayBackGestureHandler 0],Not drawing due to not visible. Reason=View.GONE]
+09-20 21:20:21.086  1570  1800 I am_uid_idle: 10214

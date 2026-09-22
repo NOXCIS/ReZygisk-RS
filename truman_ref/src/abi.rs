@@ -34,7 +34,7 @@ pub struct ReZygiskApi {
     pub plt_hook_register: *mut c_void,
     pub plt_hook_exclude: *mut c_void,
     pub plt_hook_commit: *mut c_void,
-    pub connect_companion: *mut c_void,
+    pub connect_companion: Option<unsafe extern "C" fn(*mut c_void) -> i32>,
     pub set_option: Option<unsafe extern "C" fn(*mut c_void, u32)>,
     pub get_module_dir: *mut c_void,
     pub get_flags: *mut c_void,

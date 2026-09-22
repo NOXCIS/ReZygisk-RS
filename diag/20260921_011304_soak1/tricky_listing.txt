@@ -1,0 +1,39 @@
+/data/adb/modules/tricky_store:
+total 4282
+drwxr-xr-x  2 root root    3452 2026-09-20 20:59 .
+drwxr-xr-x 10 root root    3452 1969-12-31 21:50 ..
+-rw-r--r--  1 root root    1732 2026-08-06 20:24 action.sh
+-rw-r--r--  1 root root   18826 2026-08-06 20:24 action_i18n.sh
+-rw-r--r--  1 root root 2451940 2026-08-06 20:24 classes.dex
+-rwxr-xr-x  1 root root     415 2026-08-06 20:24 daemon
+-rwxr-xr-x  1 root root  475432 2026-08-06 20:24 inject
+-rw-r--r--  1 root root  206624 2026-08-06 20:24 libTEESimulator.so
+-rw-r--r--  1 root root 1180864 2026-08-06 20:24 libcertgen.so
+-rw-r--r--  1 root root     285 2026-08-06 20:24 module.prop
+-rw-r--r--  1 root root     915 2026-08-06 20:24 sepolicy.rule
+-rw-r--r--  1 root root     546 2026-08-06 20:24 service.sh
+-rwxr-xr-x  1 root root    6144 2026-08-06 20:24 supervisor
+-rw-r--r--  1 root root     562 2026-08-06 20:24 uninstall.sh
+
+/data/adb/tricky_store:
+total 55
+drwxr-xr-x  5 root root 3452 2026-09-17 22:46 .
+drwxr-xr-x 16 root root 3452 1969-12-31 21:50 ..
+-rw-rw-rw-  1 root root   32 2026-09-20 21:11 boot_hash.bin
+-rw-rw-rw-  1 root root   32 2026-09-17 22:46 boot_key.bin
+-rw-r--r--  1 root root   32 2026-08-06 20:13 hbk
+drwx------  2 root root 3452 2026-09-17 22:46 key_db
+-rw-------  1 root root 5815 2026-09-17 22:46 keybox.xml
+drwxrwxrwx  2 root root 3452 2026-08-06 20:14 logs
+drwx------  2 root root 3452 2026-09-18 10:04 persistent_keys
+-rw-r--r--  1 root root   15 2026-09-20 21:11 security_patch.txt
+-rw-------  1 root root 1190 2026-09-17 22:46 target.txt
+-rw-------  1 root root 1190 2026-09-17 20:11 target.txt.bak
+-rw-------  1 root root  420 2026-08-08 12:31 target.txt.r7.bak
+-rw-rw-rw-  1 root root   15 2026-08-06 18:17 tee_status
+
+/data/adb/tricky_store/logs:
+total 62
+drwxrwxrwx 2 root root  3452 2026-08-06 20:14 .
+drwxr-xr-x 5 root root  3452 2026-09-17 22:46 ..
+-rw-rw-rw- 1 root root 57127 2026-09-18 10:04 certgen.log

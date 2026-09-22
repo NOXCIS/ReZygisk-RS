@@ -4,15 +4,49 @@
 use std::mem::size_of;
 
 use rz_common::plog;
+use thiserror::Error;
 
 use crate::remote_csoloader::remote_csoloader_load_and_resolve_entry;
 use crate::utils::{
-    find_module_return_addr, get_addr_mem_region, get_regs, parse_status, read_proc, remote_call,
-    set_regs, tango_wait_linker_ready, wait_for_event_stop, wait_for_trace, write_proc,
-    TangoLinkerWatch, UserRegs, PTRACE_INTERRUPT, PTRACE_SEIZE, TAG,
+    dlogd, dloge, dlogi, dlogv, dlogw, find_module_return_addr, get_addr_mem_region, get_regs,
+    parse_status, read_proc, remote_call, set_regs, tango_wait_linker_ready, wait_for_event_stop,
+    wait_for_trace_deadline, write_proc, TangoLinkerWatch, UserRegs, PTRACE_INTERRUPT,
+    PTRACE_SEIZE, TAG,
 };
 
-use crate::utils::{dlogd, dloge, dlogi, dlogv};
+/// Errors that can occur during injection operations.
+#[derive(Debug, Error)]
+pub enum InjectError {
+    #[error("failed to parse remote maps")]
+    MapsParseFailed,
+    #[error("failed to get registers")]
+    GetRegsFailed,
+    #[error("failed to set registers")]
+    SetRegsFailed,
+    #[error("AT_ENTRY not found in auxv")]
+    AtEntryNotFound,
+    #[error("failed to load library: {0}")]
+    LoadLibraryFailed(String),
+    #[error("remote call failed")]
+    RemoteCallFailed,
+    #[error("ptrace operation failed: {0}")]
+    PtraceFailed(&'static str),
+    #[error("timeout waiting for trace event")]
+    TraceTimeout,
+    #[error("unexpected stop status: {0}")]
+    UnexpectedStopStatus(String),
+}
+
+// Blocking wait used only by the arm32 tango path.
+#[cfg(target_arch = "arm")]
+use crate::utils::wait_for_trace;
+
+#[cfg_attr(not(target_arch = "arm"), allow(unused_imports))]
+use std::time::Duration;
+
+/// Blocking wait budget for each zygote-trace step: exceeding it fails the
+/// injection (kill + restart cycle) instead of freezing the zygote forever.
+const TRACE_STEP_TIMEOUT: Duration = Duration::from_secs(15);
 
 // auxv type ids are c_int-sized on 32-bit targets.
 #[allow(clippy::unnecessary_cast)]
@@ -96,9 +130,12 @@ mod tango {
 
             // mprotect(lib_base, lib_size, RWX); entry(lib_base, lib_size, 1);
             // getpid(); kill(getpid(), SIGTRAP). See ptracer.c for the encoding.
-            let code: [u32; 11] = [
+            // ptracer.c:83-104: the C array carries a trailing 0 placeholder
+            // word, so sizeof(code) is 48 bytes — the trampoline reservation
+            // must cover the tail-call stub written at tramp+32..tramp+48.
+            let code: [u32; 12] = [
                 0x4807B5FF, 0x22074907, 0xDF00277D, 0x49054804, 0x4B052201, 0x27144798,
-                0x2105DF00, 0xDF002725, lib_base, lib_size, lib_entry,
+                0x2105DF00, 0xDF002725, lib_base, lib_size, lib_entry, 0,
             ];
 
             let mut tramp = 0u32;
@@ -224,7 +261,11 @@ mod tango {
 
         if need_restore {
             let mut restore = backup;
-            let _ = set_regs(pid, &mut restore);
+            if let Err(err) = crate::utils::try_set_regs(pid, &mut restore) {
+                dloge!(
+                    "failed to restore tracee registers after trampoline: {err:?} — zygote left with mangled register state"
+                );
+            }
         }
 
         ok
@@ -347,7 +388,10 @@ fn inject_on_main(pid: i32, lib_path: &str) -> bool {
     }
 
     let mut status = 0;
-    wait_for_trace(pid, &mut status, libc::__WALL);
+    if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, Duration::from_secs(30)) {
+        dloge!("zygote never hit the poisoned entry");
+        return false;
+    }
     if stopped_sig(status, libc::SIGSEGV) {
         if !get_regs(pid, &mut regs) {
             return false;
@@ -390,7 +434,8 @@ fn inject_on_main(pid: i32, lib_path: &str) -> bool {
         };
 
         let args = [mapped.base as i64, mapped.total_size as i64, 0 /* tango_flag */];
-        remote_call(pid, &mut regs, mapped.entry as u64, libc_return_addr as u64, &args);
+        let ret = remote_call(pid, &mut regs, mapped.entry as u64, libc_return_addr as u64, &args);
+        dlogi!("client entry call returned {ret:#x}");
 
         // remote_call uses a deliberate SIGSEGV on an invalid return address
         // to regain control. If the call faults elsewhere (e.g., inside
@@ -406,10 +451,16 @@ fn inject_on_main(pid: i32, lib_path: &str) -> bool {
 
             dloge!("injector entry faulted at {:#x} ({})", regs.reg_ip(), stopped_region);
 
-            // Restore registers before reporting failure.
+            // Restore registers before reporting failure. A failed restore
+            // leaves the tracee mangled — surface it loudly instead of
+            // silently continuing with a corrupted zygote.
             let mut restore = backup;
             restore.set_reg_ip(entry_addr as u64);
-            let _ = set_regs(pid, &mut restore);
+            if let Err(err) = crate::utils::try_set_regs(pid, &mut restore) {
+                dloge!(
+                    "failed to restore tracee registers after injector fault: {err:?} — zygote left with mangled register state"
+                );
+            }
 
             return false;
         }
@@ -417,7 +468,7 @@ fn inject_on_main(pid: i32, lib_path: &str) -> bool {
         // Reset pc to entry.
         let mut restore = backup;
         restore.set_reg_ip(entry_addr as u64);
-        dlogd!("invoke entry");
+        dlogi!("invoke entry");
 
         // Restore registers.
         if !set_regs(pid, &mut restore) {
@@ -466,7 +517,10 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
                     return false;
                 }
 
-                wait_for_trace(pid, &mut status, libc::__WALL);
+                if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+                    dloge!("seized zygote never reported its stop");
+                    return false;
+                }
             }
         }
 
@@ -486,8 +540,9 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
                 return false;
             }
 
-            if !tango_flag {
-                wait_for_trace(pid, &mut status, libc::__WALL);
+            if !tango_flag && !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+                dloge!("seized zygote never reported its stop");
+                return false;
             }
         }
     } else {
@@ -496,7 +551,10 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
             return false;
         }
 
-        wait_for_trace(pid, &mut status, libc::__WALL);
+        if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+            dloge!("seized zygote never reported its stop");
+            return false;
+        }
     }
 
     if tango_flag {
@@ -574,7 +632,7 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
             return false;
         }
 
-        dlogd!("inject done, continue process");
+        dlogi!("inject done, continuing process");
         if unsafe { libc::kill(pid, libc::SIGCONT) } != 0 {
             plog!(TAG, "kill");
             return false;
@@ -585,17 +643,23 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
             plog!(TAG, "cont");
             return false;
         }
-        wait_for_trace(pid, &mut status, libc::__WALL);
+        if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+            dloge!("no stop after post-injection CONT");
+            return false;
+        }
 
         if stopped_with(status, libc::SIGTRAP, libc::PTRACE_EVENT_STOP) {
             if unsafe { libc::ptrace(libc::PTRACE_CONT, pid, 0, 0) } == -1 {
                 plog!(TAG, "cont");
                 return false;
             }
-            wait_for_trace(pid, &mut status, libc::__WALL);
+            if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+                dloge!("no stop while draining group-stop exit");
+                return false;
+            }
 
             if stopped_with(status, libc::SIGCONT, 0) {
-                dlogd!("received SIGCONT");
+                dlogi!("received SIGCONT, detaching zygote");
 
                 // Kernel bugs fixed in 5.16+ may leave a stale
                 // ptrace_message; PTRACE_SYSCALL resets it to the normal
@@ -604,11 +668,23 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
                     libc::ptrace(libc::PTRACE_SYSCALL, pid, 0, 0);
                 }
 
-                wait_for_trace(pid, &mut status, libc::__WALL);
+                if !wait_for_trace_deadline(pid, &mut status, libc::__WALL, TRACE_STEP_TIMEOUT) {
+                    dloge!("no syscall-stop before detach");
+                    return false;
+                }
 
                 unsafe {
                     libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGCONT);
                 }
+            } else {
+                // ptracer.c:574-588: when the expected SIGCONT delivery never
+                // arrives, C returns success WITHOUT detaching — tracer exit
+                // then triggers PTRACE_O_EXITKILL, killing the zygote so init
+                // restarts it and the monitor re-injects (fail-closed).
+                dlogw!(
+                    "expected SIGCONT delivery, got {} — leaving zygote for EXITKILL restart",
+                    parse_status(status)
+                );
             }
         } else {
             dloge!(
@@ -634,6 +710,8 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
 
         return false;
     }
+
+    dlogi!("trace complete, zygote {pid} released");
 
     true
 }

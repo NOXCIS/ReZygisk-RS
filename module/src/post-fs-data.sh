@@ -33,6 +33,12 @@ rm -rf "$TMP_PATH"
 
 create_sys_perm $TMP_PATH
 
+# Opt-in diagnostics: presence of $MODDIR/.diag keeps a rotated full logcat for
+# this boot under $TMP_PATH. Absent by default; leaves no trace on device.
+if [ -f "$MODDIR/.diag" ] && command -v logcat >/dev/null 2>&1; then
+  logcat -f "$TMP_PATH/boot.log" -r 4096 -n 2 -v threadtime &
+fi
+
 sh /data/adb/post-fs-data.d/rezygisk.sh
 
 # INFO: Utilize the one with the biggest output, as some devices with Tango have the full list

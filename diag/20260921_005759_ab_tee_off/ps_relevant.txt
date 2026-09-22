@@ -1,0 +1,6 @@
+  729     1 keystore     20:55:47 keystore2 /data/misc/keystore
+  992     1 root         20:55:49 logcat -f /data/adb/rezygisk/boot.log -r 4096 -n 2 -v threadtime
+  998     1 root         20:55:49 zygisk-ptrace64 monitor
+ 1093   998 root         20:55:49 zygiskd64
+ 1108   998 root         20:55:49 zygiskd32
+ 4009     1 root         20:56:11 ksud truman watchdog

@@ -13,6 +13,7 @@ libc.workspace = true
 bitflags.workspace = true
 jni.workspace = true
 static_assertions.workspace = true
+regex = "1"
 rz-common.workspace = true
 rz-ipc.workspace = true
 rz-elf.workspace = true

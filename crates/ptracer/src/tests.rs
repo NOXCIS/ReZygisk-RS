@@ -98,10 +98,28 @@ fn state_json_empty_environment() {
 
 #[test]
 fn module_prop_split() {
+    // Leading status brackets are stripped: update_status prepends a fresh
+    // "[Monitor: …] " on every write, so a stored bracket is stale history.
     let orig = "id=rezygisk\nname=ReZygisk\ndescription=[Monitor: ✅] tracer\nversion=v1\nextra=1\n";
     let (pre, post) = split_module_prop(orig);
     assert_eq!(pre, "id=rezygisk\nname=ReZygisk\ndescription=");
-    assert_eq!(post, "[Monitor: ✅] tracer\nversion=v1\nextra=1\n");
+    assert_eq!(post, "tracer\nversion=v1\nextra=1\n");
+
+    // Fossilized bracket pileup from older monitors self-heals: only the
+    // fresh bracket written by update_status remains.
+    let dirty = "description=[Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅] \
+                 [Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ⚠️] Standalone implementation of Zygisk.\n\
+                 versionCode=1\n";
+    let (pre, post) = split_module_prop(dirty);
+    assert_eq!(post, "Standalone implementation of Zygisk.\nversionCode=1\n");
+    assert_eq!(
+        format!("{}[Monitor: ✅] {}", pre, post),
+        "description=[Monitor: ✅] Standalone implementation of Zygisk.\nversionCode=1\n"
+    );
+
+    // Non-status leading brackets are left untouched.
+    let (_, post) = split_module_prop("description=[TIP] friendly text\n");
+    assert_eq!(post, "[TIP] friendly text\n");
 
     // No trailing newline on the last line.
     let (pre, post) = split_module_prop("a=1\ndescription=d\nb=2");

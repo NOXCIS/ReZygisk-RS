@@ -1,0 +1,11 @@
+total 30
+drwxr-xr-x 10 root root 3452 1969-12-31 21:50 .
+drwxr-xr-x 16 root root 3452 1969-12-31 21:50 ..
+drwxr-xr-x  5 root root 3452 2026-09-20 21:11 bindhosts
+drwxr-xr-x  2 root root 3452 2026-09-18 20:05 dd_fixes
+drwxr-xr-x  3 root root 3452 2025-12-31 06:10 debian_shortcuts
+drwxr-xr-x  4 root root 3452 2026-09-18 20:05 magic_mount_rs
+drwxr-xr-x  2 root root 3452 2026-09-18 20:06 miuicamera_country_fix
+drwxr-xr-x  6 root root 3452 2026-09-20 21:11 playintegrityfix
+drwxr-xr-x  7 root root 3452 1969-12-31 21:50 rezygisk
+drwxr-xr-x  2 root root 3452 2026-09-20 20:59 tricky_store

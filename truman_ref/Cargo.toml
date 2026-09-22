@@ -8,5 +8,13 @@ description = "Truman Phase 7 reflection-spoof Zygisk sub-module (seed crate of 
 name = "truman_ref"
 crate-type = ["cdylib"]
 
+# Dev-only: with `truman-log`, tlog! lines are relayed by the module's
+# rezygiskd companion process (root) into /data/adb/truman/module.log — the
+# host process's own logcat buffer is never written. Release builds ship
+# with the whole channel compiled out (no symbols, no format strings).
+[features]
+truman-log = []
+
 [dependencies]
 jni = "0.21"
+libc = "0.2"

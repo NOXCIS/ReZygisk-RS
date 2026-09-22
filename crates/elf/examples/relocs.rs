@@ -5,7 +5,13 @@ fn main() {
     let raw = std::fs::read(&path).expect("read file");
     let img = rz_elf::ElfImage::parse(&raw).expect("parse elf");
 
-    let relocs = img.relocations().expect("relocations");
+    let relocs = match img.relocations() {
+        Ok(relocs) => relocs,
+        Err(e) => {
+            eprintln!("failed to decode relocations: {e}");
+            std::process::exit(1);
+        }
+    };
     println!("total = {}", relocs.len());
     for rel in relocs {
         println!(

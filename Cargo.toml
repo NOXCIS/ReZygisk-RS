@@ -19,6 +19,7 @@ license = "AGPL-3.0"
 
 [workspace.dependencies]
 libc = "0.2"
+nix = { version = "0.29", default-features = false }
 goblin = { version = "0.10", default-features = false, features = ["elf64", "elf32", "endian_fd", "std"] }
 bitflags = "2"
 serde = { version = "1", features = ["derive"] }
@@ -38,3 +39,9 @@ lto = true
 codegen-units = 1
 strip = "symbols"
 panic = "abort"
+
+# The C libzygisk.so ships unstripped: the loader's crash handler and
+# dladdr-based diagnostics rely on its own symbol table, and the hidden
+# shims (memcpy, fork, ...) must remain visible in .symtab for parity.
+[profile.release.package.rz-loader]
+strip = "none"

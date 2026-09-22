@@ -1,0 +1,695 @@
+1786061713 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061715 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061715 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061745 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061745 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061745 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061747 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061748 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061749 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786061749 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786061750 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061750 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061751 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061751 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061751 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061752 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061752 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061752 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061753 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061753 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061753 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061754 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061754 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061754 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061755 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061755 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061755 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061755 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061756 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061757 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061757 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786061777 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061805 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061810 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061903 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061904 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786061999 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062036 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062036 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062062 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062101 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062132 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062132 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062146 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062146 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062157 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062239 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062252 [INFO] certgen: assembled native cert result uid=10259 certs=4
+1786062340 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786062340 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786062342 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786062342 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786062343 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786062351 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786065813 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786065813 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786065815 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786065815 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786065817 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786065824 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786071433 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786071433 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786071435 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786071435 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786071437 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786071443 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786071611 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786071611 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786071613 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786071613 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786071617 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786071628 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786187906 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786187906 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786187908 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786187908 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786187909 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786187916 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786204535 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786204535 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786204536 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786204536 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786204538 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786204546 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786208852 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786208852 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786208854 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786208854 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786208855 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786208863 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786208986 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786208986 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786208988 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786208988 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786208989 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786208996 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786209611 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786209611 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786209613 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786209613 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786209614 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786209623 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786211159 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786211159 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786211161 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786211161 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786211162 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786211170 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786279516 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786279516 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786279517 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786279517 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786279519 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786279527 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786312421 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786312421 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786312422 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786312422 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786312424 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786312431 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786313087 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786313087 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786313089 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786313089 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786313090 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786313097 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786314208 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786314208 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786314209 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786314209 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786314211 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786314217 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786315282 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786315282 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786315283 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786315283 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786315284 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786315291 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786316671 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786316671 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786316673 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786316673 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786316674 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786316681 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786321604 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786321604 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786321605 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786321605 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786321607 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786321615 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786437205 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786437205 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786437206 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786437206 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786437207 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786437215 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786716279 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786716279 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786716280 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786716280 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786716281 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786716289 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786849767 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786849767 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786849768 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786849768 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786849769 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786849776 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786888353 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786888353 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786888355 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786888355 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786888356 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786888364 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786888434 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786888434 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786888435 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786888435 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786888437 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786888445 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786893970 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786893970 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786893972 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786893972 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786893973 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786893981 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786896640 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786896640 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786896642 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786896642 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786896643 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786896651 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786898345 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786898345 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786898346 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786898346 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786898348 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786898356 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786898588 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786898588 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786898590 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1786898590 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1786898592 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1786898599 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787516093 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787516093 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787516095 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787516095 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787516096 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787516104 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787538582 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787538582 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787538584 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787538584 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787538585 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787538594 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787540444 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787540444 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787540446 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787540446 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787540448 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787540456 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787620968 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787620968 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787620970 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787620970 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787620971 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787620977 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787836440 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787836440 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787836441 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787836441 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787836443 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787836450 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787925372 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787925372 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787925374 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1787925374 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1787925375 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1787925386 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1788299789 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1788299789 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1788299791 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1788299791 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1788299792 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1788299799 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789047391 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789047391 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789047392 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789047392 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789047394 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789047401 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789313955 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789313955 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789313958 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789313958 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789313960 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789313973 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789336442 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789336442 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789336444 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789336444 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789336445 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789336453 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789342351 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789342351 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789342353 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789342353 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789342354 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789342360 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789349787 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789349787 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789349790 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789349790 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789349792 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789349798 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789368373 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789368373 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789368375 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789368375 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789368376 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789368386 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789408312 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789408312 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789408313 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789408313 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789408315 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789408322 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789408756 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789408756 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789408757 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789408757 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789408759 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789408766 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789409137 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789409137 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789409139 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789409139 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789409141 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789409149 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789409555 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789409555 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789409556 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789409556 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789409558 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789409564 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789413812 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789413812 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789413814 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789413814 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789413815 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789413823 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789415922 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789415922 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789415924 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789415924 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789415925 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789415933 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789420886 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789420886 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789420888 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789420888 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789420890 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789420899 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789420912 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789420912 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789420914 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789420914 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789420915 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789420924 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789422388 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789422388 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789422390 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789422390 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789422392 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789422466 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789422466 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789422468 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789422468 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789422471 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789422483 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789423929 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789423929 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789423930 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789423930 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789423932 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789423939 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789426057 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789426057 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789426059 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789426059 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789426061 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789426069 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789428234 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789428234 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789428235 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789428235 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789428237 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789428246 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789434959 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789434959 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789434961 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789434961 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789434962 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789434969 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789435766 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789435766 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789435767 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789435767 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789435770 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789435778 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789437863 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789437863 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789437864 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10373
+1789437864 [INFO] certgen: assembled native cert result uid=10373 certs=1
+1789437866 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789437873 [INFO] certgen: assembled native cert result uid=10373 certs=4
+1789438042 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789438042 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789438044 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789438044 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789438045 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789438052 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789438081 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789438081 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789438083 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789438083 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789438084 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789438090 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789474207 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789474207 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789474209 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789474209 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789474210 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789474218 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789485154 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789485154 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789485156 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789485156 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789485157 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789485167 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789582505 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789582505 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789582507 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789582507 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789582508 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789582514 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789586001 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789586001 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789586003 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789586003 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789586004 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789586011 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789604393 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789604393 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789604394 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789604394 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789604396 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789604406 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789607954 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789607954 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789607955 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789607955 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789607957 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789607964 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789608513 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789608513 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789608514 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789608514 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789608515 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789608523 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789610449 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789610449 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789610451 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789610451 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789610452 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789610460 [INFO] certgen: assembled native cert result uid=10405 certs=4
+1789618431 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789618431 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789618433 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789618433 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789618434 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789618443 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789621095 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789621095 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789621097 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789621097 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789621100 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789621107 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789646628 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789646628 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789646629 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789646629 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789646631 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789646638 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789647153 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789647153 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789647155 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789647155 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789647156 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789647163 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789651459 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789651459 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789651461 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789651461 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789651462 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789651468 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789651509 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789651509 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789651593 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789651593 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789651595 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789651595 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789651596 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789651602 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789655546 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789655546 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789655548 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789655548 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789655551 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789655559 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789656086 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789656086 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789656087 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789656087 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789656089 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789656094 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789657141 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789657141 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789657142 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789657142 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789657143 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789657150 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789661364 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789661364 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789661366 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789661366 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789661368 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789661375 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789662098 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789662098 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789662100 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789662100 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789662101 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789662107 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789667496 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789667496 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789667497 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789667497 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789667499 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789667506 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789670469 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789670469 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789670471 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789670471 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789670472 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789670479 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789673451 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789673451 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789673453 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789673453 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789673455 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789673461 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789678880 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789678880 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789678882 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789678882 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789678885 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789678891 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789690294 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789690294 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789690296 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789690296 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789690298 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789690307 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692279 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692279 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692281 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692281 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692282 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692289 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692430 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692430 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692432 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692432 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692433 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692442 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692442 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692442 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692443 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692443 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692445 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692451 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692837 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692837 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692839 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789692839 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789692840 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789692846 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789695214 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789695214 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789695215 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789695215 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789695217 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789695225 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699175 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699175 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699177 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699177 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699178 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699185 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699851 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699851 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699853 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699853 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699854 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699863 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699890 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699890 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699892 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699892 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699893 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699900 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699989 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699989 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699990 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789699990 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789699992 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789699999 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789702289 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789702289 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789702291 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789702291 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789702292 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789702299 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724665 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724665 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724667 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724667 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724668 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724675 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724760 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724760 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724762 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724762 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724763 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724768 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724785 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724785 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724787 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789724787 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789724788 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789724795 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789726366 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789726366 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789726367 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789726367 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789726369 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789726376 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733242 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733242 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733244 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733244 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733245 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733253 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733358 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733358 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733360 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733360 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733361 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733367 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733374 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733374 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733376 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733376 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733377 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733383 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733852 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733852 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733854 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789733854 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789733855 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789733861 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789734350 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789734350 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789734351 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789734351 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789734353 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789734360 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789735000 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789735000 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789735002 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789735002 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789735003 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789735010 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789735096 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789735096 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789735098 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789735098 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789735099 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789735108 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789739242 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789739242 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789739243 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789739243 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789739245 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789739252 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789740237 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789740237 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789740238 [INFO] certgen: no attestation challenge, generating self-signed cert (depth 1) uid=10405
+1789740238 [INFO] certgen: assembled native cert result uid=10405 certs=1
+1789740241 [INFO] certgen: assembled native cert result uid=10405 certs=5
+1789740249 [INFO] certgen: assembled native cert result uid=10405 certs=5

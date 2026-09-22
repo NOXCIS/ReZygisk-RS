@@ -8,7 +8,8 @@ use jni::signature::JavaType;
 use jni::{JNIEnv, objects::JString};
 
 use crate::spoof::SpoofEntry;
-use crate::truman_log;
+#[allow(unused_imports)]
+use crate::tlog;
 
 const STRING_SIG: &str = "Ljava/lang/String;";
 
@@ -23,22 +24,26 @@ pub fn apply_entry(env: &mut JNIEnv, entry: &SpoofEntry) -> Result<(), String> {
         .get_static_field_id(&class, entry.field, STRING_SIG)
         .map_err(|e| format!("get_static_field_id({}.{}) failed: {e}", entry.class, entry.field))?;
 
-    // Log the donor-honest value we are replacing (verification evidence).
-    let old = env
-        .get_static_field_unchecked(&class, &field_id, JavaType::Object(STRING_SIG.into()))
-        .ok()
-        .and_then(|v| v.l().ok());
-    if let Some(old) = old {
-        let old = unsafe { JString::from_raw(old.as_raw()) };
-        if let Ok(s) = env.get_string(&old) {
-            truman_log(&format!(
-                "{}.{}: '{}' -> '{}'",
-                entry.class, entry.field, s.to_str().unwrap_or("?"), entry.value
-            ));
+    // Log the donor-honest value we are replacing (dev evidence only — a
+    // pure read, compiled out of release to save a JNI round-trip).
+    #[cfg(feature = "truman-log")]
+    {
+        let old = env
+            .get_static_field_unchecked(&class, &field_id, JavaType::Object(STRING_SIG.into()))
+            .ok()
+            .and_then(|v| v.l().ok());
+        if let Some(old) = old {
+            let old = unsafe { JString::from_raw(old.as_raw()) };
+            if let Ok(s) = env.get_string(&old) {
+                tlog!(
+                    "{}.{}: '{}' -> '{}'",
+                    entry.class, entry.field, s.to_str().unwrap_or("?"), entry.value
+                );
+            }
+            // The local ref was created by OUR GetStaticObjectField — dropping
+            // the wrapper here is correct. `forget` would leak it.
+            drop(old);
         }
-        // The local ref was created by OUR GetStaticObjectField — dropping
-        // the wrapper here is correct. `forget` would leak it.
-        drop(old);
     }
 
     let value = env
@@ -48,7 +53,33 @@ pub fn apply_entry(env: &mut JNIEnv, entry: &SpoofEntry) -> Result<(), String> {
     env.set_static_field(&class, (&class, entry.field, STRING_SIG), JValue::Object(&value))
         .map_err(|e| format!("set_static_field({}.{}) failed: {e}", entry.class, entry.field))?;
 
-    Ok(())
+    // Verify the spoof actually took: re-read the field and compare. A
+    // mismatch is fail-soft (Err → caller logs in dev builds) but never
+    // leaves us assuming a rewrite that ART silently dropped.
+    let written = match env
+        .get_static_field_unchecked(&class, &field_id, JavaType::Object(STRING_SIG.into()))
+        .ok()
+        .and_then(|v| v.l().ok())
+    {
+        Some(v) => {
+            let jstr = unsafe { JString::from_raw(v.as_raw()) };
+            let out = env.get_string(&jstr).ok().map(|s| s.to_str().unwrap_or("").to_string());
+            drop(jstr);
+            out
+        }
+        None => None,
+    };
+    match written {
+        Some(current) if current == entry.value => Ok(()),
+        Some(current) => Err(format!(
+            "verify({}.{}) failed: field reads '{}' but expected '{}'",
+            entry.class, entry.field, current, entry.value
+        )),
+        None => Err(format!(
+            "verify({}.{}) failed: field could not be re-read",
+            entry.class, entry.field
+        )),
+    }
 }
 
 /// Drop any pending exception so the process keeps running normally.

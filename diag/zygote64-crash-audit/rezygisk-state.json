@@ -1,0 +1,21 @@
+{
+  "root": "KernelSU",
+  "monitor": {
+    "state": "0",
+    "reason": "Zygote crashed",
+  },
+  "rezygiskd": {
+    "64": {
+      "state": 1,
+      "modules": ["truman", "playintegrityfix"]
+    },
+    "32": {
+      "state": 1,
+      "modules": []
+    }
+  },
+  "zygote": {
+    "64": 1,
+    "32": 1
+  }
+}

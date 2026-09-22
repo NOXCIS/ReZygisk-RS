@@ -1,0 +1,8 @@
+total 7718
+dr-xr-xr-x  2 root root    3452 2026-09-20 20:56 .
+drwxr-xr-x 16 root root    3452 1969-12-31 21:35 ..
+-rw-r-----  1 root root 3682304 2026-09-20 20:57 boot.log
+-rw-r-----  1 root root 4194431 2026-09-20 20:56 boot.log.1
+srwxrwxrwx  1 root root       0 1969-12-31 21:35 init_monitor
+-rw-r--r--  1 root root     257 2026-09-20 20:55 state.json
+-rw-rw-rw-  1 root root    3109 2026-09-20 20:56 verbose.log

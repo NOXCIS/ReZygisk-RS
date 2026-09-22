@@ -58,7 +58,11 @@ pub fn sleb128_decode(buf: &[u8], pos: usize) -> crate::Result<(u64, usize)> {
             .get(p)
             .ok_or(crate::Error::OutOfBounds("sleb128 byte", p))?;
         p += 1;
-        value |= ((b & 0x7f) as i64) << shift;
+        // The C payload shift (`(int64_t)(byte & 0x7f) << shift`,
+        // sleb128.c) is UB for shift >= 64; arm64/x86_64 hardware masks the
+        // shift to 6 bits, so mask here too (mirrors
+        // csoloader/src/misc.rs sleb128_decode).
+        value |= ((b & 0x7f) as i64).wrapping_shl(shift & 63);
         shift += 7;
         if b & 0x80 == 0 {
             break b;
@@ -84,8 +88,13 @@ pub fn decode_android_packed(table: &[u8], is_rela: bool, is_64: bool) -> crate:
     let (num_relocs, p) = sleb128_decode(table, pos)?;
     pos = p;
 
-    // unified_r start: offset accumulated from deltas; addend starts at 0.
-    let mut r_offset: u64 = 0;
+    // linker.c 1843-1845: the value right after num_relocs is the ABSOLUTE
+    // initial r_offset — group fields are deltas on top of it. Skipping this
+    // desyncs the whole stream on real lld output (the initial offset gets
+    // read as the first group's size).
+    let (initial_offset, p) = sleb128_decode(table, pos)?;
+    pos = p;
+    let mut r_offset: u64 = initial_offset;
     let mut sym_idx: u32 = 0;
     let mut rtype: u32 = 0;
     let mut r_addend: u64 = 0;
@@ -94,6 +103,13 @@ pub fn decode_android_packed(table: &[u8], is_rela: bool, is_64: bool) -> crate:
     while i < num_relocs {
         let (group_size, p) = sleb128_decode(table, pos)?;
         pos = p;
+        if group_size == 0 {
+            // C hangs here (`for (i = 0; i < num_relocs; ) { ... i += 0; }`);
+            // the stream is malformed, so fail instead of looping forever.
+            return Err(crate::Error::Other(
+                "APS2: zero-sized relocation group".into(),
+            ));
+        }
         let (group_flags, p) = sleb128_decode(table, pos)?;
         pos = p;
 
@@ -108,6 +124,14 @@ pub fn decode_android_packed(table: &[u8], is_rela: bool, is_64: bool) -> crate:
             let (r_info, p) = sleb128_decode(table, pos)?;
             pos = p;
             split_r_info(r_info, is_64, &mut sym_idx, &mut rtype);
+        }
+
+        if !is_rela && group_flags & RELOCATION_GROUP_HAS_ADDEND_FLAG != 0 {
+            // C LOGFs here ("REL relocations should not have addends"); the
+            // per-reloc addend bytes would otherwise desync the stream.
+            return Err(crate::Error::Other(
+                "APS2: REL relocation group carries addends".into(),
+            ));
         }
 
         let group_flags_reloc = if is_rela {

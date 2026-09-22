@@ -1,0 +1,6 @@
+total 14
+dr-xr-xr-x  2 root root 3452 2026-09-20 19:48 .
+drwxr-xr-x 16 root root 3452 2026-09-20 19:48 ..
+srwxrwxrwx  1 root root    0 1969-12-31 20:27 init_monitor
+-rw-r--r--  1 root root  257 2026-09-20 19:48 state.json
+-rw-rw-rw-  1 root root 3110 2026-09-20 19:48 verbose.log

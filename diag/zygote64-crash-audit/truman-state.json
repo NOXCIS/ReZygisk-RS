@@ -1,0 +1,88 @@
+{
+  "version": "v0.7-ksud",
+  "surfaces": {
+    "audit_silence": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:01.022510985-05:00",
+      "detail": "3 dontaudit rules injected"
+    },
+    "boot_gate": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.907062438-04:00",
+      "detail": "dome armed — gate released"
+    },
+    "boot_props": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:00.969675412-05:00",
+      "detail": "6 props green/locked/enforcing"
+    },
+    "cmdline": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:00.971956141-05:00",
+      "detail": "1531 bytes"
+    },
+    "data_lock": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:00.966055725-05:00",
+      "detail": "0700"
+    },
+    "dome_kernel": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.659688636-04:00",
+      "detail": "4 uid(s), 142 entries"
+    },
+    "hunter": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.978940719-04:00",
+      "detail": "hunter thread started"
+    },
+    "pkg_filter": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.647624625-04:00",
+      "detail": "45 pkgs, 4 uids"
+    },
+    "pkg_spoof": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.863642438-04:00",
+      "detail": "2/2 entries armed"
+    },
+    "qemu_sf": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:01.023950725-05:00",
+      "detail": "prop area absent"
+    },
+    "rule_strips": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:00.973100360-05:00",
+      "detail": "clean"
+    },
+    "susfs_config": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.854263532-04:00",
+      "detail": "kernel repair: 11 sus_path armed, 7 skipped (path absent)"
+    },
+    "target_sync": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:01.028018693-05:00",
+      "detail": "core set present"
+    },
+    "umount": {
+      "state": "armed",
+      "at": "1970-01-01T18:49:00.972710360-05:00",
+      "detail": "kernel_umount=0"
+    },
+    "watchdog": {
+      "state": "armed",
+      "at": "2026-09-21T18:10:01.976238115-04:00",
+      "detail": "pid 4390, interval 1200s"
+    }
+  },
+  "migration": null,
+  "yielded": null,
+  "guard_retired": null,
+  "canary_last": null,
+  "last_audit": "AUDIT: all surfaces armed",
+  "last_early": "1970-01-01T18:49:01.030416662-05:00",
+  "last_late": "2026-09-21T18:10:01.908195875-04:00",
+  "last_drift": null
+}

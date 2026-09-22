@@ -101,6 +101,12 @@ pub fn companion_entry(fd: RawFd) -> ! {
 
         dlogi!(" - Module entry found");
 
+        // C companion.c: ack success so spawn_companion's read_u8 unblocks.
+        if write_u8(fd, 1).is_err() {
+            dloge!("Failed to write companion success ack");
+            break 'cleanup;
+        }
+
         // Ignore SIGPIPE like C.
         unsafe {
             libc::signal(libc::SIGPIPE, libc::SIG_IGN);
@@ -128,14 +134,17 @@ pub fn companion_entry(fd: RawFd) -> ! {
                 break 'cleanup;
             }
 
-            std::thread::Builder::new()
+            // companion.c 164-172: a failed pthread_create breaks the serve
+            // loop (after closing the client fd) and exits the companion.
+            if std::thread::Builder::new()
                 .name("companion-req".into())
                 .spawn(move || entry_thread(client_fd, module_entry))
-                .map(|_| ())
-                .unwrap_or_else(|_| {
-                    dloge!(" - Failed to create thread for companion module");
-                    unsafe { libc::close(client_fd) };
-                });
+                .is_err()
+            {
+                dloge!(" - Failed to create thread for companion module");
+                unsafe { libc::close(client_fd) };
+                break 'cleanup;
+            }
         }
     }
 

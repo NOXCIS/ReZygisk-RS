@@ -14,25 +14,41 @@ use utils::{dlogi, TAG};
 
 const ZKSU_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-/// main.c `strtol(argv, 0, 0)`: decimal or 0x-prefixed hex.
+/// main.c `strtol(argv[2], 0, 0)`: optional sign, 0x-prefixed hex,
+/// 0-prefixed octal, otherwise decimal. Unlike strtol, trailing garbage
+/// is rejected instead of being silently ignored.
 fn parse_pid(s: &str) -> Option<i32> {
     let s = s.trim();
-    if let Some(hex) = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")) {
-        i32::from_str_radix(hex, 16).ok()
+    let (neg, digits) = match s.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, s.strip_prefix('+').unwrap_or(s)),
+    };
+
+    let (radix, digits) = if let Some(hex) = digits.strip_prefix("0x").or_else(|| digits.strip_prefix("0X")) {
+        (16, hex)
+    } else if digits.len() > 1 && digits.starts_with('0') {
+        (8, &digits[1..])
     } else {
-        s.parse().ok()
-    }
+        (10, digits)
+    };
+
+    let magnitude = i64::from_str_radix(digits, radix).ok()?;
+    i32::try_from(if neg { -magnitude } else { magnitude }).ok()
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
-    println!("The ReZygisk Tracer {ZKSU_VERSION}\n");
+    println!("tracer {ZKSU_VERSION} online\n");
 
     if args.len() >= 2 && args[1] == "monitor" {
+        rz_common::init_log_level_from_flags();
+        rz_common::redirect_stdio_to_log("zygisk-ptrace monitor");
         monitor::init_monitor();
         return;
     } else if args.len() >= 3 && args[1] == "trace" {
+        rz_common::init_log_level_from_flags();
+        rz_common::redirect_stdio_to_log("zygisk-ptrace trace");
         let mut is_tango = false;
         let mut do_restart = false;
 

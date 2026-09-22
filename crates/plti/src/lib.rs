@@ -1,18 +1,179 @@
 //! PLTI (Pure Library Hooking) port: PLT/GOT hooking inside the current
 //! process, mirroring `loader/src/external/plti/src/{plti.c, elf_util.c}`.
 //!
-//! The C parses ELF headers straight out of the mapped image; here the file
-//! image is read once per library (via `rz_elf`) and runtime addresses are
-//! computed as `bias_addr + vaddr` where `bias_addr = base_addr -
-//! load0.p_vaddr` exactly like `elfutil_init`. Everything that only touches
-//! program headers / relocation tables is host-testable; the GOT write
-//! helpers mirror the C mprotect/mremap dances 1:1.
+//! The C parses ELF headers straight out of the mapped image; the port
+//! copies that same mapped window once per library ([`read_mapped_image`])
+//! and parses it through `rz_elf`, so runtime addresses stay
+//! `bias_addr + vaddr` where `bias_addr = base_addr - load0.p_vaddr`
+//! exactly like `elfutil_init` — and the file system is never touched
+//! (csoloader-loaded, memfd-backed or since-deleted images hook identically
+//! to the C). Everything that only touches program headers / relocation
+//! tables is host-testable; the GOT write helpers mirror the C
+//! mprotect/mremap dances 1:1.
 
 #![allow(clippy::missing_safety_doc)]
 
 use std::ffi::CStr;
+use std::ops::Range;
+use std::ptr::NonNull;
 
-pub const TAG: &str = "zygisk";
+// ---------------------------------------------------------------------------
+// MappedElf: bounds-checked access to memory-mapped ELF images
+// ---------------------------------------------------------------------------
+
+/// Safe abstraction for accessing memory-mapped ELF images with bounds checking.
+///
+/// All accesses go through methods that verify the requested range fits within
+/// the mapped region, preventing out-of-bounds reads on malformed ELF files.
+pub struct MappedElf {
+    base: NonNull<u8>,
+    len: usize,
+}
+
+impl MappedElf {
+    /// Create a MappedElf from a base pointer and length.
+    ///
+    /// # Safety
+    /// - `base` must point to a valid, readable memory region of at least `len` bytes.
+    /// - The memory must remain valid for the lifetime of the MappedElf.
+    pub const unsafe fn new(base: NonNull<u8>, len: usize) -> Self {
+        Self { base, len }
+    }
+
+    /// Create a MappedElf from a raw address and length.
+    ///
+    /// Returns None if the address is null.
+    ///
+    /// # Safety
+    /// - The address must point to valid, readable memory of at least `len` bytes.
+    pub unsafe fn from_raw(base: usize, len: usize) -> Option<Self> {
+        NonNull::new(base as *mut u8).map(|base| Self { base, len })
+    }
+
+    /// The base address of the mapped region.
+    pub fn base(&self) -> usize {
+        self.base.as_ptr() as usize
+    }
+
+    /// The length of the mapped region in bytes.
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    /// Returns true if the mapped region is empty.
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    /// Get a slice of the mapped region, with bounds checking.
+    ///
+    /// Returns None if the range extends beyond the mapped region.
+    pub fn slice(&self, range: Range<usize>) -> Option<&[u8]> {
+        if range.start <= range.end && range.end <= self.len {
+            Some(unsafe {
+                std::slice::from_raw_parts(self.base.as_ptr().add(range.start), range.len())
+            })
+        } else {
+            None
+        }
+    }
+
+    /// Get a pointer to an offset within the mapped region, with bounds checking.
+    ///
+    /// Returns None if offset + size would exceed the mapped region.
+    pub fn ptr_at(&self, offset: usize, size: usize) -> Option<*const u8> {
+        if offset.checked_add(size).map_or(false, |end| end <= self.len) {
+            Some(unsafe { self.base.as_ptr().add(offset) })
+        } else {
+            None
+        }
+    }
+
+    /// Read a value of type T at the given offset, with bounds checking.
+    ///
+    /// Returns None if the offset + size_of::<T>() would exceed the mapped region.
+    ///
+    /// # Safety
+    /// The memory at offset must be properly aligned for T and contain a valid T.
+    pub unsafe fn read_at<T: Copy>(&self, offset: usize) -> Option<T> {
+        self.ptr_at(offset, std::mem::size_of::<T>())
+            .map(|ptr| unsafe { (ptr as *const T).read_unaligned() })
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ProtectedPage: RAII wrapper for mprotect sequences
+// ---------------------------------------------------------------------------
+
+/// RAII wrapper for temporarily changing memory protection.
+///
+/// Automatically restores the original protection on drop, preventing
+/// pages from being left writable after a GOT write sequence.
+pub struct ProtectedPage {
+    addr: *mut std::ffi::c_void,
+    len: usize,
+    restore_prot: i32,
+}
+
+impl ProtectedPage {
+    /// Make a page range writable, returning a guard that restores the
+    /// original protection on drop.
+    ///
+    /// # Safety
+    /// - `addr` must be page-aligned.
+    /// - The memory range must be valid for the current process.
+    /// - `original_prot` must be the actual current protection of the pages.
+    pub unsafe fn make_writable(
+        addr: *mut std::ffi::c_void,
+        len: usize,
+        original_prot: i32,
+    ) -> std::io::Result<Self> {
+        let new_prot = original_prot | libc::PROT_WRITE;
+        // SAFETY: Caller guarantees addr is page-aligned and the range is valid
+        if unsafe { libc::mprotect(addr, len, new_prot) } == -1 {
+            return Err(std::io::Error::last_os_error());
+        }
+        Ok(Self {
+            addr,
+            len,
+            restore_prot: original_prot,
+        })
+    }
+
+    /// Create a ProtectedPage guard without changing protection.
+    ///
+    /// Useful when the page is already writable but you want to ensure
+    /// protection is restored on all exit paths.
+    pub const fn already_writable(
+        addr: *mut std::ffi::c_void,
+        len: usize,
+        restore_prot: i32,
+    ) -> Self {
+        Self {
+            addr,
+            len,
+            restore_prot,
+        }
+    }
+
+    /// Prevent the protection from being restored on drop.
+    ///
+    /// Use this when the write failed and you don't want to touch the
+    /// page protections at all.
+    pub fn forget(self) {
+        std::mem::forget(self);
+    }
+}
+
+impl Drop for ProtectedPage {
+    fn drop(&mut self) {
+        unsafe {
+            libc::mprotect(self.addr, self.len, self.restore_prot);
+        }
+    }
+}
+
+pub const TAG: &str = rz_common::LOG_TAG;
 
 macro_rules! dlogd {
     ($($arg:tt)*) => {{ rz_common::logd!(TAG, $($arg)*); }};
@@ -29,6 +190,19 @@ macro_rules! dloge {
 const PF_X: u32 = 1;
 const PF_W: u32 = 2;
 const PF_R: u32 = 4;
+
+// ET_* (elf_util.c checks; the Android libc crate doesn't export them).
+const ET_EXEC: u16 = 2;
+const ET_DYN: u16 = 3;
+
+// PT_DYNAMIC / DT_* tags for the elfutil_init gates in `add_manual_lib`
+// (elf_util.c 99-113, 148-159, 161-165, 265-272; libc doesn't export them).
+const PT_DYNAMIC: u32 = 2;
+const DT_STRTAB: u64 = 5;
+const DT_SYMTAB: u64 = 6;
+const DT_JMPREL: u64 = 23;
+const DT_REL: u64 = 17;
+const DT_RELA: u64 = 7;
 
 const PROT_READ: i32 = libc::PROT_READ;
 const PROT_WRITE: i32 = libc::PROT_WRITE;
@@ -80,18 +254,21 @@ unsafe fn mremap_relocate(
 // Pure ELF helpers (host-testable): bias/protection/VMA/PLT discovery.
 // ---------------------------------------------------------------------------
 
-/// `elfutil_init`: bias = base_addr - p_vaddr of the first PT_LOAD with
-/// p_offset == 0 (the mapping that holds the ELF header).
+/// `elfutil_init`: bias = base_addr - p_vaddr of the **last** PT_LOAD with
+/// p_offset == 0 that the base can reach. elf_util.c 148-159 scans every
+/// phdr without breaking, so a later matching LOAD overwrites earlier ones;
+/// when nothing matches, `base_addr` is returned (bias 0 relative to the
+/// image start). Must agree with [`read_mapped_image`]'s bias computation.
 pub fn bias_addr_for(img: &rz_elf::ElfImage, base_addr: usize) -> usize {
-    let load0 = img
-        .load_segments()
-        .into_iter()
-        .find(|s| s.offset == 0);
+    let mut bias = base_addr;
 
-    match load0 {
-        Some(seg) => base_addr.wrapping_sub(seg.vaddr as usize),
-        None => base_addr,
+    for seg in img.load_segments() {
+        if seg.offset == 0 && base_addr >= seg.vaddr as usize {
+            bias = base_addr.wrapping_sub(seg.vaddr as usize);
+        }
     }
+
+    bias
 }
 
 /// `elfutil_get_addr_protection`: PT_LOAD prot of the segment containing
@@ -182,7 +359,14 @@ pub fn get_vma_boundaries(img: &rz_elf::ElfImage, bias_addr: usize, addr: usize)
         }
     }
 
-    result
+    // elf_util.c 618-638: the C fails the lookup when the matched segment's
+    // page-aligned start is 0 (`return (vma_start && *vma_start != 0);`).
+    // The check applies to the final written value — a later PT_LOAD match
+    // may overwrite an earlier zero before the RELRO break.
+    match result {
+        Some((0, _)) => None,
+        other => other,
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -196,9 +380,13 @@ fn collect_relocs(
     is_plt: bool,
     stop_on_first_match: bool,
     out: &mut Vec<usize>,
-) {        for rel in table {
+    ) {        for rel in table {
             let matches = if let Some(prefix) = match_by_prefix {
-                img.symbol_at(rel.sym_idx as usize).is_some_and(|s| s.name.starts_with(prefix))
+                // elf_util.c 523-531: prefix matching skips st_name == 0
+                // symbols outright, then strncmp's `prefix_len` bytes. An
+                // empty prefix therefore matches every *named* symbol.
+                img.symbol_at(rel.sym_idx as usize)
+                    .is_some_and(|s| !s.name.is_empty() && s.name.starts_with(prefix))
             } else {
                 rel.sym_idx == sym_idx.unwrap_or(u32::MAX)
             };
@@ -311,7 +499,9 @@ pub struct ElfInfo {
     pub base_addr: usize,
     /// `base_addr_ - load0.p_vaddr` (`bias_addr_` in the C).
     pub bias_addr: usize,
-    /// File image, parsed on demand (avoids self-referential borrows).
+    /// Sparse per-PT_LOAD snapshot of the mapped image window, copied once
+    /// at add time (`read_mapped_image`); parsed on demand as a file image
+    /// (avoids self-referential borrows).
     file: Vec<u8>,
     stashed_vmas: Vec<StashedVma>,
 }
@@ -328,6 +518,10 @@ pub struct Hook {
     pub name: String,
     /// GOT slot address.
     pub address: usize,
+    /// GOT target captured before this slot was hooked. Slots matched by a
+    /// single (lib, name) pair can legitimately differ, so rollback and
+    /// removal must restore per-slot values, never a shared one.
+    pub original: usize,
 }
 
 pub struct Plti {
@@ -339,6 +533,219 @@ impl Default for Plti {
     fn default() -> Self {
         Self::new()
     }
+}
+
+/// ELF class of the build target (elf_util.c `ELF_CLASS`).
+#[cfg(target_pointer_width = "64")]
+const TARGET_ELF_CLASS: u8 = 2;
+#[cfg(target_pointer_width = "32")]
+const TARGET_ELF_CLASS: u8 = 1;
+
+#[cfg(target_arch = "aarch64")]
+const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_AARCH64;
+#[cfg(target_arch = "x86_64")]
+const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_X86_64;
+#[cfg(target_arch = "x86")]
+const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_386;
+#[cfg(target_arch = "arm")]
+const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_ARM;
+
+/// `elfutil_init`'s acquisition half (elf_util.c 115-159): validate the ELF
+/// header at `base_addr` and snapshot the mapped image as a sparse,
+/// per-PT_LOAD window, returning `(window, bias)`.
+///
+/// The C parses headers straight out of the mapping with raw pointers and
+/// keeps no copy; the port copies the same ground truth once at add time so
+/// `ElfInfo` can own its bytes while `rz_elf` parses them as a file image —
+/// the file system is never involved, so csoloader in-memory images,
+/// memfd-backed libs and since-deleted files all behave like the C.
+///
+/// The snapshot is NOT one contiguous span: real Android libraries leave
+/// UNMAPPED holes between their PT_LOADs (segment-alignment gaps). The C
+/// walks pointers lazily and never dereferences those holes — every walk
+/// starts from a dynamic-table entry that lives inside a mapped segment — so
+/// a single `[base_addr, bias + max(p_vaddr + p_memsz))` copy would fault
+/// where the C works. Instead each PT_LOAD's mapped range
+/// `[bias + p_vaddr, bias + p_vaddr + p_memsz)` is copied into its window
+/// slot and the holes stay zero, which `rz_elf` never reads anyway
+/// (`vaddr_to_file_offset` only resolves addresses inside a LOAD's
+/// `[p_vaddr, p_vaddr + p_filesz)`).
+///
+/// `window[k]` equals file-offset-`k` content: the winning base LOAD has
+/// `p_offset == 0`, so `base_addr` (= `bias + B`) maps to file offset 0 and
+/// its slot is 0; for every other LOAD the usual ELF congruence
+/// `p_vaddr - p_offset == B` makes the slot `p_vaddr - B` equal `p_offset`,
+/// so goblin's file-offset reads (phdrs, PT_DYNAMIC table, hash/reloc
+/// tables) land on the right bytes.
+///
+/// The returned bias is what `add_manual_lib` stores as `ElfInfo::bias_addr`
+/// — the same last-match-wins `base_addr - p_vaddr` the C computes.
+///
+/// # Safety
+/// `base_addr` must point at an ELF header in mapped memory (the C's own
+/// contract from `plti_add_manual_lib`); unmapped or short mappings fault
+/// here just as they would in the C.
+unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
+    if base_addr == 0 {
+        return None;
+    }
+
+    let ehdr_size: usize = if TARGET_ELF_CLASS == 2 { 64 } else { 52 };
+    let hdr = unsafe { std::slice::from_raw_parts(base_addr as *const u8, ehdr_size) }.to_vec();
+
+    // elf_util.c 121-137: magic, class, endianness, ident version, type and
+    // machine all gate silently except the late version check.
+    if hdr[0..4] != [0x7f, b'E', b'L', b'F'] {
+        return None;
+    }
+    if hdr[4] != TARGET_ELF_CLASS || hdr[5] != 1 || hdr[6] != 1 {
+        return None;
+    }
+
+    let (e_type, e_machine, e_version, e_phoff, e_phentsize, e_phnum) = if TARGET_ELF_CLASS == 2 {
+        (
+            u16::from_le_bytes(hdr[16..18].try_into().unwrap()),
+            u16::from_le_bytes(hdr[18..20].try_into().unwrap()),
+            u32::from_le_bytes(hdr[20..24].try_into().unwrap()),
+            u64::from_le_bytes(hdr[32..40].try_into().unwrap()) as usize,
+            u16::from_le_bytes(hdr[54..56].try_into().unwrap()),
+            u16::from_le_bytes(hdr[56..58].try_into().unwrap()),
+        )
+    } else {
+        (
+            u16::from_le_bytes(hdr[16..18].try_into().unwrap()),
+            u16::from_le_bytes(hdr[18..20].try_into().unwrap()),
+            u32::from_le_bytes(hdr[20..24].try_into().unwrap()),
+            u32::from_le_bytes(hdr[28..32].try_into().unwrap()) as usize,
+            u16::from_le_bytes(hdr[42..44].try_into().unwrap()),
+            u16::from_le_bytes(hdr[44..46].try_into().unwrap()),
+        )
+    };
+
+    if e_type != ET_EXEC && e_type != ET_DYN {
+        return None;
+    }
+    if e_machine != TARGET_ELF_MACHINE {
+        return None;
+    }
+    if e_version != 1 {
+        // C 139-143: "Unsupported ELF version".
+        dloge!("Unsupported ELF version: {e_version}");
+        return None;
+    }
+
+    let phdr_len = e_phnum as usize * e_phentsize as usize;
+    if phdr_len == 0 {
+        return None;
+    }
+    let phdrs =
+        unsafe { std::slice::from_raw_parts((base_addr + e_phoff) as *const u8, phdr_len) }
+            .to_vec();
+
+    // elf_util.c 147-159: bias from the last p_offset == 0 PT_LOAD the base
+    // can reach (the C's branch has no break, so later matches overwrite
+    // earlier ones). B is that LOAD's p_vaddr; the snapshot window starts at
+    // base_addr = bias + B, so window[k] holds the mapped byte at
+    // base_addr + k.
+    let mut bias: Option<(usize, usize)> = None;
+    // (p_offset, p_vaddr, p_filesz) — the window is laid out by FILE offset,
+    // matching what Elf::parse expects. On modern linkers p_offset and
+    // p_vaddr diverge (per-segment page alignment), so a vaddr-layout window
+    // feeds parse garbage even though every byte was copied faithfully.
+    let mut loads: Vec<(usize, usize, usize)> = Vec::new();
+    for i in 0..e_phnum as usize {
+        let p = &phdrs[i * e_phentsize as usize..];
+        let (p_type, p_offset, p_vaddr, p_memsz) = if TARGET_ELF_CLASS == 2 {
+            (
+                u32::from_le_bytes(p[0..4].try_into().unwrap()),
+                u64::from_le_bytes(p[8..16].try_into().unwrap()) as usize,
+                u64::from_le_bytes(p[16..24].try_into().unwrap()) as usize,
+                u64::from_le_bytes(p[40..48].try_into().unwrap()) as usize,
+            )
+        } else {
+            (
+                u32::from_le_bytes(p[0..4].try_into().unwrap()),
+                u32::from_le_bytes(p[4..8].try_into().unwrap()) as usize,
+                u32::from_le_bytes(p[8..12].try_into().unwrap()) as usize,
+                u32::from_le_bytes(p[20..24].try_into().unwrap()) as usize,
+            )
+        };
+
+        if p_type != libc::PT_LOAD {
+            continue;
+        }
+
+        loads.push((p_offset, p_vaddr, p_memsz));
+
+        if p_offset == 0 && base_addr >= p_vaddr {
+            bias = Some((base_addr - p_vaddr, p_vaddr));
+        }
+    }
+
+    let (bias, _load0_vaddr) = bias?;
+
+    // Window end = the furthest file extent across the LOADs.
+    // i128 keeps unchecked sums from wrapping: p_offset/p_memsz come straight
+    // from the file (checked math; equivalent to the old `end <= base_addr`
+    // sanity for every non-pathological image).
+    let mut window_len: i128 = 0;
+    for &(p_offset, _, p_memsz) in &loads {
+        window_len = window_len.max(p_offset as i128 + p_memsz as i128);
+    }
+    if window_len <= 0 || window_len > usize::MAX as i128 {
+        return None;
+    }
+    let window_len = window_len as usize;
+
+    // Copy each PT_LOAD's mapped range into its FILE-offset window slot. Only
+    // PT_LOADs are touched, so the alignment holes between segments stay zero
+    // instead of being dereferenced (real Android libraries leave those gaps
+    // unmapped; the C's lazy pointer walks never read them).
+    //
+    // Use try_reserve_exact to avoid panicking on allocation failure (could
+    // be triggered by a malformed ELF with extreme vaddr spans).
+    let mut window = Vec::new();
+    if window.try_reserve_exact(window_len).is_err() {
+        dloge!("Failed to allocate ELF window of size {window_len}");
+        return None;
+    }
+    window.resize(window_len, 0);
+    for &(p_offset, p_vaddr, p_memsz) in &loads {
+        if p_offset >= window_len || p_memsz == 0 {
+            continue;
+        }
+
+        let copy_len = p_memsz.min(window_len - p_offset);
+        let src = bias.wrapping_add(p_vaddr as usize);
+        unsafe {
+            std::ptr::copy_nonoverlapping(
+                src as *const u8,
+                window.as_mut_ptr().add(p_offset),
+                copy_len,
+            );
+        }
+    }
+
+    // Strip section-header references from the window's header copy. The
+    // section table is typically not covered by any PT_LOAD, so it is absent
+    // from the window; goblin would otherwise reject the image ("bad offset
+    // set"). PLTI only consumes phdrs + the dynamic segment — exactly like
+    // the C, which never reads sections.
+    if TARGET_ELF_CLASS == 2 {
+        if window_len >= 64 {
+            window[0x28..0x30].fill(0); // e_shoff
+            window[0x3a..0x3c].fill(0); // e_shentsize
+            window[0x3c..0x3e].fill(0); // e_shnum
+            window[0x3e..0x40].fill(0); // e_shstrndx
+        }
+    } else if window_len >= 52 {
+        window[0x20..0x24].fill(0); // e_shoff
+        window[0x2e..0x30].fill(0); // e_shentsize
+        window[0x30..0x32].fill(0); // e_shnum
+        window[0x32..0x34].fill(0); // e_shstrndx
+    }
+
+    Some((window, bias))
 }
 
 impl Plti {
@@ -357,17 +764,118 @@ impl Plti {
             return true;
         }
 
-        let Ok(file) = std::fs::read(lib_path) else {
-            dloge!("Failed to read ELF image for library: {lib_path}");
-            return false;
-        };
-
-        let Ok(img) = rz_elf::ElfImage::parse(&file) else {
+        // The C initializes its ELF image from the mapping at base_addr; the
+        // port copies that same window instead of reading the file from
+        // disk, so nothing touches the file system (C-parity for csoloader
+        // in-memory images, memfd-backed libs and since-deleted files
+        // alike). The bias computed while building the window is the image's
+        // load bias — the value `elfutil_init` derives from its phdr scan
+        // and the one stored as `ElfInfo::bias_addr`.
+        let Some((file, bias_addr)) = (unsafe { read_mapped_image(base_addr) }) else {
             dloge!("Failed to initialize ELF image for library: {lib_path}");
             return false;
         };
 
-        let bias_addr = bias_addr_for(&img, base_addr);
+        let img = match rz_elf::ElfImage::parse(&file) {
+            Ok(img) => img,
+            Err(_) => {
+                dloge!("Failed to initialize ELF image for library: {lib_path}");
+                return false;
+            }
+        };
+
+        // elf_util.c 155-165: `dynamic_` holds the LAST PT_DYNAMIC phdr's
+        // p_vaddr (the scan has no break) and init fails when that value is
+        // 0 — a zero-vaddr PT_DYNAMIC is not saved by an earlier one, and a
+        // later PT_DYNAMIC with p_vaddr != 0 wins over an earlier zero.
+        if !img
+            .all_segments()
+            .iter()
+            .rev()
+            .find(|(pt, _)| *pt == PT_DYNAMIC)
+            .is_some_and(|(_, seg)| seg.vaddr != 0)
+        {
+            dloge!("Failed to find dynamic section or bias address in ELF header");
+            return false;
+        }
+
+        // elf_util.c 99-113 (`set_by_offset`) parity: every tag the C turns
+        // into a runtime pointer must satisfy `bias + value >= base` (the
+        // C's wrap-around ElfW(Addr) arithmetic, reproduced exactly). Only
+        // tags actually present in the dynamic table are checked, exactly
+        // like the C's switch.
+        for &(tag, value) in img.dynamic_entries() {
+            let checked = matches!(
+                tag,
+                DT_STRTAB
+                    | DT_SYMTAB
+                    | DT_JMPREL
+                    | DT_REL
+                    | DT_RELA
+                    | rz_elf::DT_ANDROID_REL
+                    | rz_elf::DT_ANDROID_RELA
+            );
+            if checked && bias_addr.wrapping_add(value as usize) < base_addr {
+                dloge!(
+                    "Failed to set pointer: base={base_addr:#x}, bias={bias_addr:#x}, off={value:#x}, val={:#x}",
+                    bias_addr.wrapping_add(value as usize)
+                );
+                return false;
+            }
+        }
+
+        // elf_util.c 219-236 + 265-272: `rel_android_` is the LAST
+        // DT_ANDROID_REL/DT_ANDROID_RELA occurrence and `rel_android_size_`
+        // the last of the two size tags — the C's flat assignments pair the
+        // two fields independently, so the winning pair can cross tags. A
+        // table pointer that fails `set_by_offset` (bias + d_ptr < base) or
+        // lands exactly on 0 is left at 0 and never checked; otherwise the
+        // runtime pointer must hold at least 4 bytes starting with "APS2".
+        // When d_ptr == 0 and the load0 segment has p_vaddr == 0 the check
+        // resolves to the ELF header itself and fails, exactly like the C.
+        let android_table = img
+            .dynamic_entries()
+            .iter()
+            .rev()
+            .find(|(t, _)| {
+                *t == rz_elf::DT_ANDROID_REL || *t == rz_elf::DT_ANDROID_RELA
+            })
+            .copied();
+        let android_size = img
+            .dynamic_entries()
+            .iter()
+            .rev()
+            .find(|(t, _)| {
+                *t == rz_elf::DT_ANDROID_RELSZ || *t == rz_elf::DT_ANDROID_RELASZ
+            })
+            .map(|(_, v)| *v);
+
+        if let Some((_, table_vaddr)) = android_table {
+            let runtime_ptr = bias_addr.wrapping_add(table_vaddr as usize);
+            if runtime_ptr != 0 && runtime_ptr >= base_addr {
+                let size = android_size.unwrap_or(0);
+                let Some(off) = img.vaddr_to_file_offset(table_vaddr) else {
+                    dloge!("Invalid Android packed reloc table");
+                    return false;
+                };
+                let (Ok(start), Ok(size)) = (
+                    usize::try_from(off),
+                    usize::try_from(size),
+                ) else {
+                    dloge!("Invalid Android packed reloc table");
+                    return false;
+                };
+                let Some(bytes) = img.raw().get(start..start.checked_add(size).unwrap_or(usize::MAX))
+                else {
+                    dloge!("Invalid Android packed reloc table");
+                    return false;
+                };
+                if bytes.len() < 4 || !bytes.starts_with(rz_elf::APS2_MAGIC) {
+                    dloge!("Invalid Android packed reloc table");
+                    return false;
+                }
+            }
+        }
 
         self.elf_infos.push(ElfInfo {
             path: lib_path.to_string(),
@@ -408,12 +916,12 @@ impl Plti {
                 return 0;
             }
 
-            // When the first p_offset==0 PT_LOAD has p_vaddr != 0, the ELF
-            // header sits at dlpi_addr + p_vaddr.
+            // C plti.c: first PT_LOAD with p_offset == 0 holds the ELF header.
+            // When that LOAD has p_vaddr != 0, ehdr sits at dlpi_addr + p_vaddr.
             let mut ehdr_addr = info.dlpi_addr as usize;
             for i in 0..info.dlpi_phnum as usize {
                 let ph = unsafe { *info.dlpi_phdr.add(i) };
-                if ph.p_type != libc::PT_LOAD || ph.p_offset == 0 {
+                if ph.p_type != libc::PT_LOAD || ph.p_offset != 0 {
                     continue;
                 }
 
@@ -444,7 +952,8 @@ impl Plti {
             return false;
         };
 
-        self.add_manual_lib(&name, ehdr_addr)
+        let ok = self.add_manual_lib(&name, ehdr_addr);
+        ok
     }
 
     /// `plti_internal_set_got_entry`.
@@ -559,7 +1068,8 @@ impl Plti {
             }
 
             // Modify GOT first. If this fails, no metadata is committed; roll
-            // back only the slots already hooked in this call.
+            // back only the slots already hooked in this call, each to its
+            // own captured original.
             if !Self::set_got_entry(&mut self.elf_infos[info_idx], plt_addr, new_callback) {
                 dloge!("Failed to set GOT entry for PLT hook at {plt_addr:#x}");
 
@@ -568,8 +1078,8 @@ impl Plti {
                         continue;
                     }
 
-                    // Best-effort rollback.
-                    Self::set_got_entry(&mut self.elf_infos[info_idx], h.address, original_callback);
+                    // Best-effort rollback with the slot's own original.
+                    Self::set_got_entry(&mut self.elf_infos[info_idx], h.address, h.original);
                 }
 
                 return false;
@@ -579,6 +1089,7 @@ impl Plti {
                 lib_name: lib_name.to_string(),
                 name: name.to_string(),
                 address: plt_addr,
+                original: original_callback,
             });
         }
 
@@ -621,14 +1132,17 @@ impl Plti {
 
         let mut hooks = std::mem::take(&mut self.hooks);
 
-        // Restore every matching GOT slot; on the first failure, keep the
-        // hook list unchanged (partially restored, like the C) and bail.
+        // Restore every matching GOT slot to its own captured original (the
+        // API-level `original_callback` is only a fallback for legacy entries
+        // recorded without one). On the first failure, keep the hook list
+        // unchanged (partially restored, like the C) and bail.
         for hook in hooks.iter() {
             if hook.lib_name != lib_name || hook.name != name || hook.address == 0 {
                 continue;
             }
 
-            if !Self::set_got_entry(&mut self.elf_infos[info_idx], hook.address, original_callback) {
+            let original = if hook.original != 0 { hook.original } else { original_callback };
+            if !Self::set_got_entry(&mut self.elf_infos[info_idx], hook.address, original) {
                 dloge!("Failed to restore GOT entry for PLT hook at {:#x}", hook.address);
                 self.hooks = hooks;
 
@@ -664,8 +1178,6 @@ impl Plti {
 
     /// `plti_deinit`: move every stashed VMA back and drop state.
     pub fn deinit(mut self) -> bool {
-        let mut ok = true;
-
         for info in &mut self.elf_infos {
             for vma in info.stashed_vmas.drain(..) {
                 let restored = unsafe {
@@ -676,12 +1188,16 @@ impl Plti {
                     )
                 };
 
+                // plti.c 556-560: the C's `if (!mremap(...))` negates the
+                // MAP_FAILED sentinel, so the branch is dead code and every
+                // restore is silently accepted. The port keeps the intended
+                // failure handling (log + free the backup) but, like the C's
+                // plti_deinit, the restore result never changes the return.
                 if restored as usize != vma.original_addr {
                     dloge!("Failed to restore original VMA for library {}", info.path);
                     unsafe {
                         libc::munmap(vma.backup_addr as *mut libc::c_void, vma.len);
                     }
-                    ok = false;
                 }
             }
         }
@@ -689,7 +1205,8 @@ impl Plti {
         self.elf_infos.clear();
         self.hooks.clear();
 
-        ok
+        // plti.c 580: plti_deinit returns true unconditionally.
+        true
     }
 }
 

@@ -1,0 +1,8 @@
+isPrevious: true
+Build: Xiaomi/odin/odin:16/BP4A.251205.006/V816.0.4.0.UKMCNXM:user/release-keys
+Hardware: odin
+Revision: 0
+Bootloader: unknown
+Radio: 4.3CPL2-34.1-1208_1646_fffe5e692b01,4.3CPL2-34.1-1208_1646_fffe5e692b01
+Kernel: Linux version 5.4.302-noxcis-v2-suki-hardened+ (noxcis@ROMBUILDER) (Android (14054843, +pgo, +bolt, +lto, +mlgo, based on r574158) clang version 21.0.0 (https://android.googlesource.com/toolchain/llvm-project 9f872551d3c681d06fd303b36f16ed5c274735eb), LLD 21.0.0 (/mnt/disks/build-disk/src/googleplex-android/llvm-r574158-release/out/llvm-project/llvm 9f872551d3c681d06fd303b36f16ed5c274735eb)) #240 SMP PREEMPT Thu Sep 17 21:01:43 EDT 2026
+
