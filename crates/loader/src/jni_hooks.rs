@@ -377,6 +377,27 @@ pub unsafe fn initialize_jni_hook() {
 /// record the unhook entries in `context::JNI_HOOK_LIST` (hook.c
 /// `jni_hook_list_add`).
 ///
+/// A NUL-terminated, never-freed copy of a table literal.
+///
+/// `JNINativeMethod.name`/`.signature` are jni.h C strings: ART runs `strlen`
+/// over them in `RegisterNatives`, and the restore path re-reads them with
+/// `CStr::from_ptr`. Rust `&str` literals are **not** NUL-terminated, so
+/// handing out `str::as_ptr()` made `strlen` run on into the next literal in
+/// .rodata. ART then logged `Failed to register native method ...Zygote
+/// .nativeForkAndSpecialize(...)I(II[II...)I(II[II[[IJJ)Iselfutf8info...` (a
+/// smear of neighbouring strings), failed the lookup, and left a pending
+/// NoSuchMethodError that killed the zygote on its next fork — the 5x-boot
+/// crash loop. The C reference uses `static const char*` literals, which are
+/// NUL-terminated and immortal; a leaked `CString` reproduces exactly that
+/// lifetime. It is never freed because the entry list also carries
+/// module-owned pointers that must not be freed, and because these entries
+/// die with the process anyway.
+fn static_cstr(s: &'static str) -> *mut c_char {
+    CString::new(s)
+        .expect("JNI name/signature literal cannot contain an interior NUL")
+        .into_raw()
+}
+
 /// The bootstrap hooks are installed from the flat table's own `&'static str`
 /// name/signature slices instead of going through a `JNINativeMethod`
 /// pointer buffer: instrumentation during the original bring-up showed
@@ -509,8 +530,8 @@ unsafe fn hook_zygote_methods_str(
                 _ => {}
             }
             hooked.push(JNINativeMethod {
-                name: name.as_ptr() as *mut c_char,
-                signature: sig.as_ptr() as *mut c_char,
+                name: static_cstr(name),
+                signature: static_cstr(sig),
                 fn_ptr: orig as *mut c_void,
             });
         }

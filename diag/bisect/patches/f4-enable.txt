@@ -1,0 +1,45 @@
+REPL
+FILE crates/loader/src/fork_hooks.rs
+OLD
+        // BISECT-EXPERIMENT: F4 neutered — no counter tracking.
+        LoaderGuard
+END-OLD
+NEW
+        // BISECT-RUNG(F4 on): counter tracking restored (the F4 design).
+        IN_LOADER.fetch_add(1, Ordering::Relaxed);
+        LoaderGuard
+END-NEW
+REPL
+FILE crates/loader/src/fork_hooks.rs
+OLD
+        // BISECT-EXPERIMENT: F4 neutered.
+END-OLD
+NEW
+        IN_LOADER.fetch_sub(1, Ordering::Relaxed);
+END-NEW
+REPL
+FILE crates/loader/src/fork_hooks.rs
+OLD
+        // BISECT-EXPERIMENT: gate disabled — always take the munmap path.
+        if false {
+            if IN_LOADER.load(Ordering::Relaxed) != 1 {
+                dlogw!(
+                    "loader code in flight on another thread — keeping libzygisk.so mapped"
+                );
+                UNLOADING.store(false, Ordering::Relaxed);
+                crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
+                return res;
+            }
+        }
+END-OLD
+NEW
+        // BISECT-RUNG(F4 on): quiescence gate active again (F4 design).
+        if IN_LOADER.load(Ordering::Relaxed) != 1 {
+            dlogw!(
+                "loader code in flight on another thread — keeping libzygisk.so mapped"
+            );
+            UNLOADING.store(false, Ordering::Relaxed);
+            crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
+            return res;
+        }
+END-NEW

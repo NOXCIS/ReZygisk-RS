@@ -3,12 +3,17 @@
 
 pub mod consts;
 pub mod fdpass;
+pub mod generation;
 pub mod kversion;
 pub mod maps;
 pub mod owned_fd;
 
 pub use consts::*;
 pub use fdpass::{recv_fd, send_fd};
+pub use generation::{
+    abi_label, generation_line, log_generation, log_generation_and_check, manifest_generation, manifest_path,
+    DeploymentCheck, RZ_GENERATION, RZ_GENERATION_BANNER,
+};
 pub use kversion::KernelVersion;
 pub use maps::{parse_maps, parse_maps_line, parse_maps_safe, MapEntry, MapPerms};
 pub use owned_fd::OwnedFd;

@@ -1,0 +1,6 @@
+-rw-rw-r--  1 tombstoned system 269418 2026-09-21 21:45 tombstone_29
+-rw-rw-r--  1 tombstoned system 162207 2026-09-21 21:45 tombstone_29.pb
+-rw-rw-r--  1 tombstoned system 269938 2026-09-21 21:45 tombstone_30
+-rw-rw-r--  1 tombstoned system 162351 2026-09-21 21:45 tombstone_30.pb
+-rw-rw-r--  1 tombstoned system 270236 2026-09-21 21:45 tombstone_31
+-rw-rw-r--  1 tombstoned system 162572 2026-09-21 21:45 tombstone_31.pb

@@ -1,0 +1,134 @@
+REPL
+FILE crates/loader/src/context.rs
+OLD
+static ZYGISK_MODULES: ModuleTable = ModuleTable {
+    lock: Mutex::new(()),
+    data: std::cell::UnsafeCell::new(None),
+};
+END-OLD
+NEW
+static ZYGISK_MODULES: ModuleTable = ModuleTable {
+    lock: Mutex::new(()),
+    data: std::cell::UnsafeCell::new(None),
+};
+
+// BISECT-RUNG(F1 off): the pre-F1 re-entrancy bypass that F1 removed. While a
+// callback pass is live the accessors below skip the table lock, so a module
+// re-entering the loader from inside a callback is unguarded (DERIVED repro).
+thread_local! {
+    static MODULE_TABLE_BYPASS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// BISECT-RUNG(F1 off): arm/disarm the pre-F1 module-table re-entrancy bypass.
+pub fn bisect_set_module_table_bypass(on: bool) {
+    MODULE_TABLE_BYPASS.with(|b| b.set(on));
+}
+
+#[inline]
+fn module_table_bypass() -> bool {
+    MODULE_TABLE_BYPASS.with(|b| b.get())
+}
+END-NEW
+REPL
+FILE crates/loader/src/context.rs
+OLD
+pub fn module_snapshot() -> ModuleSnapshot {
+    let _guard = lock_ok(&ZYGISK_MODULES.lock);
+END-OLD
+NEW
+pub fn module_snapshot() -> ModuleSnapshot {
+    // BISECT-RUNG(F1 off): skip the lock while a callback pass is live.
+    let _guard = (!module_table_bypass()).then(|| lock_ok(&ZYGISK_MODULES.lock));
+END-NEW
+REPL
+FILE crates/loader/src/context.rs
+OLD
+) -> Option<R> {
+    let _guard = lock_ok(&ZYGISK_MODULES.lock);
+END-OLD
+NEW
+) -> Option<R> {
+    // BISECT-RUNG(F1 off): skip the lock while a callback pass is live.
+    let _guard = (!module_table_bypass()).then(|| lock_ok(&ZYGISK_MODULES.lock));
+END-NEW
+REPL
+FILE crates/loader/src/context.rs
+OLD
+pub fn with_module_table<R>(f: impl FnOnce(&mut Vec<crate::abi::ReZygiskModule>) -> R) -> R {
+    let _guard = lock_ok(&ZYGISK_MODULES.lock);
+END-OLD
+NEW
+pub fn with_module_table<R>(f: impl FnOnce(&mut Vec<crate::abi::ReZygiskModule>) -> R) -> R {
+    // BISECT-RUNG(F1 off): skip the lock while a callback pass is live.
+    let _guard = (!module_table_bypass()).then(|| lock_ok(&ZYGISK_MODULES.lock));
+END-NEW
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+    // Snapshot (base, len) and release the table lock BEFORE any module code
+    // runs: module entries re-enter the loader (`register_module`) and must
+    // be able to take the lock (audit F1). All element access below is
+    // through raw pointers — no reference into the table is alive across a
+    // callback.
+    let modules = module_snapshot();
+END-OLD
+NEW
+    // BISECT-RUNG(F1 off): pre-F1 shape — arm the bypass for the whole pass.
+    crate::context::bisect_set_module_table_bypass(true);
+    let modules = module_snapshot();
+END-NEW
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+            check_module_exception(ctx.env, i, "pre_server_specialize", pending_before);
+        }
+    }
+}
+END-OLD
+NEW
+            check_module_exception(ctx.env, i, "pre_server_specialize", pending_before);
+        }
+    }
+    // BISECT-RUNG(F1 off): disarm the bypass after the pass.
+    crate::context::bisect_set_module_table_bypass(false);
+}
+END-NEW
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+    // Same snapshot discipline as rz_run_modules_pre: the lock is released
+    // before the first callback and never re-taken during the loop.
+    let modules = module_snapshot();
+END-OLD
+NEW
+    // BISECT-RUNG(F1 off): pre-F1 shape — arm the bypass for the whole pass.
+    crate::context::bisect_set_module_table_bypass(true);
+    let modules = module_snapshot();
+END-NEW
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+    if total_modules > 0 {
+        logd!(
+            TAG,
+            "Modules unloaded: {}/{}",
+            modules_unloaded,
+            total_modules
+        );
+    }
+}
+END-OLD
+NEW
+    // BISECT-RUNG(F1 off): disarm the bypass after the pass.
+    crate::context::bisect_set_module_table_bypass(false);
+
+    if total_modules > 0 {
+        logd!(
+            TAG,
+            "Modules unloaded: {}/{}",
+            modules_unloaded,
+            total_modules
+        );
+    }
+}
+END-NEW

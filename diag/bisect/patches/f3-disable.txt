@@ -1,0 +1,36 @@
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+fn exception_pending(env: *mut jni::sys::JNIEnv) -> bool {
+    let Ok(env) = (unsafe { JNIEnv::from_raw(env) }) else {
+END-OLD
+NEW
+#[allow(unreachable_code)] // BISECT-RUNG(F3 off)
+fn exception_pending(env: *mut jni::sys::JNIEnv) -> bool {
+    // BISECT-RUNG(F3 off): the C reference never inspects pending exceptions.
+    let _ = env;
+    return false;
+    let Ok(env) = (unsafe { JNIEnv::from_raw(env) }) else {
+END-NEW
+REPL
+FILE crates/loader/src/load_modules.rs
+OLD
+fn check_module_exception(
+    env: *mut jni::sys::JNIEnv,
+    module_idx: usize,
+    stage: &str,
+    pending_before: bool,
+) {
+END-OLD
+NEW
+#[allow(unreachable_code)] // BISECT-RUNG(F3 off)
+fn check_module_exception(
+    env: *mut jni::sys::JNIEnv,
+    module_idx: usize,
+    stage: &str,
+    pending_before: bool,
+) {
+    // BISECT-RUNG(F3 off): the C reference never inspects pending exceptions.
+    let _ = (env, module_idx, stage, pending_before);
+    return;
+END-NEW

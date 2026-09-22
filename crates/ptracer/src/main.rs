@@ -10,7 +10,7 @@ mod utils;
 mod tests;
 
 use rz_common::loge;
-use utils::{dlogi, TAG};
+use utils::{dloge, dlogi, TAG};
 
 const ZKSU_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -49,6 +49,12 @@ fn main() {
     } else if args.len() >= 3 && args[1] == "trace" {
         rz_common::init_log_level_from_flags();
         rz_common::redirect_stdio_to_log("zygisk-ptrace trace");
+
+        // Same self-report + manifest cross-check as the monitor path; the
+        // tracer is a fresh exec of the same binary, so a mixed deployment
+        // shows up as one of the two roles logging a different generation.
+        println!("{}", rz_common::log_generation_and_check(TAG, "tracer"));
+
         let mut is_tango = false;
         let mut do_restart = false;
 
@@ -72,12 +78,21 @@ fn main() {
         };
 
         if !trace::trace_zygote(pid, is_tango) {
+            // The monitor reaps tracers through `fork_dont_care`, so a tracer
+            // that dies is invisible to it: this line is the only durable
+            // record that an ABI's injection failed. Never downgrade it.
+            dloge!(
+                "tracer: injection into {pid} failed, killing it so init restarts it and the monitor can hand off the fresh exec"
+            );
+
             unsafe {
                 libc::kill(pid, libc::SIGKILL);
             }
 
             std::process::exit(1);
         }
+
+        dlogi!("tracer: injection into {pid} succeeded, exiting");
 
         if do_restart && is_tango {
             daemon_client::rezygiskd_zygote_restart();

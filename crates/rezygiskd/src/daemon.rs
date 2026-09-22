@@ -9,9 +9,9 @@ use rz_common::{
     CONTROLLER_SOCKET, PATH_MODULES_DIR,
 };
 use rz_ipc::{
-    controller_code, read_string_bounded, read_u8, read_u32, read_usize, send_fd, write_u8,
-    write_u32, write_usize, write_string, build_error_info_datagrams, build_set_info_datagrams,
-    ControllerCode, DaemonSocketAction, MountNamespaceState, ProcessFlags,
+    build_error_info_message, build_set_info_message, controller_code, read_string_bounded, read_u8,
+    read_u32, read_usize, send_fd, write_u8, write_u32, write_usize, write_string, ControllerCode,
+    DaemonSocketAction, MountNamespaceState, ProcessFlags,
 };
 
 use crate::root_impl::{self, SetupKind};
@@ -444,12 +444,12 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
             // Keep the monitor's state.json / WebUI module list truthful:
             // re-report the shrunken list. The monitor's SetInfo handler is
             // idempotent (replaces env.modules, re-renders status), so a
-            // re-send needs no new protocol.
+            // re-send needs no new protocol. One datagram per report: two
+            // reports in flight used to interleave and desync the monitor.
             let module_names: Vec<&str> = context.modules.iter().map(|m| m.name.as_str()).collect();
             let impl_name = root_impl::stringify_root_impl_name(impl_);
-            for frame in build_set_info_datagrams(impl_name, &module_names) {
-                unix_datagram_sendto(CONTROLLER_SOCKET, &frame);
-            }
+            let report = build_set_info_message(impl_name, &module_names);
+            unix_datagram_sendto(CONTROLLER_SOCKET, &report);
 
             write_u8(client_fd, 1).map_err(|_| ClientError::MidFrame)?;
         }
@@ -475,17 +475,13 @@ pub fn zygiskd_start(argv0: &str) -> ! {
         SetupKind::None => {
             let msg = "Unsupported environment: Unknown root implementation";
             dloge!("{msg}");
-            for frame in build_error_info_datagrams(msg) {
-                unix_datagram_sendto(CONTROLLER_SOCKET, &frame);
-            }
+            unix_datagram_sendto(CONTROLLER_SOCKET, &build_error_info_message(msg));
             std::process::exit(1);
         }
         SetupKind::Multiple => {
             let msg = "Unsupported environment: Multiple root implementations found";
             dloge!("{msg}");
-            for frame in build_error_info_datagrams(msg) {
-                unix_datagram_sendto(CONTROLLER_SOCKET, &frame);
-            }
+            unix_datagram_sendto(CONTROLLER_SOCKET, &build_error_info_message(msg));
             std::process::exit(1);
         }
         SetupKind::Single(impl_) => {
@@ -493,9 +489,8 @@ pub fn zygiskd_start(argv0: &str) -> ! {
 
             let impl_name = root_impl::stringify_root_impl_name(impl_);
             let module_names: Vec<&str> = ctx.modules.iter().map(|m| m.name.as_str()).collect();
-            for frame in build_set_info_datagrams(impl_name, &module_names) {
-                unix_datagram_sendto(CONTROLLER_SOCKET, &frame);
-            }
+            let report = build_set_info_message(impl_name, &module_names);
+            unix_datagram_sendto(CONTROLLER_SOCKET, &report);
 
             dlogi!("Sent root implementation and modules information to controller socket");
             (ctx, impl_)

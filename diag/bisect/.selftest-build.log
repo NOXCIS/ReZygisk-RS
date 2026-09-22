@@ -1,0 +1,16 @@
+== rung f4f3f1off: F4+F3+F1 off (pre-F1/F3/F4 shape; 18:45-stable equivalent) (features: <none>) ==
+  applying f3-disable
+    applied crates/loader/src/load_modules.rs #1
+    applied crates/loader/src/load_modules.rs #2
+  applying f1-disable
+    applied crates/loader/src/context.rs #1
+    applied crates/loader/src/context.rs #2
+    applied crates/loader/src/context.rs #3
+    applied crates/loader/src/context.rs #4
+    applied crates/loader/src/load_modules.rs #5
+    applied crates/loader/src/load_modules.rs #6
+    applied crates/loader/src/load_modules.rs #7
+    applied crates/loader/src/load_modules.rs #8
+ERROR: F3-off markers 4 (want 2)
+ERROR: F1-off context markers 5 (want 4)
+ERROR: REFUSED: scratch tree is not rung 'f4f3f1off' (marker check failed)

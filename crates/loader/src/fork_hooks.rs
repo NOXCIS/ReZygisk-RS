@@ -30,6 +30,9 @@ macro_rules! dlogd {
 macro_rules! dlogw {
     ($($arg:tt)*) => {{ rz_common::logw!(TAG, $($arg)*); }};
 }
+macro_rules! dlogi {
+    ($($arg:tt)*) => {{ rz_common::logi!(TAG, $($arg)*); }};
+}
 
 // ---------------------------------------------------------------------------
 // Self-unload quiescence (audit F4)
@@ -53,6 +56,36 @@ pub(crate) static IN_LOADER: std::sync::atomic::AtomicUsize =
 pub(crate) static UNLOADING: std::sync::atomic::AtomicBool =
     std::sync::atomic::AtomicBool::new(false);
 
+/// Enables the in-process self-unmap (`[[clang::musttail]] return munmap(...)`
+/// in hook.c, reached from the `pthread_attr_setstacksize` hook).
+///
+/// It is **off** because the tail call is not real yet, and a not-real one
+/// kills the process: `tail_call_munmap` below jumps to `munmap` without
+/// running an epilogue, so x30 still holds a return address *inside*
+/// libzygisk.so. `munmap` then returns into the region it just unmapped.
+/// Observed on device (system_server child, 5 restarts, then the monitor's
+/// restart guard disabled injection):
+///
+/// ```text
+/// signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x00000001000affb4
+/// esr: Instruction Abort                      <- executing unmapped memory
+/// x19 0000000100000000   <- libzygisk base    (tracer: "mapped ... at 0x100000000")
+/// x20 0000000000183000   <- libzygisk size    ("size 0x183000")
+/// lr  00000001000affb4   pc 00000001000affb4  <- pc == lr: `ret` to a stale LR
+/// ```
+///
+/// C gets this right because `[[clang::musttail]]` makes the compiler emit the
+/// full epilogue (restore callee-saved registers, sp, and x30 = the app's
+/// return address) before branching. Rust has no `musttail`, so the same
+/// guarantee needs a naked wrapper around the hook: save x30 on entry, do the
+/// work in a normal `extern "C"` body, then on the unmap path pop the frame
+/// (`ldp x29, x30, [sp], #16`) and `br munmap` — after which `munmap` returns
+/// directly to the app and no unmapped code runs. Until that lands, the gate
+/// below still runs and the library stays mapped: that costs stealth only,
+/// because `unhook_functions()` has already restored every PLT slot, so
+/// nothing branches into the mapping.
+const SELF_UNMAP_ENABLED: bool = false;
+
 /// RAII marker for "this thread is executing loader code". Held across the
 /// original-call forwarding in every exported hook and across the
 /// nativeFork/Specialize wrappers.
@@ -61,7 +94,7 @@ pub(crate) struct LoaderGuard;
 impl LoaderGuard {
     #[inline]
     pub(crate) fn new() -> Self {
-        // BISECT-EXPERIMENT: F4 neutered — no counter tracking.
+        IN_LOADER.fetch_add(1, Ordering::Relaxed);
         LoaderGuard
     }
 }
@@ -69,7 +102,7 @@ impl LoaderGuard {
 impl Drop for LoaderGuard {
     #[inline]
     fn drop(&mut self) {
-        // BISECT-EXPERIMENT: F4 neutered.
+        IN_LOADER.fetch_sub(1, Ordering::Relaxed);
     }
 }
 
@@ -240,15 +273,17 @@ unsafe fn old_pthread_attr_setstacksize() -> OldPthreadAttrSetStacksizeFn {
 
 /// C `[[clang::musttail]] return munmap(start_addr, block_size)`.
 ///
-/// A plain call would return into the freshly unmapped libzygisk.so image
-/// (hook.c explains the segfault); the jump leaves the caller's link register
-/// untouched, so `munmap` returns directly to OUR caller and no code of this
-/// library runs afterwards. `musttail` requires signature-identical
-/// arguments, so `addr`/`len` stay in the argument registers (cdecl: stack
-/// slots) while only the target address moves into a scratch register.
-/// `#[inline(always)]` keeps this in the hook body: an extra call frame
-/// would overwrite the link register with a return address inside the
-/// unmapped library.
+/// **This is not a valid tail call — see `SELF_UNMAP_ENABLED` before enabling
+/// it.** A real tail call must leave the callee with the *caller's* link
+/// register and stack pointer, so that `munmap` returns straight to the app.
+/// A bare `br`/`jmp`/`bx` does not: x30 (arm64), lr (arm), and the return
+/// address already pushed on the stack (x86) are all untouched, so they still
+/// point at the instruction after the branch *inside libzygisk.so*, and the
+/// callee returns into the image it just unmapped. The C only looks correct
+/// because `musttail` makes the compiler emit the epilogue that restores
+/// sp/x30/callee-saved registers before the branch; a hand-written branch has
+/// no such epilogue. Keeping `addr`/`len` in argument registers (as this does)
+/// is necessary but nowhere near sufficient.
 #[inline(always)]
 unsafe fn tail_call_munmap(addr: *mut c_void, len: usize, target: usize) -> ! {
     #[cfg(target_arch = "aarch64")]
@@ -383,20 +418,16 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
             p.deinit();
         }
 
-        let start_addr = crate::context::START_ADDR.load(Ordering::Relaxed);
-        let block_size = crate::context::BLOCK_SIZE.load(Ordering::Relaxed);
-        dlogd!(
-            "unmap libzygisk.so loaded at {:p} with size {}",
-            start_addr as *const c_void,
-            block_size,
-        );
+        if SELF_UNMAP_ENABLED {
+            let start_addr = crate::context::START_ADDR.load(Ordering::Relaxed);
+            let block_size = crate::context::BLOCK_SIZE.load(Ordering::Relaxed);
 
-        // F4 quiescence gate: every other thread must be outside loader code
-        // (this hook holds the only legitimate in-flight entry, so the count
-        // must be exactly 1 — this thread's own guard). Skipping keeps the
-        // library mapped and disarms the unloader, the safe direction.
-        // BISECT-EXPERIMENT: gate disabled — always take the munmap path.
-        if false {
+            // F4 quiescence gate: every other thread must be outside loader
+            // code (this hook holds the only legitimate in-flight entry, so
+            // the count must be exactly 1 — this thread's own guard). Skipping
+            // keeps the library mapped and disarms the unloader, the safe
+            // direction. It narrows the window but cannot close it: a thread
+            // can still enter loader code between this check and the branch.
             if IN_LOADER.load(Ordering::Relaxed) != 1 {
                 dlogw!(
                     "loader code in flight on another thread — keeping libzygisk.so mapped"
@@ -405,17 +436,32 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
                 crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
                 return res;
             }
+
+            dlogd!(
+                "unmap libzygisk.so loaded at {:p} with size {}",
+                start_addr as *const c_void,
+                block_size,
+            );
+
+            // C: [[clang::musttail]] return munmap(start_addr, block_size);
+            // Nothing of this library runs between the check above and the jump.
+            unsafe {
+                tail_call_munmap(
+                    start_addr as *mut c_void,
+                    block_size,
+                    libc::munmap as usize,
+                )
+            };
         }
 
-        // C: [[clang::musttail]] return munmap(start_addr, block_size);
-        // Nothing of this library runs between the check above and the jump.
-        unsafe {
-            tail_call_munmap(
-                start_addr as *mut c_void,
-                block_size,
-                libc::munmap as usize,
-            )
-        };
+        // Fail closed (see SELF_UNMAP_ENABLED): without a real tail call the
+        // jump above would return into the unmapped image. Keeping the library
+        // mapped is harmless — `unhook_functions()` already put every PLT slot
+        // back, so nothing branches into it any more — and it costs stealth
+        // only, where a wrong unmap kills the process.
+        dlogi!("self-unmap disabled — keeping libzygisk.so mapped");
+        UNLOADING.store(false, Ordering::Relaxed);
+        crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
     }
 
     res

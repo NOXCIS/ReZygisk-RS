@@ -1,0 +1,12 @@
+event	ts	rung	abi	verdict	expectation	result	pid	staged_sha256	features	git_head	src_digest	notes
+CLASSIFY	2026-09-22T12:15:44Z	offline	64	NOT_INJECTED	-	-	none	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:15:44Z	offline	32	NOT_INJECTED	-	-	none	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:16:39Z	offline	64	INJECTED_NO_HOOKS	-	-	1057	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:16:39Z	offline	32	INJECTED_NO_HOOKS	-	-	1058	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:18:58Z	offline	64	INJECTED_NO_HOOKS	-	-	1057	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:18:58Z	offline	32	INJECTED_NO_HOOKS	-	-	1058	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:19:58Z	offline	64	INJECTED_NO_HOOKS	-	-	1057	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:19:58Z	offline	32	INJECTED_NO_HOOKS	-	-	1058	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=/tmp/rz-this-boot.log
+CLASSIFY	2026-09-22T12:19:59Z	offline	64	CRASHED	-	-	none	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=diag/zygote64-crash-audit/logcat-crash.txt
+CLASSIFY	2026-09-22T12:19:59Z	offline	32	UNKNOWN	-	-	none	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	log=diag/zygote64-crash-audit/logcat-crash.txt
+BUILD	2026-09-22T12:20:55Z	f4off	-	BUILT	-	-	-	-		b2697c7	9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba	features=none src=9a1a1af0897ec621a25759f84efb4b862322a576179bb0573027c938ad83efba

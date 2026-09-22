@@ -6,7 +6,7 @@ mod root_impl;
 mod utils;
 
 use crate::root_impl::{stringify_root_impl_name, root_impls_setup, SetupKind};
-use crate::utils::{dlogi, switch_mount_namespace};
+use crate::utils::{dlogi, switch_mount_namespace, TAG};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -49,6 +49,8 @@ fn main() {
     // Daemon mode only: keep CLI helpers (version/root) writing to real stdout.
     rz_common::init_log_level_from_flags();
     rz_common::redirect_stdio_to_log("rezygiskd");
+
+    println!("{}", rz_common::log_generation_and_check(TAG, "daemon"));
 
     if !switch_mount_namespace(1) {
         dlogi!("Failed to switch mount namespace");

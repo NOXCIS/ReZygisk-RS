@@ -2,3 +2,10 @@
 /build
 truman_ref/target
 Cargo.lock.bak
+
+# Bulky, regenerable diag artifacts: soak/repro raw logcat and app dumps plus
+# the bisect ladder's build scratch. The small evidence files (SUMMARY.txt,
+# samples.tsv, app_starts.tsv, state.json, verbose.log) stay tracked.
+diag/bisect/scratch/
+diag/**/logcat*.txt
+diag/**/applog_*.txt

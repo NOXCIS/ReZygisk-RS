@@ -1,0 +1,783 @@
+  PID  PPID ARGS                       
+    1     0 init second_stage
+    2     0 [kthreadd]
+    3     2 [rcu_gp]
+    4     2 [rcu_par_gp]
+    6     2 [kworker/0:0H-cpuboost_wq]
+    8     2 [mm_percpu_wq]
+    9     2 [ksoftirqd/0]
+   10     2 [rcu_preempt]
+   11     2 [rcuog/0]
+   12     2 [rcuop/0]
+   13     2 [migration/0]
+   14     2 [cpuhp/0]
+   16     2 [cpuhp/1]
+   17     2 [migration/1]
+   18     2 [ksoftirqd/1]
+   20     2 [kworker/1:0H-events_highpri]
+   21     2 [rcuop/1]
+   22     2 [cpuhp/2]
+   23     2 [migration/2]
+   24     2 [ksoftirqd/2]
+   26     2 [kworker/2:0H-events_highpri]
+   27     2 [rcuop/2]
+   28     2 [cpuhp/3]
+   29     2 [migration/3]
+   30     2 [ksoftirqd/3]
+   32     2 [kworker/3:0H-events_highpri]
+   33     2 [rcuop/3]
+   34     2 [cpuhp/4]
+   35     2 [migration/4]
+   36     2 [ksoftirqd/4]
+   38     2 [kworker/4:0H-events_highpri]
+   39     2 [rcuog/4]
+   40     2 [rcuop/4]
+   41     2 [cpuhp/5]
+   42     2 [migration/5]
+   43     2 [ksoftirqd/5]
+   45     2 [kworker/5:0H-events_highpri]
+   46     2 [rcuop/5]
+   47     2 [cpuhp/6]
+   48     2 [migration/6]
+   49     2 [ksoftirqd/6]
+   52     2 [rcuop/6]
+   53     2 [cpuhp/7]
+   54     2 [migration/7]
+   55     2 [ksoftirqd/7]
+   58     2 [rcuop/7]
+   59     2 [netns]
+   60     2 [rcu_tasks_kthre]
+   61     2 [rcu_tasks_trace]
+   66     2 [kauditd]
+   67     2 [qrtr_ns]
+   72     2 [qmp_aop]
+   73     2 [hh-watchdog]
+   74     2 [oom_reaper]
+   75     2 [writeback]
+   76     2 [kcompactd0]
+   93     2 [cryptd]
+  125     2 [kblockd]
+  126     2 [blk_crypto_wq]
+  127     2 [blkcg_punt_bio]
+  129     2 [irq/41-arm-smmu]
+  130     2 [irq/42-arm-smmu]
+  131     2 [governor_msm_ad]
+  132     2 [irq/26-tsens-up]
+  133     2 [irq/27-tsens-cr]
+  134     2 [irq/29-tsens-up]
+  135     2 [irq/30-tsens-cr]
+  136     2 [irq/15-dcvsh-ir]
+  137     2 [irq/16-dcvsh-ir]
+  138     2 [irq/17-dcvsh-ir]
+  139     2 [core_ctl/0]
+  141     2 [core_ctl/4]
+  143     2 [core_ctl/7]
+  145     2 [ion_system_heap]
+  146     2 [devfreq_wq]
+  147     2 [ipa_usb_wq]
+  148     2 [mpcie_wq]
+  149     2 [watchdogd]
+  150     2 [ion-pool-uncach]
+  151     2 [ion-pool-cached]
+  152     2 [system]
+  153     2 [cfg80211]
+  183     2 [kswapd0:0]
+  184     2 [erofs_worker/0]
+  193     2 [irq/299-smp2p]
+  194     2 [irq/300-smp2p]
+  195     2 [irq/301-smp2p]
+  196     2 [irq/302-smp2p]
+  198     2 [pmic_glink_rx]
+  199     2 [pmic_glink_rx]
+  201     2 [cdsprm-wq]
+  202     2 [cdsprm-wq-delay]
+  203     2 [hyp_core_ctl]
+  205     2 [kgsl-workqueue]
+  206     2 [kgsl-mementry]
+  207     2 [kgsl_worker_thr]
+  208     2 [qseecom-unreg-l]
+  209     2 [qseecom-unload-]
+  210     2 [uas]
+  211     2 [k_ipa_usb]
+  212     2 [irq/283-qcom,te]
+  214     2 [kworker/1:1H-kblockd]
+  215     2 [kworker/2:1H-kblockd]
+  216     2 [kworker/3:1H-kblockd]
+  217     2 [kworker/4:1H-kblockd]
+  218     2 [kworker/5:1H-kblockd]
+  219     2 [kworker/6:1H-fsverity_read_queue]
+  220     2 [kworker/7:1H-kblockd]
+  221     2 [irq/284-bcl-lvl]
+  222     2 [irq/285-bcl-lvl]
+  223     2 [irq/286-bcl-lvl]
+  224     2 [irq/291-bcl-lvl]
+  225     2 [irq/292-bcl-lvl]
+  226     2 [irq/293-bcl-lvl]
+  227     2 [irq/243-637000.]
+  228     2 [irq/244-635000.]
+  229     2 [dm_bufio_cache]
+  230     2 [qcrypto_seq_res]
+  231     2 [hh_rm_recv_task]
+  232     2 [memlat_wq]
+  233     2 [irq/305-soc:ext]
+  234     2 [ipv6_addrconf]
+  235     2 [krfcommd]
+  236     2 [soc:qcom,svm_ne]
+  237     2 [rq_stats]
+  238     2 [msm_perf:events]
+  239     2 [khvcd]
+  241     2 [ipa_power_mgmt]
+  242     2 [transport_power]
+  243     2 [ipa_pm_activate]
+  244     2 [rmnet_ctlwq]
+  245     2 [hwrng]
+  246     2 [irq/53-arm-smmu]
+  247     2 [irq/54-arm-smmu]
+  248     2 [irq/60-arm-smmu]
+  249     2 [usb_bam_wq]
+  250     2 [irq/152-pwr_eve]
+  251     2 [irq/151-dp_hs_p]
+  252     2 [irq/154-dm_hs_p]
+  253     2 [irq/153-ss_phy_]
+  254     2 [msm_vidc_worker]
+  255     2 [pm_workerq_venu]
+  256     2 [vidc_core_workq]
+  257     2 [irq/62-arm-smmu]
+  258     2 [irq/63-arm-smmu]
+  259     2 [irq/64-arm-smmu]
+  260     2 [irq/65-arm-smmu]
+  261     2 [irq/43-arm-smmu]
+  262     2 [kgsl-events]
+  263     2 [irq/44-arm-smmu]
+  264     2 [irq/45-arm-smmu]
+  265     2 [irq/46-arm-smmu]
+  266     2 [kgsl_devfreq_wq]
+  267     2 [msm_cvp_workerq]
+  268     2 [pm_workerq_iris]
+  269     2 [irq/66-arm-smmu]
+  270     2 [irq/67-arm-smmu]
+  271     2 [irq/68-arm-smmu]
+  272     2 [cvp-dsp-thread]
+  273     2 [irq/69-arm-smmu]
+  274     2 [irq/70-arm-smmu]
+  275     2 [irq/71-arm-smmu]
+  276     2 [mem_buf_rcvr]
+  277     2 [irq/72-arm-smmu]
+  278     2 [irq/73-arm-smmu]
+  279     2 [irq/74-arm-smmu]
+  280     2 [irq/75-arm-smmu]
+  281     2 [irq/76-arm-smmu]
+  282     2 [irq/77-arm-smmu]
+  283     2 [irq/78-arm-smmu]
+  284     2 [irq/79-arm-smmu]
+  285     2 [irq/80-arm-smmu]
+  286     2 [irq/81-arm-smmu]
+  287     2 [irq/82-arm-smmu]
+  288     2 [irq/83-arm-smmu]
+  289     2 [irq/84-arm-smmu]
+  290     2 [irq/85-arm-smmu]
+  291     2 [irq/86-arm-smmu]
+  292     2 [irq/87-arm-smmu]
+  293     2 [irq/88-arm-smmu]
+  294     2 [irq/89-arm-smmu]
+  295     2 [irq/90-arm-smmu]
+  296     2 [irq/282-qcom,te]
+  297     2 [irq/290-qcom,te]
+  298     2 [irq/297-qcom,te]
+  299     2 [irq/280-thresho]
+  300     2 [irq/91-arm-smmu]
+  301     2 [irq/92-arm-smmu]
+  302     2 [irq/93-arm-smmu]
+  303     2 [irq/61-arm-smmu]
+  324     2 [uaudio_svc]
+  325     2 [irq/94-arm-smmu]
+  326     2 [irq/95-arm-smmu]
+  327     2 [irq/96-arm-smmu]
+  328     2 [irq/97-arm-smmu]
+  329     2 [irq/55-arm-smmu]
+  330     2 [scsi_eh_0]
+  331     2 [scsi_tmf_0]
+  332     2 [qc_ufs_qos_swq]
+  333     2 [ufs_eh_wq_0]
+  334     2 [ufs_clk_gating_]
+  335     2 [ufs_clkscaling_]
+  336     2 [irq/202-int_glo]
+  337     2 [spi0]
+  339     2 [irq/327-aw8697]
+  340     2 [aw8976_vibrator]
+  347     2 [spi1]
+  348     2 [spi2]
+  349     2 [irq/98-arm-smmu]
+  350     2 [irq/99-arm-smmu]
+  351     2 [irq/100-arm-smm]
+  352     2 [irq/101-arm-smm]
+  362     2 [jbd2/sda17-8]
+  363     2 [ext4-rsv-conver]
+  364     2 [kdmflush]
+  365     2 [kdmflush]
+  366     2 [kdmflush]
+  367     2 [kdmflush]
+  368     2 [kdmflush]
+  369     2 [ext4-rsv-conver]
+  370     2 [ext4-rsv-conver]
+  371     2 [ext4-rsv-conver]
+  372     2 [ext4-rsv-conver]
+  373     2 [ext4-rsv-conver]
+  378     1 init subcontext u:r:vendor_init:s0 16
+  379     1 ueventd
+  429     2 [kdmflush]
+  430     2 [kdmflush]
+  431     2 [kdmflush]
+  432     2 [kdmflush]
+  433     2 [kdmflush]
+  434     2 [kdmflush]
+  435     2 [kdmflush]
+  436     2 [kdmflush]
+  437     2 [kdmflush]
+  440     2 [kdmflush]
+  441     2 [kdmflush]
+  442     2 [kdmflush]
+  443     2 [kdmflush]
+  444     2 [kdmflush]
+  446     2 [kdmflush]
+  449     2 [kdmflush]
+  450     2 [kdmflush]
+  453     2 [kdmflush]
+  454     2 [kdmflush]
+  455     2 [kdmflush]
+  456     2 [kdmflush]
+  457     2 [kdmflush]
+  459     2 [kdmflush]
+  461     2 [kdmflush]
+  462     2 [kdmflush]
+  464     2 [kdmflush]
+  469     2 [loop2]
+  470     2 [loop0]
+  471     2 [loop1]
+  472     2 [loop3]
+  473     2 [ext4-rsv-conver]
+  474     2 [ext4-rsv-conver]
+  475     2 [ext4-rsv-conver]
+  476     2 [ext4-rsv-conver]
+  585     2 [irq/102-arm-smm]
+  587     2 [sb-1]
+  588     2 [ngd_rx_thread1]
+  589     2 [ngd_notify_sl1]
+  590     2 [irq/333-cs35l41]
+  591     2 [apr_driver]
+  592     2 [dsi_dma_cmd_wor]
+  593     2 [irq/59-arm-smmu]
+  594     2 [irq/103-arm-smm]
+  595     2 [dsi_dma_cmd_wor]
+  596     2 [drm_dp]
+  597     2 [dsi_dma_cmd_wor]
+  598     2 [disp_feature:0]
+  599     2 [disp_fod:0]
+  600     2 [fmradio]
+  601     2 [fmradioscan]
+  602     2 [fmradiords]
+  603     2 [irq/339-cs35l41]
+  604     2 [irq/335-esd_err]
+  605     2 [sdm_dp_audio_no]
+  606     2 [hdcp_1x_1]
+  607     2 [hdcp_2x]
+  608     2 [dp_hdcp2p2]
+  609     2 [crtc_commit:141]
+  610     2 [crtc_event:141]
+  611     2 [crtc_commit:202]
+  612     2 [crtc_event:202]
+  613     2 [crtc_commit:211]
+  614     2 [crtc_event:211]
+  615     2 [crtc_commit:220]
+  616     2 [crtc_event:220]
+  617     2 [crtc_commit:229]
+  618     2 [crtc_event:229]
+  619     2 [pp_event]
+  620     2 [irq/104-arm-smm]
+  621     2 [irq/105-arm-smm]
+  622     2 [mhi_w]
+  624     2 [irq/289-flash_a]
+  625     2 [irq/288-flash_a]
+  626     2 [irq/287-flash_f]
+  627     2 [irq/106-arm-smm]
+  628     2 [irq/107-arm-smm]
+  629     2 [irq/108-arm-smm]
+  630     2 [irq/109-arm-smm]
+  631     2 [cam-cpas]
+  632     2 [qcom,cam_virtua]
+  633     2 [qcom,cam-cpas-c]
+  634     2 [qcom,cam-cpas-c]
+  635     2 [qcom,cam-cpas-c]
+  636     2 [qcom,cam-cpas-c]
+  637     2 [qcom,cam-ife-cd]
+  638     2 [qcom,cam-ife-cd]
+  639     2 [qcom,cam-ife-cd]
+  640     2 [qcom,cam-ife-cd]
+  641     2 [qcom,cam-ife-cd]
+  642     2 [qcom,cam-ife-cd]
+  643     2 [qcom,cam-ife-cd]
+  644     2 [qcom,cam-ife-cd]
+  645     2 [qcom,cam-ife-cd]
+  646     2 [qcom,cam-ife-cd]
+  647     2 [qcom,cam-ife-cd]
+  648     2 [qcom,cam-ife-cd]
+  649     2 [cam_cci_wq]
+  650     2 [cam_cci_wq]
+  651     2 [cam_cci_wq]
+  652     2 [cam_cci_wq]
+  653     2 [kworker/2:2-cgroup_offline]
+  659     2 [ipa_interrupt_w]
+  660     2 [ipawq36]
+  661     2 [iparepwq36]
+  662     2 [ipawq33]
+  663     2 [iparepwq33]
+  664     2 [ipafreepagewq33]
+  665     2 [ipawq32]
+  666     2 [iparepwq32]
+  667     2 [ipa_uc_holb_wq]
+  668     2 [clnt_req]
+  670     2 [irq/374-fts]
+  673     1 prng_seeder
+  688     1 logd
+  689     1 lmkd
+  690     1 servicemanager
+  691     1 hwservicemanager
+  692     1 vndservicemanager /dev/vndbinder
+  694     2 [psimon]
+  702     1 android.hardware.keymaster@4.1-service-qti
+  703     1 qseecomd
+  704     1 vendor.qti.hardware.qseecom@1.0-service
+  705     1 vold --blkid_context=u:r:blkid:s0 --blkid_untrusted_context=u:r:blkid_untrusted:s0 --fsck_context=u:r:fsck:s0 --fsck_untrusted_context=u:r:fsck_untrusted:s0
+  711     2 [jbd2/sda21-8]
+  712     2 [ext4-rsv-conver]
+  713     2 [jbd2/sde35-8]
+  714     2 [ext4-rsv-conver]
+  722     2 [kdmflush]
+  730     1 android.system.suspend-service
+  731     1 keystore2 /data/misc/keystore
+  732     1 android.hardware.atrace@1.0-service
+  737     1 android.hardware.boot-service.qti
+  738     1 android.hardware.gatekeeper@1.0-service-qti
+  739     1 android.hardware.nfc-service.nxp
+  740     1 sscrpcd sensorspd
+  755     2 [f2fs_flush-253:]
+  756     2 [f2fs_discard-25]
+  757     2 [f2fs_gc-253:41]
+  758     1 android.hardware.power-service.lineage-libperfmgr
+  759     1 keymasterd
+  770     1 tombstoned
+  824     2 [loop4]
+  837     2 [loop5]
+  838     2 [loop6]
+  851     2 [loop7]
+  854     2 [loop8]
+  855     2 [loop9]
+  856     2 [loop10]
+  857     2 [loop11]
+  858     2 [loop12]
+  859     2 [loop13]
+  860     2 [loop14]
+  861     2 [loop15]
+  862     2 [loop16]
+  863     2 [loop17]
+  864     2 [loop18]
+  865     2 [loop19]
+  866     2 [loop20]
+  867     2 [loop21]
+  868     2 [loop22]
+  869     2 [loop23]
+  870     2 [loop24]
+  871     2 [loop25]
+  872     2 [loop26]
+  873     2 [loop27]
+  874     2 [loop28]
+  875     2 [loop29]
+  876     2 [loop30]
+  877     2 [loop31]
+  878     2 [loop32]
+  879     2 [loop33]
+  880     2 [loop34]
+  881     2 [loop35]
+  882     2 [loop36]
+  883     2 [loop37]
+  884     2 [loop38]
+  885     2 [loop39]
+  886     2 [kverityd]
+  887     2 [kverityd]
+  888     2 [ext4-rsv-conver]
+  889     2 [ext4-rsv-conver]
+  890     2 [ext4-rsv-conver]
+  891     2 [kverityd]
+  892     2 [kverityd]
+  893     2 [kverityd]
+  894     2 [kverityd]
+  895     2 [kverityd]
+  896     2 [kverityd]
+  897     2 [kverityd]
+  898     2 [kverityd]
+  899     2 [kverityd]
+  900     2 [kverityd]
+  901     2 [kverityd]
+  902     2 [kverityd]
+  903     2 [kverityd]
+  904     2 [kverityd]
+  905     2 [kverityd]
+  906     2 [kverityd]
+  907     2 [kverityd]
+  908     2 [kverityd]
+  909     2 [kverityd]
+  910     2 [kverityd]
+  911     2 [kverityd]
+  912     2 [kverityd]
+  913     2 [kverityd]
+  914     2 [kverityd]
+  915     2 [ext4-rsv-conver]
+  916     2 [ext4-rsv-conver]
+  917     2 [ext4-rsv-conver]
+  918     2 [ext4-rsv-conver]
+  919     2 [ext4-rsv-conver]
+  920     2 [ext4-rsv-conver]
+  921     2 [ext4-rsv-conver]
+  922     2 [ext4-rsv-conver]
+  923     2 [ext4-rsv-conver]
+  924     2 [ext4-rsv-conver]
+  925     2 [ext4-rsv-conver]
+  926     2 [ext4-rsv-conver]
+  927     2 [ext4-rsv-conver]
+  928     2 [ext4-rsv-conver]
+  929     2 [ext4-rsv-conver]
+  930     2 [ext4-rsv-conver]
+  931     2 [ext4-rsv-conver]
+  932     2 [ext4-rsv-conver]
+  933     2 [ext4-rsv-conver]
+  934     2 [ext4-rsv-conver]
+  935     2 [ext4-rsv-conver]
+  936     2 [ext4-rsv-conver]
+  937     2 [ext4-rsv-conver]
+  938     2 [ext4-rsv-conver]
+  939     2 [ext4-rsv-conver]
+  940     2 [ext4-rsv-conver]
+  941     2 [ext4-rsv-conver]
+  942     2 [ext4-rsv-conver]
+  943     2 [ext4-rsv-conver]
+  944     2 [ext4-rsv-conver]
+  945     2 [ext4-rsv-conver]
+  946     2 [ext4-rsv-conver]
+  947     2 [ext4-rsv-conver]
+  980     2 [kworker/7:2H-kblockd]
+  998     1 zygisk-ptrace64 monitor
+ 1051     1 time_daemon
+ 1052     1 ipacm
+ 1069   998 zygiskd64
+ 1071     2 [at_usb0]
+ 1072     2 [at_usb1]
+ 1074     2 [at_usb2]
+ 1076     2 [rmnet_ctrl]
+ 1077     2 [dpl_ctrl]
+ 1078     2 [qdss]
+ 1079     2 [qdss_mdm]
+ 1080     2 [qdss_sw]
+ 1082   998 zygiskd32
+ 1113     2 [kworker/u17:5-kgsl-events]
+ 1187     2 [glink_cdsp]
+ 1189     2 [qrtr_rx]
+ 1203     2 [glink_adsp]
+ 1204     2 [qrtr_rx]
+ 1232     1 ssgtzd
+ 1235     1 android.hidl.allocator@1.0-service
+ 1256     1 qccsyshal@1.2-service
+ 1258     1 android.hardware.bluetooth@1.0-service-qti
+ 1260     1 android.hardware.camera.provider@2.4-service_64
+ 1283     1 android.hardware.cas@1.2-service
+ 1303     1 android.hardware.drm-service.clearkey
+ 1325     1 android.hardware.drm@1.3-service.widevine
+ 1327     1 android.hardware.gnss@2.1-service-qti
+ 1332     1 android.hardware.health-service.qti
+ 1335     1 android.hardware.ir-service.lineage
+ 1336     1 android.hardware.lights-service.qti
+ 1337     1 android.hardware.neuralnetworks@1.3-service-qti
+ 1338     1 android.hardware.sensors-service.xiaomi-multihal
+ 1345     1 android.hardware.usb-service.qti
+ 1346     1 android.hardware.usb.gadget-service.qti
+ 1351     1 android.hardware.wifi-service
+ 1356     1 vendor.qti.hardware.memtrack-service
+ 1357     1 qconfigservice
+ 1365     1 qesdk-manager
+ 1368     1 vendor.display.color@1.0-service
+ 1370     1 dolbycodec2-aidl
+ 1372     1 vendor.lineage.powershare-service.default
+ 1377     1 vendor.lineage.touch-service.xiaomi
+ 1378     1 vendor.qti.esepowermanager@1.1-service
+ 1382     1 vendor.qti.hardware.capabilityconfigstore@1.0-service
+ 1383     1 vendor.qti.hardware.display.allocator-service
+ 1384     1 vendor.qti.hardware.display.composer-service
+ 1386     1 dspservice
+ 1387     1 vendor.qti.hardware.eid@1.0-service
+ 1388     1 vendor.qti.hardware.qccvndhal@1.0-service
+ 1390     1 vendor.qti.hardware.qteeconnector@1.0-service
+ 1391     1 vendor.qti.hardware.secureprocessor@1.0
+ 1392     1 vendor.qti.hardware.sensorscalibrate@1.0-service
+ 1396     1 vendor.qti.hardware.servicetracker@1.2-service
+ 1397     1 vendor.qti.hardware.soter@1.0-service
+ 1398     1 vendor.qti.hardware.tui_comm@1.0-service-qti
+ 1401     1 vendor.qti.hardware.vibrator.service
+ 1403     1 qticodec2-aidl
+ 1408     1 vendor.qti.secure_element@1.2-service
+ 1411     1 vendor.qti.sla.service@1.0-service
+ 1413     1 fidoca
+ 1418     1 vendor.xiaomi.hardware.misys@1.0-service
+ 1419     1 vendor.xiaomi.hardware.misys@2.0-service
+ 1420     1 vendor.xiaomi.hardware.misys@3.0-service
+ 1421     1 vendor.xiaomi.hardware.misys@4.0-service
+ 1422     1 mlipayd@1.1
+ 1424     1 mtd@1.3
+ 1429     1 tidad@1.2
+ 1431     1 vppservice
+ 1436     1 qrtr-ns -f
+ 1439     1 lowirpcd
+ 1440     1 pd-mapper
+ 1443     1 pm-service
+ 1469     2 [adsp]
+ 1470     2 [adsp]
+ 1473     1 credstore /data/misc/credstore
+ 1475     2 [irq/110-arm-smm]
+ 1486     1 gpuservice
+ 1494     1 surfaceflinger
+ 1497     1 rmt_storage
+ 1498     2 [glink_slpi]
+ 1499     2 [qrtr_rx]
+ 1500     1 tftp_server
+ 1501     1 sensors.qti
+ 1525     2 [kworker/6:3-events]
+ 1556     2 [irq/378-swr_mas]
+ 1557     2 [irq/379-swr_mas]
+ 1617     1 mi_thermald
+ 1733     1 pm-proxy
+ 1740     1 drmserver
+ 1746     1 traced_probes
+ 1748     1 traced
+ 1750     1 dpmd
+ 1754     1 dpmQmiMgr
+ 1757     1 feature_enabler_client
+ 1759  1750 dpmd
+ 1769     2 [irq/391-swr_wak]
+ 1773     1 qmipriod
+ 1807     1 incidentd
+ 1808     1 installd
+ 1809     1 media.extractor aextractor
+ 1811     1 media.metrics diametrics
+ 1816     1 storaged
+ 1821     1 cnd
+ 1823     1 imsdaemon
+ 1825     1 netmgrd
+ 1828     1 port-bridge
+ 1829     1 adsprpcd
+ 1830     1 audioadsprpcd audiopd
+ 1832     1 cdsprpcd
+ 1834     1 media.swcodec oid.media.swcodec/bin/mediaswcodec
+ 1836     1 statsd
+ 1861     1 cnss-daemon -n -l
+ 1866     1 ssgqmigd
+ 1868     1 mlid
+ 1872     1 loc_launcher
+ 1890     1 ATFWD-daemon
+ 1894  1872 lowi-server
+ 1895  1872 xtra-daemon
+ 1898     1 gatekeeperd /data/misc/gatekeeper
+ 1900     1 update_engine --logtostderr --logtofile --foreground
+ 1914     1 android.hardware.biometrics.fingerprint-service.xiaomi
+ 1919     1 qcc-trd
+ 1926     1 odin-display
+ 1928     2 [irq/332-gf]
+ 1929     1 vendor.lineage.livedisplay-service.sdm
+ 1931     1 vendor.xiaomi.hardware.citsensorservice@1.1-service
+ 1936     1 qcrilNrd
+ 1939     1 adbd --root_seclabel=u:r:su:s0 --tim_seclabel=u:r:adbd_tradeinmode:s0
+ 1972     1 qcrilNrd -c 2
+ 1978     1 supervisor ./daemon /data/adb/modules/tricky_store
+ 1982  1978 TEESimulator
+ 1990     1 qti
+ 1995     1 adpl
+ 2239     2 [glink_modem]
+ 2242     2 [qrtr_rx]
+ 2316     2 [kworker/0:2H]
+ 2500     1 android.hardware.thermal-service.qti
+ 2546     2 [ipawq34]
+ 2547     2 [iparepwq34]
+ 2548     2 [ipawq104]
+ 2549     2 [iparepwq104]
+ 2551     2 [ipawq95]
+ 2552     2 [iparepwq95]
+ 2553     2 [ipafreepagewq95]
+ 2554     2 [ipawq35]
+ 2555     2 [iparepwq35]
+ 2556     2 [ipawq105]
+ 2557     2 [iparepwq105]
+ 2558     2 [ipafreepagewq10]
+ 2565     1 shsusrd 0x002819000
+ 2706     1 ims_rtp_daemon
+ 2793     2 [wda_wq]
+ 2794     2 [rmnet_powersave]
+ 3592     2 [kworker/6:2H-kblockd]
+ 3687     2 [kworker/7:56-events]
+ 3689     2 [kworker/7:57-mm_percpu_wq]
+ 3795     2 [cds_recovery_wo]
+ 3796     2 [wlan_logging_th]
+ 3812     2 [irq/342-mhi]
+ 4308     2 [qrtr_rx]
+ 4374     2 [scheduler_threa]
+ 4375     2 [cds_ol_rx_threa]
+ 4382     2 [dp_rx_thread_0]
+ 4383     2 [dp_rx_thread_1]
+ 4384     2 [dp_rx_thread_2]
+ 4668     1 ksud truman watchdog
+ 4689     1 batterysecret
+ 4690     1 charge_logger
+ 4720     1 msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
+ 4731     1 odin-color
+ 4772     2 [kworker/3:3-cgroup_release]
+ 7340     2 [kworker/u17:1-hal_register_write_wq]
+ 7508     2 [kworker/u16:14-qc_ufs_qos_swq]
+ 7511     2 [kworker/u16:17+flush-253:41]
+ 7901     2 [kworker/3:5-events]
+ 8011     2 [kworker/4:1-mm_percpu_wq]
+ 8319     2 [kworker/0:3-events]
+ 8342     2 [kworker/5:0-rcu_gp]
+ 8458     2 [kworker/1:6-mm_percpu_wq]
+ 9580     2 [erofs_worker/1]
+ 9581     2 [erofs_worker/2]
+ 9582     2 [erofs_worker/3]
+ 9583     2 [erofs_worker/4]
+ 9584     2 [erofs_worker/5]
+ 9585     2 [erofs_worker/6]
+ 9586     2 [erofs_worker/7]
+11378     2 [kworker/1:0-events]
+11463     2 [kworker/6:1-cgroup_release]
+11933     2 [kworker/u16:0-ufs_clkscaling_0]
+13284     2 [kworker/u16:1-qc_ufs_qos_swq]
+13513     2 [kworker/u17:0-qmi_msg_handler]
+13715     2 [kworker/2:1-events]
+13964     2 [kworker/3:0-mm_percpu_wq]
+14110     2 [kworker/5:1-mm_percpu_wq]
+14250     2 [kworker/6:0-cgroup_offline]
+14396     2 [kworker/4:0-rcu_gp]
+15698     2 [kworker/u17:2-kgsl-events]
+15820     2 [kworker/0:1-cgroup_release]
+15929     2 [kworker/3:1-events]
+15973     2 [kworker/6:2-sock_diag_events]
+17609     2 [kworker/u17:3-hal_register_write_wq]
+18255     2 [kworker/1:1-events]
+18356     2 [kworker/2:0-events]
+18920     1 android.hardware.audio.service
+18921     1 zygote
+18923     2 [kworker/6:4-mm_percpu_wq]
+18924     1 zygote64
+18933     1 audioserver
+18936     1 cameraserver
+18937     1 mediaserver
+18938     1 netd
+18939     1 wificond
+18940 18938 iptables-restore --noflush -w -v
+18941 18938 ip6tables-restore --noflush -w -v
+18992     2 [dsi_err_workq]
+19030 18924 system_server
+19316     2 [kworker/u16:2-ufs_clk_gating_0]
+19363     1 wpa_supplicant -O/data/vendor/wifi/wpa/sockets -puse_p2p_group_interface=1 -dd -g@android:vendor_wpa_wlan0
+19370 18924 com.android.systemui
+19473 18924 com.android.axion.quicklook
+19507 18921 webview_zygote
+19515 18924 .dataservices
+19517 18924 .qtidataservices
+19519 18924 com.qti.phone
+19521 18924 com.android.networkstack.process
+19524 18924 com.android.nfc
+19529 18924 org.codeaurora.ims
+19530 18924 com.android.se
+19532 18924 com.android.phone
+19548 18924 org.protonaosp.columbus
+19571 18924 com.android.settings
+19668 18924 com.google.android.gms
+19738 18924 com.android.smspush
+19741 18924 com.android.permissioncontroller
+19748 18924 com.android.launcher3
+19800 18924 com.android.cellbroadcastreceiver.module
+19986 18924 com.android.carrierconfig
+20000 18924 com.android.dialer
+20028 18924 android.process.acore
+20144 18924 android.ext.services
+20174     2 [kworker/3:2-events]
+20177 18924 com.google.android.apps.wellbeing
+20218 18924 com.google.android.googlequicksearchbox:interactor
+20228 18924 com.android.providers.media.module
+20250     2 [irq/23-90b6400.]
+20252 18924 com.libremobileos.sidebar
+20269     2 [irq/24-9091000.]
+20273 18924 com.libremobileos.freeform
+20286 18924 com.qualcomm.qti.services.systemhelper:systemhelper_service
+20293 18924 org.ifaa.aidl.manager
+20313     2 [irq/25-90b9100.]
+20337 18924 io.chaldeaprjkt.gamespace
+20370 18924 com.tencent.soter.soterserver
+20386 18924 org.lineageos.audiofx
+20400 18924 org.mipay.android.manager
+20420 18924 com.qualcomm.location
+20423 18924 org.lineageos.settings
+20434 18924 com.android.printspooler
+20442 18924 com.android.keychain
+20538 18924 co.aospa.sense
+20549 18924 android.process.media
+20575 18924 com.google.android.googlequicksearchbox:search
+20672 18924 com.google.android.googlequicksearchbox:googleapp
+20714 18924 com.android.providers.calendar
+20791 18924 org.lineageos.twelve
+20848 18924 com.android.vending
+20856     1 zygiskd64-playintegrityfix companion 12
+20917 18924 com.google.android.partnersetup
+20981 18924 com.android.imsserviceentitlement
+21019 18924 org.lineageos.settingsconfig
+21038 18924 com.google.android.gms.unstable
+21047 18924 org.protonaosp.deviceconfig
+21074 18924 org.lineageos.lineageparts
+21121 18924 com.google.android.projection.gearhead:shared
+21187 18924 com.android.inputmethod.latin
+21192 18924 .adservices
+21248 18924 com.android.devicediagnostics
+21278 18924 com.android.dynsystem
+21320 18924 com.android.federatedcompute.services
+21325 18924 com.android.localtransport
+21328 18924 com.android.dynsystem:dynsystem
+21371 18924 com.google.android.apps.restore
+21372 18924 com.android.healthconnect.controller
+21422 18924 com.android.hotwordenrollment.okgoogle
+21443 18924 com.android.hotwordenrollment.xgoogle
+21466 18924 com.android.managedprovisioning
+21484 18924 com.android.ondevicepersonalization.services
+21498 18924 com.stevesoltys.seedvault
+21499 18924 com.android.packageinstaller
+21527 18924 com.android.rkpdapp
+21565 18924 com.android.shell
+21593 18924 com.android.statementservice
+21623 18924 com.google.android.gm.exchange
+21650 18924 com.google.android.projection.gearhead:car
+21688 18924 com.google.android.setupwizard
+21718 18924 com.google.android.syncadapters.calendar
+21748 18924 com.google.android.tts
+21827 18924 org.calyxos.backup.contacts
+21846 18924 org.lineageos.updater
+21863 18924 com.aurora.store
+21892 18924 com.android.photopicker
+21906 18924 com.android.externalstorage
+21927 18924 com.android.vending:background
+21931 18924 com.android.vending:quick_launch
+22005     2 [kworker/u17:4-dwc_wq]
+22015 18924 com.android.vending:instant_app_installer
+22055 18924 com.google.android.projection.gearhead:provider
+22121 18924 com.nox.nox
+22140 22121 sh
+22167 22121 sh
+22168 22121 sh
+22174 22121 sh
+22405     2 [kworker/2:3-events]
+22448     2 [kworker/0:0-events]
+22469     2 [kworker/1:2]
+22480  1939 ps -A -o PID,PPID,ARGS

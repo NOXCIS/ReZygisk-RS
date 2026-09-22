@@ -453,32 +453,29 @@ impl Monitor {
 
     fn rezygiskd_listener_callback(&mut self) {
         loop {
-            let mut cmd = 0u8;
-            let nread = unsafe {
-                libc::read(self.sock_fd, (&mut cmd as *mut u8).cast(), 1)
+            let Some((cmd, payload)) = recv_control_datagram(self.sock_fd) else {
+                break;
             };
-            if nread == -1 {
-                let err = io::Error::last_os_error();
-                if err.raw_os_error() == Some(libc::EINTR) || err.raw_os_error() == Some(libc::EWOULDBLOCK) {
-                    break;
-                }
-
-                // A persistent error must not turn this loop into a spin.
-                plog!(TAG, "read socket");
-                break;
-            }
-            if nread == 0 {
-                break;
-            }
 
             match cmd {
-                1 => self.handle_start(),
-                2 => self.handle_stop(),
-                3 => self.handle_exit(),
-                4 | 5 => self.handle_zygote_injected(cmd),
-                6 | 7 => self.handle_set_info(cmd),
-                8 | 9 => self.handle_set_error_info(cmd),
-                _ => {}
+                6 | 7 => self.handle_set_info(cmd, &payload),
+                8 | 9 => self.handle_set_error_info(cmd, &payload),
+                // Commands are payload-free one-byte datagrams; reports carry
+                // the command byte *plus* fields. Running the dispatcher off
+                // byte 0 of a data datagram is how this monitor once stopped
+                // itself: after an interleaving desync a module-count field,
+                // `[u32 2]`, was the next datagram in the queue and its byte 0
+                // is 2 = Stop.
+                1..=5 if payload.is_empty() => match cmd {
+                    1 => self.handle_start(),
+                    2 => self.handle_stop(),
+                    3 => self.handle_exit(),
+                    _ => self.handle_zygote_injected(cmd),
+                },
+                _ => dlogw!(
+                    "ignoring control datagram with unexpected shape (cmd={cmd}, {} payload bytes)",
+                    payload.len()
+                ),
             }
         }
     }
@@ -535,42 +532,20 @@ impl Monitor {
         self.update_status(None);
     }
 
-    fn handle_set_info(&mut self, cmd: u8) {
+    fn handle_set_info(&mut self, cmd: u8, payload: &[u8]) {
         let which = if cmd == 6 { "64" } else { "32" };
         dlogd!("Received ReZygiskd{which} info");
 
-        // One field per datagram (C zygiskd.c `zygiskd_start`). Any framing
-        // violation aborts the message and drains the queue: the old
-        // stream-style reads busy-spun on EAGAIN forever inside the epoll
-        // callback, wedging the whole monitor (boot-killing).
-        let Some(root_impl_buf) = recv_bytes_field(self.sock_fd) else {
-            dloge!("malformed DaemonSetInfo{which} (root impl), draining controller socket");
-            drain_controller_socket(self.sock_fd);
+        // One datagram, strictly decoded (rz_ipc::build_set_info_message). A
+        // malformed report is dropped without touching the queue: the old
+        // per-field reader drained the socket on a framing violation, which
+        // also threw away the *other* daemon's perfectly good report and let a
+        // single desync cascade.
+        let Some((root_impl, modules)) = rz_ipc::parse_set_info(payload) else {
+            dloge!("malformed DaemonSetInfo{which}, ignoring report");
             return;
         };
-        let root_impl = String::from_utf8_lossy(&root_impl_buf).into_owned();
         dlogd!("ReZygiskd{which} root impl: {root_impl}");
-
-        let Some(modules_len) = recv_u32_field(self.sock_fd) else {
-            dloge!("malformed DaemonSetInfo{which} (modules len), draining controller socket");
-            drain_controller_socket(self.sock_fd);
-            return;
-        };
-        if modules_len > MAX_MODULES {
-            dloge!("DaemonSetInfo{which}: implausible module count {modules_len}, draining");
-            drain_controller_socket(self.sock_fd);
-            return;
-        }
-
-        let mut modules = Vec::with_capacity(modules_len as usize);
-        for i in 0..modules_len {
-            let Some(name_buf) = recv_bytes_field(self.sock_fd) else {
-                dloge!("malformed DaemonSetInfo{which} (module {i} name), draining controller socket");
-                drain_controller_socket(self.sock_fd);
-                return;
-            };
-            modules.push(String::from_utf8_lossy(&name_buf).into_owned());
-        }
 
         let env = if cmd == 6 { &mut self.env64 } else { &mut self.env32 };
         env.root_impl = Some(root_impl);
@@ -579,18 +554,17 @@ impl Monitor {
         self.update_status(None);
     }
 
-    fn handle_set_error_info(&mut self, cmd: u8) {
+    fn handle_set_error_info(&mut self, cmd: u8, payload: &[u8]) {
         let which = if cmd == 8 { "64" } else { "32" };
         dlogd!("Received ReZygiskd{which} error info");
 
-        let Some(buf) = recv_bytes_field(self.sock_fd) else {
-            dloge!("malformed DaemonSetErrorInfo{which}, draining controller socket");
-            drain_controller_socket(self.sock_fd);
+        let Some(info) = rz_ipc::parse_error_info(payload) else {
+            dloge!("malformed DaemonSetErrorInfo{which}, ignoring report");
             return;
         };
 
         let status = if cmd == 8 { &mut self.status64 } else { &mut self.status32 };
-        status.daemon_error_info = Some(String::from_utf8_lossy(&buf).into_owned());
+        status.daemon_error_info = Some(info);
 
         self.update_status(None);
     }
@@ -877,6 +851,25 @@ impl Monitor {
                     dlogv!("{pid} program {program}");
 
                     self.consider_handoff(pid, &program, &mut status);
+                } else if self.tracing_state == TracingState::Tracing && is_stopping_signal_stop(status) {
+                    // A fork child that has not exec'd yet can take a
+                    // signal-delivery stop first (init's `sigstop` option, any
+                    // `kill -STOP`, the run-as debug paths). The detach below
+                    // used to fire here and cost the boot its only chance at
+                    // this process: once detached, the exec that follows is
+                    // delivered to nobody and the zygote runs un-injected
+                    // forever. Suppress the stop signal and stay attached —
+                    // the same trade the init handler makes for pid 1.
+                    dlogw!(
+                        "suppressing stopping signal sent to {pid}: {}",
+                        utils::sigabbrev_np(utils::wstopsig(status))
+                    );
+
+                    unsafe {
+                        libc::ptrace(libc::PTRACE_CONT, pid, 0, 0);
+                    }
+
+                    return;
                 } else {
                     let program = utils::get_program(pid).unwrap_or_else(|_| "<unreadable>".to_string());
                     let cmdline = utils::get_cmdline(pid);
@@ -1004,24 +997,77 @@ impl Monitor {
             // it, wedging the whole boot.
             let deadline = Instant::now() + Duration::from_secs(10);
             let mut handoff_status = 0;
+            let mut exited = false;
             let stopped_ok = loop {
                 let r = unsafe { libc::waitpid(pid, &mut handoff_status, libc::__WALL | libc::WNOHANG) };
+
                 if r == pid {
-                    break utils::stopped_with(handoff_status, libc::SIGSTOP, 0);
+                    // A parked tracee reports as a plain SIGSTOP group-stop
+                    // (0x137f) or, when the kernel routes it through the event
+                    // channel, as SIGTRAP|PTRACE_EVENT_STOP (0x80057f). Both
+                    // mean "parked"; accepting only the first form silently
+                    // turned a parkable zygote into a skipped handoff.
+                    if utils::stopped_with(handoff_status, libc::SIGSTOP, 0)
+                        || utils::stopped_with(handoff_status, libc::SIGTRAP, libc::PTRACE_EVENT_STOP)
+                    {
+                        break true;
+                    }
+
+                    if utils::wifexited(handoff_status) || utils::wifsignaled(handoff_status) {
+                        exited = true;
+                        break false;
+                    }
+
+                    // Foreign stop — a signal-delivery stop for a signal the
+                    // zygote received, an early PTRACE_EVENT_FORK/EXIT report.
+                    // The group-stop request is still pending, so re-arm it and
+                    // keep waiting rather than abandoning the handoff.
+                    // Re-deliver anything that is not a stop request: a CONT
+                    // with signal 0 would silently swallow it.
+                    let stop_sig = utils::wstopsig(handoff_status);
+                    let redeliver = if matches!(
+                        stop_sig,
+                        libc::SIGSTOP | libc::SIGTSTP | libc::SIGTTIN | libc::SIGTTOU
+                    ) {
+                        0
+                    } else {
+                        stop_sig
+                    };
+
+                    let _ = kill(Pid::from_raw(pid), Signal::SIGSTOP);
+                    unsafe {
+                        libc::ptrace(libc::PTRACE_CONT, pid, 0, redeliver);
+                    }
+                } else if r == -1 {
+                    let err = io::Error::last_os_error();
+                    if err.raw_os_error() != Some(libc::EINTR) {
+                        break false;
+                    }
                 }
-                if r == -1 || Instant::now() > deadline {
+
+                if Instant::now() > deadline {
                     break false;
                 }
-                std::thread::sleep(Duration::from_millis(20));
+                std::thread::sleep(Duration::from_millis(5));
             };
 
             if !stopped_ok {
-                dloge!("handoff: pid {pid} did not group-stop as expected ({}), aborting handoff", parse_status(handoff_status));
+                // Never silent: an abandoned handoff means this ABI gets no
+                // Zygisk for the rest of the boot, and the raw status word is
+                // the only thing that can explain which stop form defeated us.
+                dloge!(
+                    "handoff: pid {pid} did not park as expected (status={:#010x} {}), aborting handoff — {} gets no Zygisk this boot",
+                    handoff_status as u32,
+                    parse_status(handoff_status),
+                    if exited { "this process" } else { "this ABI" }
+                );
 
-                unsafe {
-                    libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGCONT);
+                if utils::wifstopped(handoff_status) {
+                    unsafe {
+                        libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGCONT);
+                    }
+                    let _ = kill(Pid::from_raw(pid), Signal::SIGCONT);
                 }
-                let _ = kill(Pid::from_raw(pid), Signal::SIGCONT);
 
                 self.clear_tracked(pid);
                 return;
@@ -1072,6 +1118,89 @@ impl Monitor {
     }
 }
 
+/// True when `status` is a stop that must never cost us the tracee: a
+/// signal-delivery stop for one of the job-control stop signals, or the
+/// event-channel form of a stop (`PTRACE_EVENT_STOP`). Neither means the
+/// process is gone, so the caller suppresses/ignores it and stays attached.
+fn is_stopping_signal_stop(status: i32) -> bool {
+    if utils::stopped_with(status, libc::SIGTRAP, libc::PTRACE_EVENT_STOP) {
+        return true;
+    }
+
+    if !utils::wifstopped(status) || utils::wptevent(status) != 0 {
+        return false;
+    }
+
+    matches!(
+        utils::wstopsig(status),
+        libc::SIGSTOP | libc::SIGTSTP | libc::SIGTTIN | libc::SIGTTOU
+    )
+}
+
+/// `"<size> bytes mtime=<epoch> ELF64|ELF32|unreadable|MISSING"` for one
+/// deployment artifact. Size+mtime alone are enough to spot a stale binary;
+/// the ELF class catches an ABI mix-up without a hashing dependency.
+fn file_stamp(path: &str) -> String {
+    let Ok(meta) = std::fs::metadata(path) else {
+        return "MISSING".to_string();
+    };
+
+    let mtime = meta
+        .modified()
+        .ok()
+        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+
+    let mut magic = [0u8; 5];
+    let class = std::fs::File::open(path)
+        .and_then(|mut f| std::io::Read::read_exact(&mut f, &mut magic))
+        .map(|()| {
+            if &magic[..4] != b"\x7fELF" {
+                "not-elf"
+            } else if magic[4] == 2 {
+                "ELF64"
+            } else {
+                "ELF32"
+            }
+        })
+        .unwrap_or("unreadable");
+
+    format!("{} bytes mtime={mtime} {class}", meta.len())
+}
+
+/// Startup identity stamp for the whole deployment.
+///
+/// A mixed-generation install (one ABI left behind by an older build) is
+/// invisible from the device: the stale binary simply logs less, and the
+/// missing lines read as "the code path never ran". That misdiagnosis cost a
+/// full debug cycle — the 64-bit handoff looked absent only because the
+/// installed 64-bit monitor predated the stdio redirect that every other
+/// component already had. Logging what is actually deployed makes the skew
+/// visible in one line per component, in logcat and in the verbose log.
+fn log_identity_stamp() {
+    let self_exe = std::fs::read_link("/proc/self/exe")
+        .map(|p| p.to_string_lossy().into_owned())
+        .unwrap_or_else(|_| "<unreadable>".to_string());
+
+    dlogi!(
+        "deployed monitor: {self_exe} {} ({}-bit)",
+        file_stamp(&self_exe),
+        if cfg!(target_pointer_width = "64") { 64 } else { 32 }
+    );
+
+    for component in [
+        "./bin/zygisk-ptrace64",
+        "./bin/zygisk-ptrace32",
+        "./bin/zygiskd64",
+        "./bin/zygiskd32",
+        "./lib64/libzygisk.so",
+        "./lib/libzygisk.so",
+    ] {
+        dlogi!("deployed component: {component} {}", file_stamp(component));
+    }
+}
+
 /// exec helper for the forked children: mirrors `execl(...)` + PLOGE/exit(1).
 /// When `kill_target` is set (tracer handoff), the C monitor kills the parked
 /// zygote on exec failure — otherwise it stays group-stopped forever.
@@ -1096,22 +1225,27 @@ fn execv_or_die(path: &str, args: &[&str], kill_target: Option<i32>) -> ! {
 // Controller-socket datagram discipline
 // ---------------------------------------------------------------------------
 
-/// Sanity bound for a controller string field (root impl name, module name,
-/// error message). A garbled length must never become a giant allocation.
-const MAX_FIELD_LEN: u32 = 1 << 20;
+/// Largest control datagram accepted. Reports are tiny (a root-implementation
+/// name plus module names); the kernel would refuse anything past the socket
+/// buffer anyway, so a bigger datagram is a bug, not a report.
+const MAX_CONTROL_DATAGRAM: usize = 64 * 1024;
 
-/// Sanity bound for the module count in DaemonSetInfo.
-const MAX_MODULES: u32 = 4096;
-
-/// Read one controller field: the daemon (C and Rust) sends each field as its
-/// own `SOCK_DGRAM` datagram. A datagram shorter than the field, an oversized
-/// datagram (MSG_TRUNC reports the true length), or an empty queue
-/// mid-message (EWOULDBLOCK — sender died or sequences interleaved) is a
-/// framing violation: return false so the caller logs, drains and resyncs.
-/// This must never loop on EAGAIN like `read_exact` did — that spin wedged
-/// the monitor's only thread inside the epoll callback and killed boots.
-fn recv_field(fd: i32, buf: &mut [u8]) -> bool {
+/// Read one control datagram as `(command byte, payload)`.
+///
+/// Whole-datagram reads only. The previous version read the command with a
+/// one-byte `read()`, which on a `SOCK_DGRAM` socket **truncates and discards**
+/// the rest of whichever datagram it landed on — so once the queue held a
+/// non-command datagram (`[u32 2]`, a module count, whose byte 0 is 2 = Stop)
+/// the monitor read a command that nobody sent and stopped itself. Reading the
+/// whole datagram and letting the caller require an exact shape for commands
+/// makes that impossible.
+///
+/// `None` means "nothing more to read" (EWOULDBLOCK, empty datagram, error,
+/// oversized datagram): the caller ends this drain pass, and since the socket
+/// stays readable epoll reports it again.
+fn recv_control_datagram(fd: i32) -> Option<(u8, Vec<u8>)> {
     loop {
+        let mut buf = vec![0u8; MAX_CONTROL_DATAGRAM];
         let n = unsafe {
             libc::recv(fd, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), libc::MSG_DONTWAIT | libc::MSG_TRUNC)
         };
@@ -1120,46 +1254,28 @@ fn recv_field(fd: i32, buf: &mut [u8]) -> bool {
             if err.raw_os_error() == Some(libc::EINTR) {
                 continue;
             }
-            return false;
+            if err.raw_os_error() != Some(libc::EWOULDBLOCK) && err.raw_os_error() != Some(libc::EAGAIN) {
+                // A persistent error must not turn this loop into a spin.
+                plog!(TAG, "read socket");
+            }
+            return None;
         }
-        return n as usize == buf.len();
-    }
-}
 
-/// A `u32` field datagram.
-fn recv_u32_field(fd: i32) -> Option<u32> {
-    let mut bytes = [0u8; 4];
-    if !recv_field(fd, &mut bytes) {
-        return None;
-    }
-    Some(u32::from_ne_bytes(bytes))
-}
-
-/// A length-prefixed string field: `[u32 len]` datagram followed by a
-/// `len`-byte datagram, both bounds-checked.
-fn recv_bytes_field(fd: i32) -> Option<Vec<u8>> {
-    let len = recv_u32_field(fd)?;
-    if len > MAX_FIELD_LEN {
-        return None;
-    }
-    let mut buf = vec![0u8; len as usize];
-    if !recv_field(fd, &mut buf) {
-        return None;
-    }
-    Some(buf)
-}
-
-/// After a framing violation, discard everything currently queued so the
-/// next command byte starts a fresh message.
-fn drain_controller_socket(fd: i32) {
-    let mut scratch = [0u8; 4096];
-    loop {
-        let n = unsafe {
-            libc::recv(fd, scratch.as_mut_ptr() as *mut libc::c_void, scratch.len(), libc::MSG_DONTWAIT)
-        };
-        if n <= 0 {
-            break;
+        // MSG_TRUNC makes recv report a truncated datagram's true length.
+        let n = n as usize;
+        if n == 0 {
+            return None;
         }
+        if n > buf.len() {
+            dlogw!("ignoring oversized control datagram ({n} bytes, cap {MAX_CONTROL_DATAGRAM})");
+            return None;
+        }
+
+        buf.truncate(n);
+        let cmd = buf[0];
+        buf.remove(0);
+
+        return Some((cmd, buf));
     }
 }
 
@@ -1266,6 +1382,13 @@ fn claim_init_tracer(monitor: &mut Monitor) -> bool {
 /// monitor.c `init_monitor` — the monitor main body; never returns normally.
 pub fn init_monitor() {
     dlogi!("ReZygisk {ZKSU_VERSION}");
+
+    // Own generation first, then the cross-check against the host manifest:
+    // a *stale* monitor cannot print this line at all, which is the whole
+    // point (see crates/common/build.rs).
+    println!("{}", rz_common::log_generation_and_check(TAG, "monitor"));
+
+    log_identity_stamp();
 
     let mut monitor = Monitor::new();
 

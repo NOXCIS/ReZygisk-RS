@@ -126,36 +126,113 @@ const fn lp_code(on_32: u8, on_64: u8) -> u8 {
     if cfg!(target_pointer_width = "64") { on_64 } else { on_32 }
 }
 
-/// zygiskd.c `zygiskd_start` success report: the sequence of datagrams sent
-/// to the controller socket. Each element is one `sendto()` datagram.
+/// zygiskd.c `zygiskd_start` success report, encoded as **one** datagram:
 ///
-/// Critical: the controller socket is `SOCK_DGRAM`. The monitor reads with
-/// separate `read(4)` / `read(N)` calls — one field per datagram — matching
-/// C. Combining len+payload into a single datagram truncates on the 4-byte
-/// read and leaves the monitor busy-spinning on `EAGAIN` (boot wedge).
-pub fn build_set_info_datagrams(impl_name: &str, module_names: &[&str]) -> Vec<Vec<u8>> {
-    let mut out = Vec::with_capacity(3 + module_names.len() * 2);
-    out.push(vec![controller_code(ControllerCode::DaemonSetInfo)]);
-    out.push((impl_name.len() as u32).to_ne_bytes().to_vec());
-    out.push(impl_name.as_bytes().to_vec());
-    out.push((module_names.len() as u32).to_ne_bytes().to_vec());
+/// ```text
+/// [cmd][u32 root_impl_len][root_impl][u32 module_count]([u32 name_len][name])*
+/// ```
+///
+/// Why one datagram instead of the C's one-per-`write()`: the controller
+/// socket is `SOCK_DGRAM` and every sender shares it, so two daemons reporting
+/// at the same moment — which is exactly what happens at boot — interleave
+/// their per-field datagrams, and the monitor's field reads then land on the
+/// other sender's bytes. Observed on device: both daemons reported in the same
+/// millisecond, the monitor logged `malformed DaemonSetInfo32`, and then
+/// dispatched the module-count datagram `[u32 2]` as a *command* — byte 0 is 2
+/// = Stop — and paused itself (`Stop tracing requested`, status ⛔) with no
+/// user involved. A datagram's boundary is preserved by the kernel, so a
+/// single-datagram message cannot interleave with anyone.
+///
+/// (The C is safe only because each daemon wrote to its own *stream*
+/// connection; see `recv_datagram` in the monitor for the read side.)
+pub fn build_set_info_message(impl_name: &str, module_names: &[&str]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(1 + 4 + impl_name.len() + 4 + module_names.len() * 8);
+    out.push(controller_code(ControllerCode::DaemonSetInfo));
+    out.extend_from_slice(&(impl_name.len() as u32).to_ne_bytes());
+    out.extend_from_slice(impl_name.as_bytes());
+    out.extend_from_slice(&(module_names.len() as u32).to_ne_bytes());
 
     for name in module_names {
-        out.push((name.len() as u32).to_ne_bytes().to_vec());
-        out.push(name.as_bytes().to_vec());
+        out.extend_from_slice(&(name.len() as u32).to_ne_bytes());
+        out.extend_from_slice(name.as_bytes());
     }
 
     out
 }
 
-/// zygiskd.c error path report (unknown/multiple root impl):
-/// `[cmd]`, `[u32 len]`, `[msg bytes]` — separate datagrams.
-pub fn build_error_info_datagrams(msg: &str) -> Vec<Vec<u8>> {
-    vec![
-        vec![controller_code(ControllerCode::DaemonSetErrorInfo)],
-        (msg.len() as u32).to_ne_bytes().to_vec(),
-        msg.as_bytes().to_vec(),
-    ]
+/// zygiskd.c error path report (unknown/multiple root impl), one datagram:
+/// `[cmd][u32 msg_len][msg]`.
+pub fn build_error_info_message(msg: &str) -> Vec<u8> {
+    let mut out = Vec::with_capacity(1 + 4 + msg.len());
+    out.push(controller_code(ControllerCode::DaemonSetErrorInfo));
+    out.extend_from_slice(&(msg.len() as u32).to_ne_bytes());
+    out.extend_from_slice(msg.as_bytes());
+
+    out
+}
+
+/// Upper bound accepted for a report's module count, mirroring the monitor's
+/// `MAX_MODULES`, so a corrupt length cannot make the reader allocate wildly.
+pub const MAX_MODULES_IN_REPORT: usize = 4096;
+
+/// Strict decoder for [`build_set_info_message`]'s payload — the datagram with
+/// its command byte already stripped.
+///
+/// Strict on purpose: truncated fields, an implausible module count and
+/// trailing bytes are all rejected, so neither a desynced sender nor a stray
+/// datagram can be mistaken for a valid report.
+pub fn parse_set_info(payload: &[u8]) -> Option<(String, Vec<String>)> {
+    let mut cur = payload;
+    let root_impl = read_str_field(&mut cur)?;
+    let count = read_u32(&mut cur)? as usize;
+    if count > MAX_MODULES_IN_REPORT {
+        return None;
+    }
+
+    let mut modules = Vec::with_capacity(count);
+    for _ in 0..count {
+        modules.push(read_str_field(&mut cur)?);
+    }
+
+    if !cur.is_empty() {
+        return None;
+    }
+
+    Some((root_impl, modules))
+}
+
+/// Strict decoder for [`build_error_info_message`]'s payload.
+pub fn parse_error_info(payload: &[u8]) -> Option<String> {
+    let mut cur = payload;
+    let msg = read_str_field(&mut cur)?;
+    if !cur.is_empty() {
+        return None;
+    }
+
+    Some(msg)
+}
+
+fn read_u32(cur: &mut &[u8]) -> Option<u32> {
+    if cur.len() < 4 {
+        return None;
+    }
+
+    let (head, rest) = cur.split_at(4);
+    *cur = rest;
+
+    Some(u32::from_ne_bytes([head[0], head[1], head[2], head[3]]))
+}
+
+fn read_str_field(cur: &mut &[u8]) -> Option<String> {
+    let len = read_u32(cur)? as usize;
+    if len > cur.len() {
+        return None;
+    }
+
+    let (head, rest) = cur.split_at(len);
+    *cur = rest;
+
+    Some(String::from_utf8_lossy(head).into_owned())
 }
 
 #[cfg(test)]
@@ -201,28 +278,65 @@ mod tests {
     }
 
     #[test]
-    fn set_info_datagrams_golden() {
-        // C zygiskd.c: one field per sendto — never combine len||payload.
-        let frames = build_set_info_datagrams("KernelSU", &["truman", "playintegrityfix"]);
-        assert_eq!(frames.len(), 8);
+    fn set_info_message_single_datagram_golden() {
+        // One datagram: anything longer would interleave with the other
+        // daemon's report and desync the monitor (see build_set_info_message).
+        let msg = build_set_info_message("KernelSU", &["truman", "playintegrityfix"]);
 
-        assert_eq!(frames[0], vec![controller_code(ControllerCode::DaemonSetInfo)]);
-        assert_eq!(frames[1], 8u32.to_ne_bytes().to_vec());
-        assert_eq!(frames[2], b"KernelSU".to_vec());
-        assert_eq!(frames[3], 2u32.to_ne_bytes().to_vec());
-        assert_eq!(frames[4], 6u32.to_ne_bytes().to_vec());
-        assert_eq!(frames[5], b"truman".to_vec());
-        assert_eq!(frames[6], 16u32.to_ne_bytes().to_vec());
-        assert_eq!(frames[7], b"playintegrityfix".to_vec());
+        let mut want = vec![controller_code(ControllerCode::DaemonSetInfo)];
+        want.extend_from_slice(&8u32.to_ne_bytes());
+        want.extend_from_slice(b"KernelSU");
+        want.extend_from_slice(&2u32.to_ne_bytes());
+        want.extend_from_slice(&6u32.to_ne_bytes());
+        want.extend_from_slice(b"truman");
+        want.extend_from_slice(&16u32.to_ne_bytes());
+        want.extend_from_slice(b"playintegrityfix");
+
+        assert_eq!(msg, want);
     }
 
     #[test]
-    fn error_info_datagrams_golden() {
+    fn set_info_round_trips() {
+        let names = ["truman", "playintegrityfix"];
+        let msg = build_set_info_message("KernelSU", &names);
+        let (root, modules) = parse_set_info(&msg[1..]).expect("round trip");
+        assert_eq!(root, "KernelSU");
+        assert_eq!(modules, names);
+    }
+
+    #[test]
+    fn set_info_parser_rejects_malformed_payloads() {
+        let msg = build_set_info_message("KernelSU", &["truman"]);
+
+        // Truncated at every prefix length: none may parse.
+        assert!(parse_set_info(&[]).is_none());
+        for cut in 1..msg.len() {
+            assert!(parse_set_info(&msg[1..cut]).is_none(), "cut {cut} parsed");
+        }
+
+        // Trailing garbage (the shape a desynced sender produces).
+        let mut trailing = msg[1..].to_vec();
+        trailing.push(0);
+        assert!(parse_set_info(&trailing).is_none());
+
+        // Implausible module count.
+        let mut huge = vec![0u8; 8];
+        huge[0..4].copy_from_slice(&8u32.to_ne_bytes());
+        huge[4..8].copy_from_slice(&(MAX_MODULES_IN_REPORT as u32 + 1).to_ne_bytes());
+        assert!(parse_set_info(&huge).is_none());
+    }
+
+    #[test]
+    fn error_info_message_golden() {
         let msg = "Unsupported environment: Unknown root implementation";
-        let frames = build_error_info_datagrams(msg);
-        assert_eq!(frames.len(), 3);
-        assert_eq!(frames[0], vec![controller_code(ControllerCode::DaemonSetErrorInfo)]);
-        assert_eq!(frames[1], (msg.len() as u32).to_ne_bytes().to_vec());
-        assert_eq!(frames[2], msg.as_bytes().to_vec());
+        let frame = build_error_info_message(msg);
+
+        let mut want = vec![controller_code(ControllerCode::DaemonSetErrorInfo)];
+        want.extend_from_slice(&(msg.len() as u32).to_ne_bytes());
+        want.extend_from_slice(msg.as_bytes());
+
+        assert_eq!(frame, want);
+        assert_eq!(parse_error_info(&frame[1..]).as_deref(), Some(msg));
+        assert!(parse_error_info(&frame[1..frame.len() - 1]).is_none());
     }
 }

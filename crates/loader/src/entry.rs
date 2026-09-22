@@ -22,6 +22,13 @@ const ZKSU_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
 pub unsafe extern "C" fn entry(addr: *mut c_void, size: usize, tango_flag: i32) -> usize {
+    // Self-report before anything else, and logcat-only: if PLT hooking (the
+    // 64-bit failure under repair) dies below, the deployed generation is
+    // still on record. No manifest cross-check here — the loader runs inside
+    // app_process, and its /proc/self/exe is not the module's bin/, so the
+    // host script's `assert` is what validates this line.
+    rz_common::log_generation(TAG, "loader");
+
     rz_common::logd!(
         TAG,
         "ReZygisk{} library injected, version {}",

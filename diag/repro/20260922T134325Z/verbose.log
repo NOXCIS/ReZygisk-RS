@@ -1,0 +1,244 @@
+Start tracing init
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+ReZygiskd32 already running
+handoff tracer: pid=18921 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 18921 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=18926 epoch=1790084606 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w93c1ffc4>> (lp32 tracer)
+start tracing 18921 (tracer 18926)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 18921
+ReZygiskd64 already running
+handoff tracer: pid=18924 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 18924 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=18935 epoch=1790084606 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w93c1ffc4>> (lp64 tracer)
+start tracing 18924 (tracer 18935)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 18924
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac478, backing=memfd
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe6d36000 (size 0x10a000), entry 0xe6d9c5e1, backing=memfd
+process 18924 stopped by SIGCHLD, continue
+client entry call returned 0x0
+invoke entry
+cp request: action=0
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 18924 released
+tracer: injection into 18924 succeeded, exiting
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+process 18921 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+cp request: action=3
+received SIGCONT, detaching zygote
+trace complete, zygote 18921 released
+tracer: injection into 18921 succeeded, exiting
+cp request: action=3
+cp request: action=1
+cp request: action=7
+[KSU] Unmounting root
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+[KSU] Unmounting root
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+process 20154 (program=<unreadable>, cmdline="") received unknown sigchld_status 0x7f00 exited with 127
+process 20170 (program=<unreadable>, cmdline="") received unknown sigchld_status 0x7f00 exited with 127
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=4
+Service online (lp64)
+New companion entry.
+ - Client fd: 12
+
+ - Module name: "playintegrityfix"
+ - Library fd: 4
+ - Module entry found
+ - Spawned companion for "playintegrityfix": 9
+ - Sending companion fd socket of module "playintegrityfix"
+New companion request.
+ - Module name: playintegrityfix
+ - Client fd: 4
+
+ - Client fd changed after module entry
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=4
+ - Sending companion fd socket of module "playintegrityfix"
+New companion request.
+ - Module name: playintegrityfix
+ - Client fd: 4
+
+ - Client fd changed after module entry
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1
+cp request: action=7
+cp request: action=1

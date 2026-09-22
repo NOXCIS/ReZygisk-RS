@@ -586,11 +586,26 @@ const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_ARM;
 /// contract from `plti_add_manual_lib`); unmapped or short mappings fault
 /// here just as they would in the C.
 unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
+    // SAFETY: forwarded contract; the ABI gates are this build's own target,
+    // exactly elf_util.c's `ELF_CLASS` / `EM_*` check.
+    unsafe { read_mapped_image_abi(base_addr, TARGET_ELF_CLASS, TARGET_ELF_MACHINE) }
+}
+
+/// [`read_mapped_image`] with the ABI gates supplied by the caller.
+///
+/// Production always passes this build's own class/machine; the window itself
+/// is ABI-independent byte surgery, so tests drive other ABIs here to check it
+/// against fixtures from another architecture (the device's arm64 library on
+/// an x86-64 host).
+///
+/// # Safety
+/// Same contract as [`read_mapped_image`].
+unsafe fn read_mapped_image_abi(base_addr: usize, elf_class: u8, machine: u16) -> Option<(Vec<u8>, usize)> {
     if base_addr == 0 {
         return None;
     }
 
-    let ehdr_size: usize = if TARGET_ELF_CLASS == 2 { 64 } else { 52 };
+    let ehdr_size: usize = if elf_class == 2 { 64 } else { 52 };
     let hdr = unsafe { std::slice::from_raw_parts(base_addr as *const u8, ehdr_size) }.to_vec();
 
     // elf_util.c 121-137: magic, class, endianness, ident version, type and
@@ -598,11 +613,11 @@ unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
     if hdr[0..4] != [0x7f, b'E', b'L', b'F'] {
         return None;
     }
-    if hdr[4] != TARGET_ELF_CLASS || hdr[5] != 1 || hdr[6] != 1 {
+    if hdr[4] != elf_class || hdr[5] != 1 || hdr[6] != 1 {
         return None;
     }
 
-    let (e_type, e_machine, e_version, e_phoff, e_phentsize, e_phnum) = if TARGET_ELF_CLASS == 2 {
+    let (e_type, e_machine, e_version, e_phoff, e_phentsize, e_phnum) = if elf_class == 2 {
         (
             u16::from_le_bytes(hdr[16..18].try_into().unwrap()),
             u16::from_le_bytes(hdr[18..20].try_into().unwrap()),
@@ -625,7 +640,7 @@ unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
     if e_type != ET_EXEC && e_type != ET_DYN {
         return None;
     }
-    if e_machine != TARGET_ELF_MACHINE {
+    if e_machine != machine {
         return None;
     }
     if e_version != 1 {
@@ -655,7 +670,7 @@ unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
     let mut loads: Vec<(usize, usize, usize)> = Vec::new();
     for i in 0..e_phnum as usize {
         let p = &phdrs[i * e_phentsize as usize..];
-        let (p_type, p_offset, p_vaddr, p_memsz) = if TARGET_ELF_CLASS == 2 {
+        let (p_type, p_offset, p_vaddr, p_memsz) = if elf_class == 2 {
             (
                 u32::from_le_bytes(p[0..4].try_into().unwrap()),
                 u64::from_le_bytes(p[8..16].try_into().unwrap()) as usize,
@@ -726,26 +741,66 @@ unsafe fn read_mapped_image(base_addr: usize) -> Option<(Vec<u8>, usize)> {
         }
     }
 
-    // Strip section-header references from the window's header copy. The
-    // section table is typically not covered by any PT_LOAD, so it is absent
-    // from the window; goblin would otherwise reject the image ("bad offset
-    // set"). PLTI only consumes phdrs + the dynamic segment — exactly like
-    // the C, which never reads sections.
-    if TARGET_ELF_CLASS == 2 {
-        if window_len >= 64 {
-            window[0x28..0x30].fill(0); // e_shoff
-            window[0x3a..0x3c].fill(0); // e_shentsize
-            window[0x3c..0x3e].fill(0); // e_shnum
-            window[0x3e..0x40].fill(0); // e_shstrndx
-        }
-    } else if window_len >= 52 {
-        window[0x20..0x24].fill(0); // e_shoff
-        window[0x2e..0x30].fill(0); // e_shentsize
-        window[0x30..0x32].fill(0); // e_shnum
-        window[0x32..0x34].fill(0); // e_shstrndx
-    }
+    // `rz_elf` parses the window as a *file* image, and a file image must carry
+    // its section header table; a mapped one does not (the table lies outside
+    // every PT_LOAD). Reconcile the two before handing the window over.
+    canonicalize_section_table(&mut window, elf_class);
 
     Some((window, bias))
+}
+
+/// Make a mapped-image window's header honest about the section table it
+/// actually contains.
+///
+/// goblin parses `e_shnum` section headers of `e_shentsize` bytes at `e_shoff`
+/// and rejects the whole image ("bad offset <e_shoff>" from scroll) when that
+/// span leaves the buffer. A file image always holds the table; a *mapped*
+/// image normally does not — the table sits past the last PT_LOAD, so neither
+/// the mapping nor the window has those bytes — while `elf_util.c` never reads
+/// sections at all (PLTI walks phdrs, the dynamic table, dynsym/dynstr and the
+/// reloc tables).
+///
+/// So a window that does not cover the whole table is canonicalized to the
+/// standard "no section header table" header (`e_shoff`/`e_shentsize`/
+/// `e_shnum`/`e_shstrndx` = 0). A window that does cover it keeps the real
+/// fields, preserving the section-based fast paths in `rz_elf` (exact
+/// `.dynsym` count, `section_by_name`) for images whose table is inside the
+/// window. Nothing PLTI consumes is altered: phdrs, the dynamic segment and
+/// every table they point at stay byte-identical to the mapping.
+fn canonicalize_section_table(window: &mut [u8], elf_class: u8) {
+    // (e_shoff offset, e_shoff width, e_shentsize offset, e_shnum offset,
+    // e_shstrndx offset, standard section-header size) — elf.h for both
+    // classes; goblin uses the class-standard size, not `e_shentsize`.
+    let (shoff_at, shoff_w, shentsize_at, shnum_at, shstrndx_at, shdr_size): (usize, usize, usize, usize, usize, u64) = if elf_class == 2 {
+        (0x28, 8, 0x3a, 0x3c, 0x3e, 64)
+    } else {
+        (0x20, 4, 0x2e, 0x30, 0x32, 40)
+    };
+
+    if window.len() < shoff_at + shoff_w || window.len() < shstrndx_at + 2 {
+        return;
+    }
+
+    let shoff = if shoff_w == 8 {
+        u64::from_le_bytes(window[shoff_at..shoff_at + 8].try_into().unwrap())
+    } else {
+        u32::from_le_bytes(window[shoff_at..shoff_at + 4].try_into().unwrap()) as u64
+    };
+    let shentsize = u16::from_le_bytes(window[shentsize_at..shentsize_at + 2].try_into().unwrap());
+    let shnum = u16::from_le_bytes(window[shnum_at..shnum_at + 2].try_into().unwrap());
+
+    let representable = shentsize as u64 == shdr_size
+        && shnum != 0
+        && shoff
+            .checked_add(shnum as u64 * shdr_size)
+            .is_some_and(|end| end <= window.len() as u64);
+
+    if !representable {
+        window[shoff_at..shoff_at + shoff_w].fill(0);
+        window[shentsize_at..shentsize_at + 2].fill(0);
+        window[shnum_at..shnum_at + 2].fill(0);
+        window[shstrndx_at..shstrndx_at + 2].fill(0);
+    }
 }
 
 impl Plti {

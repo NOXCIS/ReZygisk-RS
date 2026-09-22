@@ -1,0 +1,519 @@
+=== [zygisk-ptrace monitor] pid=998 epoch=3087 stdio redirected ===
+ReZygisk 1.0.0
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 monitor)
+deployed monitor: /data/adb/modules/rezygisk/bin/zygisk-ptrace64 428808 bytes mtime=1790079766 ELF64 (64-bit)
+deployed component: ./bin/zygisk-ptrace64 428808 bytes mtime=1790079766 ELF64
+deployed component: ./bin/zygisk-ptrace32 320260 bytes mtime=1790079769 ELF32
+deployed component: ./bin/zygiskd64 370800 bytes mtime=1790079767 ELF64
+deployed component: ./bin/zygiskd32 269300 bytes mtime=1790079770 ELF32
+deployed component: ./lib64/libzygisk.so 3855936 bytes mtime=1790079768 ELF64
+deployed component: ./lib/libzygisk.so 3027268 bytes mtime=1790079771 ELF32
+handoff tracer: pid=1062 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 1062 --restart
+Service online (lp64)
+=== [rezygiskd] pid=1069 epoch=1790079821 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 daemon)
+KernelSU root implementation found (v3 ioctl).
+KernelSU root implementation found.
+Loading modules for architecture: arm64-v8a
+Built-in module [truman] loaded: /data/adb/modules/rezygisk/zygisk/truman/arm64-v8a.so
+Sent root implementation and modules information to controller socket
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=1075 epoch=1790079821 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 tracer)
+start tracing 1062 (tracer 1075)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 1062
+handoff tracer: pid=1064 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 1064 --restart
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+Service online (lp32)
+=== [rezygiskd] pid=1082 epoch=1790079821 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 daemon)
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=1086 epoch=1790079821 stdio redirected ===
+KernelSU root implementation found (v3 ioctl).
+KernelSU root implementation found.
+Loading modules for architecture: armeabi-v7a
+Built-in module [truman] loaded: /data/adb/modules/rezygisk/zygisk/truman/armeabi-v7a.so
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 tracer)
+start tracing 1064 (tracer 1086)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 1064
+Sent root implementation and modules information to controller socket
+status updated: Monitor: ✅, ReZygisk 64-bit: ⚠️, ReZygisk 32-bit: ⚠️
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac414, backing=memfd
+process 1062 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ⚠️
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe72f6000 (size 0x10a000), entry 0xe735c535, backing=memfd
+received SIGCONT, detaching zygote
+trace complete, zygote 1062 released
+tracer: injection into 1062 succeeded, exiting
+process 1064 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+cp request: action=3
+received SIGCONT, detaching zygote
+trace complete, zygote 1064 released
+tracer: injection into 1064 succeeded, exiting
+cp request: action=3
+process 1753 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1924 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+process 1925 (program=/system/bin/init, cmdline="/system/bin/init second_stage") received unknown sigchld_status 0x67f stopped by signal=ABRT(6),event=(no event)
+ReZygiskd64 already running
+handoff tracer: pid=2214 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 2214 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=2216 epoch=1790079826 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 tracer)
+start tracing 2214 (tracer 2216)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 2214
+ReZygiskd32 already running
+handoff tracer: pid=2217 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 2217 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=2219 epoch=1790079826 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 tracer)
+start tracing 2217 (tracer 2219)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 2217
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac414, backing=memfd
+process 2214 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 2214 released
+tracer: injection into 2214 succeeded, exiting
+cp request: action=3
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe8db6000 (size 0x10a000), entry 0xe8e1c535, backing=memfd
+process 2217 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 2217 released
+tracer: injection into 2217 succeeded, exiting
+cp request: action=3
+ReZygiskd64 already running
+handoff tracer: pid=2904 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 2904 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=2906 epoch=1790079831 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 tracer)
+cp request: action=6
+start tracing 2904 (tracer 2906)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 2904
+ReZygiskd32 already running
+handoff tracer: pid=2907 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 2907 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=2909 epoch=1790079831 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 tracer)
+start tracing 2907 (tracer 2909)
+cp request: action=6
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 2907
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac414, backing=memfd
+process 2904 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe17b6000 (size 0x10a000), entry 0xe181c535, backing=memfd
+received SIGCONT, detaching zygote
+process 2907 stopped by SIGCHLD, continue
+trace complete, zygote 2904 released
+tracer: injection into 2904 succeeded, exiting
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+cp request: action=3
+received SIGCONT, detaching zygote
+trace complete, zygote 2907 released
+tracer: injection into 2907 succeeded, exiting
+cp request: action=3
+ReZygiskd64 already running
+handoff tracer: pid=3074 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 3074 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=3076 epoch=1790079836 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 tracer)
+cp request: action=6
+start tracing 3074 (tracer 3076)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 3074
+ReZygiskd32 already running
+handoff tracer: pid=3077 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 3077 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=3079 epoch=1790079836 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 tracer)
+start tracing 3077 (tracer 3079)
+cp request: action=6
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 3077
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xed936000 (size 0x10a000), entry 0xed99c535, backing=memfd
+process 3077 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 3077 released
+tracer: injection into 3077 succeeded, exiting
+cp request: action=3
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac414, backing=memfd
+process 3074 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 3074 released
+tracer: injection into 3074 succeeded, exiting
+cp request: action=3
+ReZygiskd64 already running
+handoff tracer: pid=3250 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 3250 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=3252 epoch=1790079841 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp64 tracer)
+cp request: action=6
+start tracing 3250 (tracer 3252)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 3250
+ReZygiskd32 already running
+handoff tracer: pid=3253 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 3253 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=3255 epoch=1790079841 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.w8d7968ee>> (lp32 tracer)
+start tracing 3253 (tracer 3255)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 3253
+cp request: action=6
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xed476000 (size 0x10a000), entry 0xed4dc535, backing=memfd
+process 3253 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 3253 released
+tracer: injection into 3253 succeeded, exiting
+cp request: action=3
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac414, backing=memfd
+process 3250 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 3250 released
+tracer: injection into 3250 succeeded, exiting
+cp request: action=3
+Zygote64 restart too much times, stop injecting
+stop tracing init
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+idle: Stopped, tracked pids: 0
+Start tracing init
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+ReZygiskd32 already running
+handoff tracer: pid=13967 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 13967 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=13970 epoch=1790084309 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp32 tracer)
+start tracing 13967 (tracer 13970)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 13967
+ReZygiskd64 already running
+handoff tracer: pid=13968 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 13968 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=13980 epoch=1790084309 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp64 tracer)
+start tracing 13968 (tracer 13980)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 13968
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe2f36000 (size 0x10a000), entry 0xe2f9c5cd, backing=memfd
+process 13967 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac4b4, backing=memfd
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+process 13968 stopped by SIGCHLD, continue
+trace complete, zygote 13967 released
+tracer: injection into 13967 succeeded, exiting
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+cp request: action=3
+received SIGCONT, detaching zygote
+trace complete, zygote 13968 released
+tracer: injection into 13968 succeeded, exiting
+cp request: action=3
+ReZygiskd32 already running
+handoff tracer: pid=14120 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 14120 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14122 epoch=1790084314 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp32 tracer)
+start tracing 14120 (tracer 14122)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 14120
+ReZygiskd64 already running
+handoff tracer: pid=14123 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 14123 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14130 epoch=1790084314 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp64 tracer)
+start tracing 14123 (tracer 14130)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 14123
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac4b4, backing=memfd
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe1336000 (size 0x10a000), entry 0xe139c5cd, backing=memfd
+process 14123 stopped by SIGCHLD, continue
+process 14120 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+received SIGCONT, detaching zygote
+trace complete, zygote 14123 released
+tracer: injection into 14123 succeeded, exiting
+trace complete, zygote 14120 released
+tracer: injection into 14120 succeeded, exiting
+cp request: action=3
+cp request: action=3
+ReZygiskd32 already running
+handoff tracer: pid=14266 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 14266 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14269 epoch=1790084319 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp32 tracer)
+cp request: action=6
+start tracing 14266 (tracer 14269)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 14266
+ReZygiskd64 already running
+handoff tracer: pid=14268 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+exec tracer command: ./bin/zygisk-ptrace64 trace 14268 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14278 epoch=1790084319 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp64 tracer)
+cp request: action=6
+start tracing 14268 (tracer 14278)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 14268
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe8776000 (size 0x10a000), entry 0xe87dc5cd, backing=memfd
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac4b4, backing=memfd
+process 14266 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+process 14268 stopped by SIGCHLD, continue
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+trace complete, zygote 14266 released
+tracer: injection into 14266 succeeded, exiting
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+cp request: action=3
+received SIGCONT, detaching zygote
+trace complete, zygote 14268 released
+tracer: injection into 14268 succeeded, exiting
+cp request: action=3
+ReZygiskd32 already running
+handoff tracer: pid=14412 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 14412 --restart
+ReZygiskd64 already running
+handoff tracer: pid=14415 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14414 epoch=1790084324 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp32 tracer)
+cp request: action=6
+start tracing 14412 (tracer 14414)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 14412
+exec tracer command: ./bin/zygisk-ptrace64 trace 14415 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14421 epoch=1790084324 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp64 tracer)
+cp request: action=6
+start tracing 14415 (tracer 14421)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 14415
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xeb2f6000 (size 0x10a000), entry 0xeb35c5cd, backing=memfd
+process 14412 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 14412 released
+tracer: injection into 14412 succeeded, exiting
+cp request: action=3
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac4b4, backing=memfd
+process 14415 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 14415 released
+tracer: injection into 14415 succeeded, exiting
+cp request: action=3
+ReZygiskd32 already running
+handoff tracer: pid=14560 program=/system/bin/app_process32 tracer=./bin/zygisk-ptrace32 tango=no
+exec tracer command: ./bin/zygisk-ptrace32 trace 14560 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14562 epoch=1790084329 stdio redirected ===
+ReZygiskd64 already running
+handoff tracer: pid=14563 program=/system/bin/app_process64 tracer=./bin/zygisk-ptrace64 tango=no
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp32 tracer)
+cp request: action=6
+start tracing 14560 (tracer 14562)
+injecting /data/adb/modules/rezygisk/lib/libzygisk.so to zygote 14560
+exec tracer command: ./bin/zygisk-ptrace64 trace 14563 --restart
+tracer 1.0.0 online
+
+=== [zygisk-ptrace trace] pid=14570 epoch=1790084329 stdio redirected ===
+generation: <<RZGEN:RZGEN-1.0.0+gb2697c7-dirty.wd4cb9901>> (lp64 tracer)
+cp request: action=6
+start tracing 14563 (tracer 14570)
+injecting /data/adb/modules/rezygisk/lib64/libzygisk.so to zygote 14563
+remote mapped /data/adb/modules/rezygisk/lib64/libzygisk.so at 0x100000000 (size 0x183000), entry 0x1000ac4b4, backing=memfd
+process 14563 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote64 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 14563 released
+tracer: injection into 14563 succeeded, exiting
+cp request: action=3
+remote mapped /data/adb/modules/rezygisk/lib/libzygisk.so at 0xe7f76000 (size 0x10a000), entry 0xe7fdc5cd, backing=memfd
+process 14560 stopped by SIGCHLD, continue
+cp request: action=0
+Received Zygote32 injected command
+status updated: Monitor: ✅, ReZygisk 64-bit: ✅, ReZygisk 32-bit: ✅
+client entry call returned 0x0
+invoke entry
+inject done, continuing process
+received SIGCONT, detaching zygote
+trace complete, zygote 14560 released
+tracer: injection into 14560 succeeded, exiting
+cp request: action=3
+Zygote32 restart too much times, stop injecting
+stop tracing init

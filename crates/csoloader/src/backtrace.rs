@@ -14,6 +14,7 @@
 
 use std::ffi::c_char;
 use std::ffi::c_void;
+use std::ffi::CString;
 use std::sync::Mutex;
 
 use crate::image::CsoElf;
@@ -42,6 +43,12 @@ struct CustomLibInfo {
     phdr_info: libc::dl_phdr_info,
     in_use: bool,
     phdr_copy: *mut c_void,
+    /// Owned NUL-terminated copy of `img.path()`, backing
+    /// `phdr_info.dlpi_name`. `dl_phdr_info` is consumed as C data: libunwind
+    /// and anything else walking the custom `dl_iterate_phdr` copy the struct
+    /// by value and run `strlen` on `dlpi_name`, but `CsoElf::path` is a Rust
+    /// `String` and Rust strings are not NUL-terminated. Freed on unregister.
+    name_cstr: *mut c_char,
 
     eh_frame_registered: *mut c_void,
     eh_frame_size: usize,
@@ -63,6 +70,7 @@ impl CustomLibInfo {
             },
             in_use: false,
             phdr_copy: std::ptr::null_mut(),
+            name_cstr: std::ptr::null_mut(),
             eh_frame_registered: std::ptr::null_mut(),
             eh_frame_size: 0,
         }
@@ -151,7 +159,17 @@ pub(crate) fn register_custom_library_for_backtrace(img: &CsoElf) -> bool {
 
     // C: (ElfW(Addr))img->base - img->bias.
     lib_info.phdr_info.dlpi_addr = img.base().wrapping_sub(img.bias() as usize) as _;
-    lib_info.phdr_info.dlpi_name = img.path().as_ptr() as *const c_char;
+    // `dlpi_name` must be a C string (see `name_cstr`'s doc). A slot can be
+    // recycled, so drop any previous copy first; a path with an interior NUL
+    // cannot exist, but fall back to NULL (a legal dlpi_name, used by the
+    // real dl_iterate_phdr for the main executable) rather than panicking.
+    if !lib_info.name_cstr.is_null() {
+        drop(unsafe { CString::from_raw(lib_info.name_cstr) });
+    }
+    lib_info.name_cstr = CString::new(img.path())
+        .map(|c| c.into_raw())
+        .unwrap_or(std::ptr::null_mut());
+    lib_info.phdr_info.dlpi_name = lib_info.name_cstr as *const c_char;
     lib_info.phdr_info.dlpi_phdr = lib_info.phdr_copy as *const _;
     lib_info.phdr_info.dlpi_phnum = img.phdr_table().0 as _;
     lib_info.phdr_info.dlpi_adds = 1;
@@ -195,6 +213,9 @@ pub(crate) fn unregister_custom_library_for_backtrace(img: &CsoElf) -> bool {
 
         if !lib_info.phdr_copy.is_null() {
             unsafe { libc::free(lib_info.phdr_copy) };
+        }
+        if !lib_info.name_cstr.is_null() {
+            drop(unsafe { CString::from_raw(lib_info.name_cstr) });
         }
         *lib_info = CustomLibInfo::new();
 

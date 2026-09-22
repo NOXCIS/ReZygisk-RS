@@ -28,6 +28,23 @@ struct Builder {
     data: Vec<u8>,
 }
 
+/// One ELF64 section header. `link` is sh_link, `entsize` sh_entsize.
+fn shdr64(name: u32, stype: u32, off: u64, vaddr: u64, size: u64, link: u32, entsize: u64) -> Vec<u8> {
+    let mut s = Vec::new();
+    s.extend(le_u32(name));
+    s.extend(le_u32(stype));
+    s.extend(le_u64(0)); // sh_flags
+    s.extend(le_u64(vaddr));
+    s.extend(le_u64(off));
+    s.extend(le_u64(size));
+    s.extend(le_u32(link));
+    s.extend(le_u32(0)); // sh_info
+    s.extend(le_u64(1)); // sh_addralign
+    s.extend(le_u64(entsize));
+    assert_eq!(s.len(), 64);
+    s
+}
+
 impl Builder {
     fn new() -> Self {
         // ehdr (0x40) + 4 phdrs (0xe0) must fit before content starts.
@@ -102,6 +119,11 @@ struct SoSpec {
     /// Emit DT_ANDROID_RELA/DT_ANDROID_RELASZ pointing at the strtab with
     /// size 4 before DT_NULL (drives the APS2 magic rejection test).
     android_tags: bool,
+    /// When set, emit a real section header table (NULL + `.dynsym` +
+    /// `.shstrtab`) with `e_shoff` at this file offset. Normal shared objects
+    /// put it past the last PT_LOAD; an offset inside a LOAD's mapped slot
+    /// builds the unusual image whose table the window *does* cover.
+    shdr_at: Option<u64>,
 }
 
 fn build_so_spec(spec: SoSpec) -> Vec<u8> {
@@ -125,7 +147,9 @@ fn build_so_spec(spec: SoSpec) -> Vec<u8> {
 
     // ---- dynsym ------------------------------------------------------
     let _ = b.append_align(8);
-    let dynsym_vaddr = spec.load0_vaddr + b.data.len() as u64;
+    let dynsym_off = b.data.len() as u64;
+    let dynsym_vaddr = spec.load0_vaddr + dynsym_off;
+    let dynsym_size = 4 * 24u64; // 4 symbols × Elf64_Sym
     let mut sym = |info: u8, shndx: u16, name_off: u64, value: u64, size: u64| {
         let mut e = Vec::new();
         e.extend(le_u32(name_off as u32));
@@ -203,6 +227,11 @@ fn build_so_spec(spec: SoSpec) -> Vec<u8> {
     // ---- ehdr + phdrs ------------------------------------------------
     const PHOFF: u64 = 0x40;
     let phnum = 3u16 + u16::from(spec.with_dynamic_phdr);
+    // NULL + .dynsym + .shstrtab; e_shstrndx points at .shstrtab (index 2).
+    let (shoff, shentsize, shnum, shstrndx) = match spec.shdr_at {
+        Some(at) => (at, 64u16, 3u16, 2u16),
+        None => (0, 0, 0, 0),
+    };
     let ehdr = {
         let mut e = Vec::new();
         e.extend_from_slice(&[0x7f, b'E', b'L', b'F']);
@@ -216,14 +245,14 @@ fn build_so_spec(spec: SoSpec) -> Vec<u8> {
         e.extend(le_u32(1));
         e.extend(le_u64(0)); // entry
         e.extend(le_u64(PHOFF));
-        e.extend(le_u64(0)); // shoff
+        e.extend(le_u64(shoff));
         e.extend(le_u32(0)); // flags
         e.extend(le_u16(64)); // ehsize
         e.extend(le_u16(56)); // phentsize
         e.extend(le_u16(phnum));
-        e.extend(le_u16(0)); // shentsize
-        e.extend(le_u16(0)); // shnum
-        e.extend(le_u16(0)); // shstrndx
+        e.extend(le_u16(shentsize));
+        e.extend(le_u16(shnum));
+        e.extend(le_u16(shstrndx));
         e
     };
     assert_eq!(ehdr.len(), 64);
@@ -269,6 +298,7 @@ fn build_so() -> Vec<u8> {
         with_dynamic_phdr: true,
         strtab_override: None,
         android_tags: false,
+        shdr_at: None,
     })
 }
 
@@ -293,6 +323,7 @@ fn build_so_gapped() -> Vec<u8> {
         with_dynamic_phdr: true,
         strtab_override: None,
         android_tags: false,
+        shdr_at: None,
     })
 }
 
@@ -306,6 +337,7 @@ fn build_so_shifted() -> Vec<u8> {
         with_dynamic_phdr: true,
         strtab_override: None,
         android_tags: false,
+        shdr_at: None,
     })
 }
 
@@ -562,8 +594,10 @@ fn build_phdrs_only(phdrs: &[Vec<u8>]) -> Vec<u8> {
 /// file-backed LOAD spans; the port must not copy the raw
 /// [base, bias + image_end) range or it faults on the unmapped hole.
 ///
-/// Fixture: LOAD R [0, 0x300), LOAD RW [0x3000, 0x3000+0x1000) with the file
-/// covering 0..0x400 — the window must cover 0..0x4000.
+/// Fixture: LOAD R [vaddr 0, filesz 0x300, p_offset 0], LOAD RW [vaddr 0x3000,
+/// memsz 0x1000, p_offset 0x300]. The window is laid out by *file* offset (see
+/// `read_mapped_image`), so it must reach p_offset + p_memsz = 0x1300 while
+/// never touching the runtime hole at vaddr 0x1000..0x3000.
 #[test]
 fn add_manual_lib_skips_unmapped_hole_between_loads() {
     let mut so = build_so_gapped();
@@ -582,8 +616,12 @@ fn add_manual_lib_skips_unmapped_hole_between_loads() {
     let mut plti = Plti::new();
     assert!(plti.add_manual_lib("gapped.so", base));
     assert_eq!(plti.elf_infos.len(), 1);
-    // The window reaches the RW LOAD's memsz end (bias + 0x4000 - base).
-    assert!(plti.elf_infos[0].file.len() >= WINDOW);
+    // Window end = max(p_offset + p_memsz) over the LOADs = the RW LOAD's end
+    // by file offset. The R LOAD only contributes 0x300.
+    assert_eq!(
+        plti.elf_infos[0].file.len(),
+        GAP_RW_POFF as usize + GAP_RW_MEMSZ as usize
+    );
 
     let img = plti.elf_infos[0].parse().expect("parse gapped window");
     let addrs = find_plt_addrs(&img, base, base, "hook_me", true);
@@ -642,6 +680,7 @@ fn add_manual_lib_rejects_missing_pt_dynamic() {
         with_dynamic_phdr: false,
         strtab_override: None,
         android_tags: false,
+        shdr_at: None,
     });
     stamp_machine(&mut so);
 
@@ -671,6 +710,7 @@ fn add_manual_lib_rejects_out_of_window_dyn_ptr() {
         with_dynamic_phdr: true,
         strtab_override: Some(0),
         android_tags: false,
+        shdr_at: None,
     });
     stamp_machine(&mut so);
 
@@ -700,6 +740,7 @@ fn add_manual_lib_rejects_bad_aps2_magic() {
         with_dynamic_phdr: true,
         strtab_override: None,
         android_tags: true,
+        shdr_at: None,
     });
     stamp_machine(&mut so);
 

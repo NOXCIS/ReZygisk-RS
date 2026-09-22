@@ -128,6 +128,16 @@ pub unsafe fn rz_cleanup(ctx: &mut ZygiskContext) {
                             "Failed to restore JNI hook of class [{}]",
                             entry.class_name
                         );
+                        // RegisterNatives throws (NoSuchMethodError for the
+                        // method it could not resolve) and leaves the exception
+                        // *pending*. A pending exception on a JVM thread is
+                        // fatal: it resurfaces at the next JNI call and tears
+                        // the process down — that is how one failed restore
+                        // became "System zygote died with fatal exception" in
+                        // the zygote child. The install side already clears it
+                        // (jni_hooks.rs); the C needed no clear only because
+                        // its literals can never fail this lookup.
+                        let _ = env.exception_clear();
                         context::SHOULD_UNMAP_ZYGISK.store(false, std::sync::atomic::Ordering::Relaxed);
                     }
                 }

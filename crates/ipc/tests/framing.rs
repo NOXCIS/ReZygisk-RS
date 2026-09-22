@@ -8,15 +8,15 @@
 //! - `connect_abstract` retry/timing semantics vs daemon.c 31-49
 //!   (`rezygiskd_connect`: exactly `retry` attempts, 1s after each failure);
 //! - filesystem datagram delivery via `datagram_sendto` with the
-//!   controller report sequences (zygiskd.c `zygiskd_start`).
+//!   controller report messages (zygiskd.c `zygiskd_start`).
 
 use std::os::unix::net::UnixDatagram;
 use std::time::Instant;
 
 use rz_ipc::{
-    build_set_info_datagrams, connect_abstract, controller_code, datagram_sendto, listen_abstract,
-    read_string, read_string_bounded, read_u32, read_u8, read_usize, write_string, write_u32,
-    write_u8, write_usize, ControllerCode, DaemonSocketAction, WriteFrame,
+    build_set_info_message, connect_abstract, controller_code, datagram_sendto, listen_abstract,
+    parse_set_info, read_string, read_string_bounded, read_u32, read_u8, read_usize, write_string,
+    write_u32, write_u8, write_usize, ControllerCode, DaemonSocketAction, WriteFrame,
 };
 
 fn socketpair() -> (i32, i32) {
@@ -282,34 +282,56 @@ fn datagram_sendto_missing_socket_errors() {
 }
 
 #[test]
-fn set_info_report_datagrams_match_zygiskd_c_sequence() {
-    // zygiskd.c zygiskd_start: one field per sendto() over the SOCK_DGRAM
-    // controller socket; the monitor reads each field with a separate read().
-    let frames = build_set_info_datagrams("KernelSU", &["truman", "playintegrityfix"]);
+fn set_info_report_is_one_datagram_and_decodes() {
+    // One datagram per report, so two daemons reporting at the same moment
+    // cannot interleave their fields. The old one-datagram-per-field framing
+    // did interleave at boot and ended with the monitor dispatching a
+    // module-count field as a Stop command.
+    let msg = build_set_info_message("KernelSU", &["truman", "playintegrityfix"]);
 
     let path = temp_socket_path("ctrl");
     let _ = std::fs::remove_file(&path);
     let sock = UnixDatagram::bind(&path).unwrap();
 
-    for frame in &frames {
-        datagram_sendto(&path, frame).unwrap();
-    }
+    datagram_sendto(&path, &msg).unwrap();
 
     let mut buf = vec![0u8; 256];
-    let expect: Vec<Vec<u8>> = vec![
-        vec![controller_code(ControllerCode::DaemonSetInfo)],
-        8u32.to_ne_bytes().to_vec(),
-        b"KernelSU".to_vec(),
-        2u32.to_ne_bytes().to_vec(),
-        6u32.to_ne_bytes().to_vec(),
-        b"truman".to_vec(),
-        16u32.to_ne_bytes().to_vec(),
-        b"playintegrityfix".to_vec(),
-    ];
-    for want in expect {
+    let (n, _) = sock.recv_from(&mut buf).unwrap();
+    assert_eq!(&buf[..n], &msg[..], "report must arrive as a single datagram");
+
+    // And nothing else is queued behind it.
+    assert!(sock.set_nonblocking(true).is_ok());
+    assert!(sock.recv_from(&mut buf).is_err(), "unexpected extra datagram");
+
+    drop(sock);
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn interleaved_reports_do_not_corrupt_each_other() {
+    // Two daemons reporting simultaneously: with single-datagram reports the
+    // reader can always resolve each one, in either order.
+    let a = build_set_info_message("KernelSU", &["truman"]);
+    let b = build_set_info_message("KernelSU", &["playintegrityfix", "truman"]);
+
+    let path = temp_socket_path("ctrl");
+    let _ = std::fs::remove_file(&path);
+    let sock = UnixDatagram::bind(&path).unwrap();
+
+    datagram_sendto(&path, &b).unwrap();
+    datagram_sendto(&path, &a).unwrap();
+
+    let mut buf = vec![0u8; 256];
+    let mut parsed = Vec::new();
+    for _ in 0..2 {
         let (n, _) = sock.recv_from(&mut buf).unwrap();
-        assert_eq!(&buf[..n], &want[..], "datagram boundary mismatch");
+        let (root, modules) = parse_set_info(&buf[1..n]).expect("each report decodes");
+        assert_eq!(root, "KernelSU");
+        parsed.push(modules);
     }
+
+    assert!(parsed.contains(&vec!["truman".to_string()]));
+    assert!(parsed.contains(&vec!["playintegrityfix".to_string(), "truman".to_string()]));
 
     drop(sock);
     let _ = std::fs::remove_file(&path);
