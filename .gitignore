@@ -9,3 +9,4 @@ Cargo.lock.bak
 diag/bisect/scratch/
 diag/**/logcat*.txt
 diag/**/applog_*.txt
+diag/rollback-*/

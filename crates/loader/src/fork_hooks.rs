@@ -76,15 +76,44 @@ pub(crate) static UNLOADING: std::sync::atomic::AtomicBool =
 ///
 /// C gets this right because `[[clang::musttail]]` makes the compiler emit the
 /// full epilogue (restore callee-saved registers, sp, and x30 = the app's
-/// return address) before branching. Rust has no `musttail`, so the same
-/// guarantee needs a naked wrapper around the hook: save x30 on entry, do the
-/// work in a normal `extern "C"` body, then on the unmap path pop the frame
-/// (`ldp x29, x30, [sp], #16`) and `br munmap` — after which `munmap` returns
-/// directly to the app and no unmapped code runs. Until that lands, the gate
-/// below still runs and the library stays mapped: that costs stealth only,
-/// because `unhook_functions()` has already restored every PLT slot, so
+/// return address) before branching. Rust has no `musttail`, so the hook is
+/// exported as a **naked wrapper** (`pthread_attr_setstacksize`) whose only job
+/// is to call the real body and then, on the unmap path, tear its own frame
+/// down and branch straight into `munmap` with x30 (lr) already holding the
+/// app's return address. `munmap` then returns to the app, and no instruction
+/// of this library runs after the mapping is gone.
+///
+/// Enabled on the two ABIs this project tests on hardware (aarch64, arm and
+/// their hooks below). x86/x86_64 keep the fail-closed path: the same wrapper
+/// is straightforward there, but with no device to exercise it, an untested
+/// self-unmap is not worth the crash risk. The cost of staying mapped is
+/// stealth only — `unhook_functions()` has already restored every PLT slot, so
 /// nothing branches into the mapping.
-const SELF_UNMAP_ENABLED: bool = false;
+const SELF_UNMAP_ENABLED: bool = cfg!(any(target_arch = "aarch64", target_arch = "arm"));
+
+/// Filled by the hook body, read by the naked wrapper: where the library is
+/// mapped and how much of it to unmap.
+///
+/// `addr == null` means "keep libzygisk.so mapped" (the fail-closed default,
+/// and also the answer whenever the quiescence gate declines). Per call, never
+/// shared, so a second thread in the hook can never pick up another thread's
+/// decision.
+#[repr(C)]
+pub struct UnmapPlan {
+    pub addr: *mut c_void,
+    pub len: usize,
+}
+
+impl UnmapPlan {
+    #[inline]
+    const fn keep_mapped() -> Self {
+        UnmapPlan {
+            addr: std::ptr::null_mut(),
+            len: 0,
+        }
+    }
+}
+
 
 /// RAII marker for "this thread is executing loader code". Held across the
 /// original-call forwarding in every exported hook and across the
@@ -271,88 +300,6 @@ unsafe fn old_pthread_attr_setstacksize() -> OldPthreadAttrSetStacksizeFn {
     unsafe { transmute(OLD_PTHREAD_ATTR_SETSTACKSIZE.load(Ordering::Relaxed)) }
 }
 
-/// C `[[clang::musttail]] return munmap(start_addr, block_size)`.
-///
-/// **This is not a valid tail call — see `SELF_UNMAP_ENABLED` before enabling
-/// it.** A real tail call must leave the callee with the *caller's* link
-/// register and stack pointer, so that `munmap` returns straight to the app.
-/// A bare `br`/`jmp`/`bx` does not: x30 (arm64), lr (arm), and the return
-/// address already pushed on the stack (x86) are all untouched, so they still
-/// point at the instruction after the branch *inside libzygisk.so*, and the
-/// callee returns into the image it just unmapped. The C only looks correct
-/// because `musttail` makes the compiler emit the epilogue that restores
-/// sp/x30/callee-saved registers before the branch; a hand-written branch has
-/// no such epilogue. Keeping `addr`/`len` in argument registers (as this does)
-/// is necessary but nowhere near sufficient.
-#[inline(always)]
-unsafe fn tail_call_munmap(addr: *mut c_void, len: usize, target: usize) -> ! {
-    #[cfg(target_arch = "aarch64")]
-    unsafe {
-        std::arch::asm!(
-            "br {target}",
-            target = in(reg) target,
-            in("x0") addr,
-            in("x1") len,
-            options(noreturn),
-        );
-    }
-    #[cfg(target_arch = "arm")]
-    unsafe {
-        std::arch::asm!(
-            "bx {target}",
-            target = in(reg) target,
-            in("r0") addr,
-            in("r1") len,
-            options(noreturn),
-        );
-    }
-    #[cfg(target_arch = "x86_64")]
-    unsafe {
-        std::arch::asm!(
-            "jmp {target}",
-            target = in(reg) target,
-            in("rdi") addr,
-            in("rsi") len,
-            options(noreturn),
-        );
-    }
-    #[cfg(target_arch = "x86")]
-    unsafe {
-        // cdecl already passes addr/len on the stack with the caller's return
-        // address on top — exactly the frame munmap expects, so a bare jump
-        // (instead of `call` + `ret`) is the tail call.
-        let _ = (addr, len);
-        std::arch::asm!(
-            "jmp {target}",
-            target = in(reg) target,
-            options(noreturn),
-        );
-    }
-    #[cfg(target_arch = "riscv64")]
-    unsafe {
-        std::arch::asm!(
-            "jalr zero, 0({target})",
-            target = in(reg) target,
-            in("a0") addr,
-            in("a1") len,
-            options(noreturn),
-        );
-    }
-    #[cfg(not(any(
-        target_arch = "aarch64",
-        target_arch = "arm",
-        target_arch = "x86_64",
-        target_arch = "x86",
-        target_arch = "riscv64"
-    )))]
-    {
-        // Not an Android target; a best-effort sibling call. By the time it
-        // returns the library is unmapped, exactly like a C build without
-        // musttail support.
-        libc::munmap(addr, len);
-        unreachable!("munmap returned into unmapped libzygisk.so");
-    }
-}
 
 // INFO: Self-unloading is not a direct task; it requires the utilization of
 // tail optimization, which requires the signature to be the same as munmap,
@@ -363,14 +310,26 @@ unsafe fn tail_call_munmap(addr: *mut c_void, len: usize, target: usize) -> ! {
 // when the VM daemon starts, to allow this to happen before the app can
 // execute code.
 ///
+/// The real body of the `pthread_attr_setstacksize` hook.
+///
+/// Called only by the naked wrapper below, which supplies `plan` on the stack
+/// and performs the actual tail branch into `munmap` when the body asks for
+/// one. Returning `addr == null` in `*plan` means "keep libzygisk.so mapped".
+///
 /// # Safety
-/// `target`/`size` come straight from the hooked caller; `OLD_...` is set by
-/// the PLT hooker before ART runs.
-#[cfg_attr(target_os = "android", unsafe(no_mangle))]
-pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: usize) -> c_int {
+/// `target`/`size` come straight from the hooked caller; `plan` must be a
+/// valid, writable, per-call `UnmapPlan`; `OLD_...` is set by the PLT hooker
+/// before ART runs.
+pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
+    target: *mut c_void,
+    size: usize,
+    plan: *mut UnmapPlan,
+) -> c_int {
     use std::sync::atomic::Ordering;
 
     let _guard = LoaderGuard::new();
+
+    unsafe { *plan = UnmapPlan::keep_mapped() };
 
     let res = unsafe { old_pthread_attr_setstacksize()(target, size) };
 
@@ -427,7 +386,8 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
             // the count must be exactly 1 — this thread's own guard). Skipping
             // keeps the library mapped and disarms the unloader, the safe
             // direction. It narrows the window but cannot close it: a thread
-            // can still enter loader code between this check and the branch.
+            // can still enter loader code between this check and the branch —
+            // the same window the C always had.
             if IN_LOADER.load(Ordering::Relaxed) != 1 {
                 dlogw!(
                     "loader code in flight on another thread — keeping libzygisk.so mapped"
@@ -444,14 +404,14 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
             );
 
             // C: [[clang::musttail]] return munmap(start_addr, block_size);
-            // Nothing of this library runs between the check above and the jump.
+            // The naked wrapper branches into munmap with this frame already
+            // torn down, so nothing of this library runs afterwards.
             unsafe {
-                tail_call_munmap(
-                    start_addr as *mut c_void,
-                    block_size,
-                    libc::munmap as usize,
-                )
+                (*plan).addr = start_addr as *mut c_void;
+                (*plan).len = block_size;
             };
+
+            return res;
         }
 
         // Fail closed (see SELF_UNMAP_ENABLED): without a real tail call the
@@ -465,6 +425,138 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
     }
 
     res
+}
+
+/// Emits the aarch64 trampoline for `$name` around the body `$inner`.
+///
+/// `$inner` decides whether an unmap is wanted by filling the `UnmapPlan` it
+/// is handed; production passes the real body, the emulated tests (see
+/// `trampoline_test`) pass a stub so the *same* instruction sequence can be
+/// driven against a controlled plan under qemu-user.
+///
+/// Frame discipline: `x19`/`x20` are the only callee-saved registers touched,
+/// and both are saved before use and restored on *both* exits. The unmap path
+/// tears the frame down, so `x30` (the app's return address) and the app's
+/// `x19`/`x20` are live when the tail branch enters `munmap`, which returns
+/// straight to the app. Nothing of this library runs after the mapping is
+/// gone — that is the whole point of the tail call.
+#[cfg(target_arch = "aarch64")]
+macro_rules! aarch64_trampoline {
+    ($(#[$meta:meta])* $name:ident, $inner:path) => {
+        $(#[$meta])*
+        #[unsafe(naked)]
+        pub unsafe extern "C" fn $name(
+            target: *mut ::core::ffi::c_void,
+            size: usize,
+        ) -> ::libc::c_int {
+            core::arch::naked_asm!(
+                "bti c",
+                "stp x29, x30, [sp, #-16]!",
+                "mov x29, sp",
+                "stp x19, x20, [sp, #-16]!",
+                "mov x19, x0",             // target
+                "mov x20, x1",             // size
+                "sub sp, sp, #16",         // UnmapPlan { addr, len }
+                "mov x2, sp",
+                "mov x0, x19",
+                "mov x1, x20",
+                "bl {inner}",
+                "ldr x9, [sp]",            // plan.addr: null => keep mapped
+                "ldr x1, [sp, #8]",        // plan.len
+                "add sp, sp, #16",
+                "cbz x9, 2f",
+                "ldp x19, x20, [sp], #16",
+                "ldp x29, x30, [sp], #16", // x30 = the app's return address
+                "mov x0, x9",
+                "b {munmap}",              // tail call: returns straight to the app
+                "2:",
+                "ldp x19, x20, [sp], #16",
+                "ldp x29, x30, [sp], #16",
+                "ret",
+                inner = sym $inner,
+                munmap = sym libc::munmap,
+            )
+        }
+    };
+}
+
+#[cfg(all(test, target_arch = "aarch64"))]
+pub(crate) use aarch64_trampoline;
+
+/// arm (Thumb-2) counterpart. `r4`/`r5` carry the arguments across the call;
+/// `r12` (`ip`, caller-saved) carries the plan once the frame is off, because
+/// `r9` — the obvious scratch — is callee-saved on the Android arm ABI (LLVM
+/// saves it in every prologue that touches it), and clobbering it would corrupt
+/// the app's register state on the keep-mapped path.
+#[cfg(target_arch = "arm")]
+macro_rules! arm_trampoline {
+    ($(#[$meta:meta])* $name:ident, $inner:path) => {
+        $(#[$meta])*
+        #[unsafe(naked)]
+        pub unsafe extern "C" fn $name(
+            target: *mut ::core::ffi::c_void,
+            size: usize,
+        ) -> ::libc::c_int {
+            core::arch::naked_asm!(
+                "push {{r4, r5, r6, lr}}", // 16-byte frame record
+                "mov r4, r0",              // target
+                "mov r5, r1",              // size
+                "sub sp, #16",             // UnmapPlan { addr, len } + 8B pad, so
+                                           // the call below is 16-byte aligned
+                "mov r2, sp",
+                "mov r0, r4",
+                "mov r1, r5",
+                "bl {inner}",
+                "ldr r12, [sp]",           // plan.addr: null => keep mapped
+                "ldr r1, [sp, #4]",        // plan.len
+                "add sp, #16",
+                "cmp r12, #0",
+                "beq 2f",
+                "pop {{r4, r5, r6, lr}}",
+                "mov r0, r12",
+                "b {munmap}",              // tail call: returns straight to the app
+                "2:",
+                "pop {{r4, r5, r6, lr}}",
+                "bx lr",
+                inner = sym $inner,
+                munmap = sym libc::munmap,
+            )
+        }
+    };
+}
+
+#[cfg(all(test, target_arch = "arm"))]
+pub(crate) use arm_trampoline;
+
+// The exported hook. On the ABIs with a verified wrapper this is naked code
+// that owns the frame discipline described above `SELF_UNMAP_ENABLED`; `x29`
+// (arm64) / frame-pointer-less (arm) is a plain record, and the unmap path
+// restores `sp`/`x30` (arm: `sp`/`lr`) before branching into `munmap` so that
+// nothing of this library runs after the mapping is gone. `bti c` makes the
+// entry a valid indirect-branch target where BTI is enforced (a HINT
+// elsewhere).
+#[cfg(target_arch = "aarch64")]
+aarch64_trampoline!(
+    #[cfg_attr(target_os = "android", unsafe(no_mangle))]
+    pthread_attr_setstacksize,
+    pthread_attr_setstacksize_inner
+);
+
+#[cfg(target_arch = "arm")]
+arm_trampoline!(
+    #[cfg_attr(target_os = "android", unsafe(no_mangle))]
+    pthread_attr_setstacksize,
+    pthread_attr_setstacksize_inner
+);
+
+/// x86/x86_64 keep the plain export: `SELF_UNMAP_ENABLED` is false there, so
+/// the plan is never filled and the body logs the fail-closed path.
+#[cfg(not(any(target_arch = "aarch64", target_arch = "arm")))]
+#[cfg_attr(target_os = "android", unsafe(no_mangle))]
+pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: usize) -> c_int {
+    let mut plan = UnmapPlan::keep_mapped();
+
+    unsafe { pthread_attr_setstacksize_inner(target, size, &mut plan) }
 }
 
 // ---------------------------------------------------------------------------

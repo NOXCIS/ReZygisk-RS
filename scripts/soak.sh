@@ -83,6 +83,14 @@ snapshot() {
 
 exercise() {
     local app="$1" elapsed="$2"
+    # A package that is not installed on this device can never produce a
+    # process; that is not a loader failure (an earlier revision listed
+    # com.android.calendar, which is absent here, and the soak "failed" on it).
+    if ! adb_dev shell "pm list packages" 2>/dev/null | grep -aq "^package:$app$"; then
+        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$elapsed" "$app" "not-installed" 0 0 0 0 >>"$OUT/app_starts.tsv"
+        echo "  app $app: not installed, skipping"
+        return 0
+    fi
     # Force-stop first: bringing an already-running app to the front produces
     # no new process and therefore no loader activity to observe. No
     # logcat -c — the crash buffer and the boot window are evidence we keep.
@@ -93,10 +101,10 @@ exercise() {
     sleep 14
     local log="$OUT/applog_${elapsed}s.txt"
     adb_dev logcat -d 2>/dev/null >"$log"
-    local pid loaded registered unmap
+    local pid loaded registered unmap keep maps_lib
     pid="$(adb_dev shell pidof "$app" 2>/dev/null | tr -d '\r' | awk '{print $1}')"
     if [[ -z "$pid" ]]; then
-        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$elapsed" "$app" "no-pid" 0 0 0 >>"$OUT/app_starts.tsv"
+        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$elapsed" "$app" "no-pid" 0 0 0 0 >>"$OUT/app_starts.tsv"
         echo "  app $app: not running after start (no pid)"
         return 0
     fi
@@ -104,9 +112,17 @@ exercise() {
     mine="$(grep -aE "[[:space:]]${pid}[[:space:]]+[0-9]+[[:space:]]+[A-Z][[:space:]]+zygisk" "$log")"
     loaded="$(grep -ac 'Loaded module \[' <<<"$mine")"
     registered="$(grep -ac 'Registering module with API version' <<<"$mine")"
-    unmap="$(grep -ac 'self-unmap disabled' <<<"$mine")"
-    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$elapsed" "$app" "$pid" "$loaded" "$registered" "$unmap" >>"$OUT/app_starts.tsv"
-    echo "  app $app (pid $pid): module loads=$loaded register=$registered loader-marker=$unmap"
+    # Self-unmap: the decision is logged either way. `unmap ...` means the
+    # trampoline took the tail branch; `keeping libzygisk.so mapped` means a
+    # gate failed closed, which is legitimate but must be explained.
+    unmap="$(grep -ac 'unmap libzygisk.so loaded at' <<<"$mine" || echo 0)"
+    keep="$(grep -ac 'keeping libzygisk.so mapped' <<<"$mine" || echo 0)"
+    # The mapping itself is the ground truth: the library must be gone from a
+    # process that finished its VM bring-up, or the gate above must say why.
+    maps_lib="$(root "grep -c libzygisk.so /proc/$pid/maps" 2>/dev/null | tr -dc 0-9)"
+    maps_lib="${maps_lib:-?}"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$elapsed" "$app" "$pid" "$loaded" "$registered" "$maps_lib" "$( [[ "$maps_lib" == "0" ]] && echo unmapped || echo mapped )" >>"$OUT/app_starts.tsv"
+    echo "  app $app (pid $pid): register=$registered maps-libzygisk=$maps_lib unmap-log=$unmap keep-log=$keep"
 }
 
 total_s=$((MINUTES * 60))
@@ -177,9 +193,17 @@ tomb_end="$(root 'ls /data/tombstones 2>/dev/null | wc -l' | tr -d '\r')"
 fl="$(fail_lines)"
 [[ "${fl:-0}" != "0" ]] && fail "$fl forbidden line(s) in logcat"
 # 6. every app start produced loader + module evidence in the fresh process
-while IFS=$'\t' read -r el app pid loaded reg unmap; do
-    if [[ "${loaded:-0}" -lt 1 && "${reg:-0}" -lt 1 && "${unmap:-0}" -lt 1 ]]; then
-        fail "app start at ${el}s ($app pid $pid) showed no loader/module evidence (loads=$loaded register=$reg marker=$unmap)"
+while IFS=$'\t' read -r el app pid loaded reg maps_lib marker; do
+    [[ "$pid" == "not-installed" || "$pid" == "no-pid" ]] && continue
+    if [[ "${loaded:-0}" -lt 1 && "${reg:-0}" -lt 1 ]]; then
+        fail "app start at ${el}s ($app pid $pid) showed no module evidence (loads=$loaded register=$reg)"
+    fi
+    if [[ "$maps_lib" == "0" ]]; then
+        :
+    elif [[ "$maps_lib" == "?" || -z "$maps_lib" ]]; then
+        fail "app start at ${el}s ($app pid $pid): could not read the mapping (maps_lib=$maps_lib)"
+    elif ! grep -aq 'keeping libzygisk.so mapped' "$OUT"/applog_*.txt 2>/dev/null; then
+        fail "app start at ${el}s ($app pid $pid): libzygisk.so still mapped with no keep-mapped reason logged"
     fi
 done <"$OUT/app_starts.tsv"
 

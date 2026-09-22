@@ -57,3 +57,9 @@ mod native_specialize;
 mod plt_commit;
 mod plt_commit_v4;
 mod ptrace_clear;
+#[cfg(all(
+    test,
+    not(target_os = "android"),
+    any(target_arch = "aarch64", target_arch = "arm")
+))]
+mod trampoline_test;
