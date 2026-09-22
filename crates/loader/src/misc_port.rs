@@ -59,10 +59,16 @@
 //!   (`fd_sanitize.rs`, hook.c fork/sanitize paths) pass NUL-free `d_name`
 //!   strings, so behavior is identical there.
 //! - `update_mnt_ns` depends on the daemon_client sibling
-//!   `crate::daemon_client::rezygiskd_update_mns(state, buf: &mut [u8]) -> bool`
-//!   (C `rezygiskd_update_mns`, daemon.c:403-434) filling `buf` with the
+//!   `crate::daemon_client::rezygiskd_update_mns(state, buf: &mut [u8],
+//!   buf_size: usize, ns_fd_out: &mut i32) -> bool` (C
+//!   `rezygiskd_update_mns`, daemon.c:403-434) filling `buf` with the
 //!   `snprintf`'d `"/proc/%u/fd/%u"` ns path — always NUL-terminated. The
 //!   defensive no-NUL failure below cannot trigger against a C-parity sibling.
+//!   `ns_fd_out` is an RS extension: the daemon also attaches the namespace
+//!   fd itself, and this port uses it in place of the C's `open` (which needs
+//!   ptrace access to the daemon and silently fails in app processes). The
+//!   path is still produced, so a peer that does not send the fd keeps the C
+//!   behavior.
 //! - C computes `mns_state_str` with an `"unknown"` default reachable only via
 //!   an out-of-range enum cast; the Rust helper keeps the same default in a
 //!   wildcard arm (unreachable today: `MountNamespaceState` has exactly
@@ -99,17 +105,33 @@ pub fn parse_int(s: &str) -> i32 {
 /// hook.c `update_mnt_ns` (lines 191-225): ask ReZygiskd for the target mount
 /// namespace, optionally only `dry_run` it, then `open`/`setns(CLONE_NEWNS)`/
 /// `close` with the exact C messages and clean/mounted string mapping.
+///
+/// Where the C opens the daemon's `/proc/<daemon pid>/fd/<n>` link, this
+/// prefers the namespace fd the daemon hands over on the same reply. The open
+/// is not a formality: it asks the kernel to ptrace a root process, and the
+/// caller is a zygote child that may already be running as the app uid, so it
+/// comes back EACCES and the clean-namespace switch simply never happens (C
+/// reference behavior, not a port difference). A received fd needs no access to
+/// the daemon at all, so the `setns` below is what decides the outcome.
 pub fn update_mnt_ns(mns_state: rz_ipc::MountNamespaceState, dry_run: bool) -> bool {
     // C: char ns_path[PATH_MAX]; snprintf'd by the daemon call.
     let mut ns_path = [0u8; libc::PATH_MAX as usize];
     let ns_len = ns_path.len();
-    if !crate::daemon_client::rezygiskd_update_mns(mns_state, &mut ns_path, ns_len) {
+    // RS extension: the daemon's own duplicate of the namespace fd, or -1.
+    let mut ns_fd: i32 = -1;
+    if !crate::daemon_client::rezygiskd_update_mns(mns_state, &mut ns_path, ns_len, &mut ns_fd) {
         plog!(TAG, "Failed to update mount namespace");
 
         return false;
     }
 
     if dry_run {
+        // The fd is a real resource even when the namespace is only being
+        // prepared: a dry run must not leave it open in the zygote.
+        if ns_fd >= 0 {
+            unsafe { libc::close(ns_fd) };
+        }
+
         return true;
     }
 
@@ -120,45 +142,66 @@ pub fn update_mnt_ns(mns_state: rz_ipc::MountNamespaceState, dry_run: bool) -> b
         Err(_) => {
             loge!(TAG, "mount namespace path is not NUL-terminated");
 
+            if ns_fd >= 0 {
+                unsafe { libc::close(ns_fd) };
+            }
+
             return false;
         }
     };
     let ns_path_str = ns_cstr.to_string_lossy();
 
-    let updated_ns = unsafe { libc::open(ns_cstr.as_ptr(), libc::O_RDONLY) };
-    if updated_ns == -1 {
-        // C parity here is PLOGE (ERROR), but the failure is routine in this
-        // deployment, not exceptional: an app process cannot open the
-        // daemon's `/proc/<pid>/fd/<n>` link, because ptrace access to a
-        // different-uid process is denied (EACCES) — so this fires in every
-        // app process that asks for the clean namespace and says nothing
-        // about the app itself.
-        //
-        // It must not stay at ERROR: logd shows an app only the entries its
-        // own uid wrote, so an `E/zygisk` line is a framework fingerprint in
-        // exactly the buffer an integrity scanner greps (the Duck Detector
-        // LSPosed slice flags the `zygisk` tag prefix). Debug level keeps it
-        // visible in a `loud-loader` build without leaking in a deployment
-        // one. Functional follow-up: have the daemon hand this namespace fd
-        // over SCM_RIGHTS like the module-dir fd already is — that needs no
-        // proc access and would make the clean-namespace switch actually
-        // succeed.
-        logd!(
-            TAG,
-            "Failed to open mount namespace [{}]: {}",
-            ns_path_str,
-            std::io::Error::last_os_error()
-        );
+    let updated_ns = if ns_fd >= 0 {
+        logd!(TAG, "Using the daemon-passed mount namespace fd [{}]", ns_fd);
 
-        return false;
-    }
+        ns_fd
+    } else {
+        let opened = unsafe { libc::open(ns_cstr.as_ptr(), libc::O_RDONLY) };
+        if opened == -1 {
+            // C parity here is PLOGE (ERROR), but the failure is routine in
+            // this deployment, not exceptional: an app process cannot open
+            // the daemon's `/proc/<pid>/fd/<n>` link, because ptrace access
+            // to a different-uid process is denied (EACCES) — so this fires
+            // in every app process that asks for the clean namespace and says
+            // nothing about the app itself.
+            //
+            // It must not stay at ERROR: logd shows an app only the entries
+            // its own uid wrote, so an `E/<tag>` line is a framework
+            // fingerprint in exactly the buffer an integrity scanner greps
+            // (the Duck Detector LSPosed slice flags the `zygisk` tag prefix).
+            // Debug level keeps it visible in a `loud-loader` build without
+            // leaking in a deployment one. Reaching it means the daemon sent
+            // no fd, i.e. the peer is a stock C `rezygiskd`.
+            logd!(
+                TAG,
+                "Failed to open mount namespace [{}]: {}",
+                ns_path_str,
+                std::io::Error::last_os_error()
+            );
+
+            return false;
+        }
+
+        opened
+    };
 
     let mns_state_str = mns_state_str(mns_state);
 
     logd!(TAG, "set mount namespace to [{}] fd=[{}]: {}", ns_path_str, updated_ns, mns_state_str);
 
     if unsafe { libc::setns(updated_ns, libc::CLONE_NEWNS) } == -1 {
-        plog!(TAG, "Failed to set mount namespace [{}]", ns_path_str);
+        // Also debug, and for a second reason on top of the fingerprint one
+        // above: joining a namespace owned by the initial user namespace needs
+        // CAP_SYS_ADMIN, so a caller that is already the app uid is refused by
+        // the kernel here no matter how the fd arrived. That is a property of
+        // *who* is asking, not of this call, and an `E/` line per app launch
+        // would say nothing the daemon's own request record does not.
+        logd!(
+            TAG,
+            "Failed to set mount namespace [{}]: {}",
+            ns_path_str,
+            std::io::Error::last_os_error()
+        );
 
         unsafe { libc::close(updated_ns) };
 

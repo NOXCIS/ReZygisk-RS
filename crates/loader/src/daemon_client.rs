@@ -24,8 +24,9 @@
 
 use rz_common::{logd, loge, logi, plog};
 use rz_ipc::{
-    read_string, read_u8, read_u32, read_usize, recv_fd, write_string, write_u8, write_u32,
-    write_usize, DaemonSocketAction, MountNamespaceState, ProcessFlags, RootImplKind,
+    read_string, read_u8, read_u32, read_usize, recv_fd, recv_fd_with_payload, write_string,
+    write_u8, write_u32, write_usize, DaemonSocketAction, MountNamespaceState, ProcessFlags,
+    RootImplKind,
 };
 
 /// daemon.c `LOG_TAG` ("zygisk" in the RS port).
@@ -439,7 +440,24 @@ pub fn rezygiskd_zygote_restart() {
 
 /// daemon.c `rezygiskd_update_mns`: report the mount namespace state, get
 /// the target `/proc/<pid>/fd/<fd>` path back (snprintf semantics into buf).
-pub fn rezygiskd_update_mns(nms_state: MountNamespaceState, buf: &mut [u8], buf_size: usize) -> bool {
+///
+/// RS extension over the C reply: the daemon also attaches the namespace fd
+/// itself as `SCM_RIGHTS`, and `ns_fd_out` receives it (`-1` when absent).
+/// The path is still filled in either way, so two peers that disagree about
+/// the extension both work — the fd is an optimization the caller may ignore,
+/// not a replacement framing:
+/// - a daemon that predates it (or a stock C `rezygiskd`) sends only the two
+///   integers and the non-blocking receive reports "nothing queued", which the
+///   caller answers with the C's own `/proc/<pid>/fd/<n>` open;
+/// - our callers against a C daemon behave exactly like the C loader did.
+pub fn rezygiskd_update_mns(
+    nms_state: MountNamespaceState,
+    buf: &mut [u8],
+    buf_size: usize,
+    ns_fd_out: &mut i32,
+) -> bool {
+    *ns_fd_out = -1;
+
     let fd = rezygiskd_connect(1);
     if fd == -1 {
         plog!(TAG, "connection to ReZygiskd");
@@ -451,13 +469,36 @@ pub fn rezygiskd_update_mns(nms_state: MountNamespaceState, buf: &mut [u8], buf_
     safe_write!(fd, write_u32(fd, unsafe { libc::getpid() } as u32), "pid", false);
     safe_write!(fd, write_u8(fd, nms_state as u8), "mount namespace state", false);
 
-    let target_pid = safe_read!(fd, read_u32(fd), "target pid", false);
-    let target_fd = safe_read!(fd, read_u32(fd), "target fd", false);
+    let target_pid = match read_u32_capture_fd(fd, ns_fd_out) {
+        Ok(v) => v,
+        Err(_) => {
+            loge!(TAG, "Failed to read target pid from ReZygiskd");
+
+            unsafe { libc::close(fd) };
+
+            return false;
+        }
+    };
+
+    let target_fd = match read_u32_capture_fd(fd, ns_fd_out) {
+        Ok(v) => v,
+        Err(_) => {
+            loge!(TAG, "Failed to read target fd from ReZygiskd");
+
+            unsafe { libc::close(fd) };
+
+            release_captured_fd(ns_fd_out);
+
+            return false;
+        }
+    };
 
     if target_fd == 0 {
         loge!(TAG, "Failed to get target fd");
 
         unsafe { libc::close(fd) };
+
+        release_captured_fd(ns_fd_out);
 
         return false;
     }
@@ -477,6 +518,36 @@ pub fn rezygiskd_update_mns(nms_state: MountNamespaceState, buf: &mut [u8], buf_
     unsafe { libc::close(fd) };
 
     true
+}
+
+/// `read_u32` that also collects an fd from the same message.
+///
+/// The daemon attaches its mount-namespace fd to one of the two words in this
+/// reply (see `rezygiskd_update_mns`), so both reads have to offer a control
+/// buffer: a plain `read` would let the kernel drop the ancillary data on the
+/// floor, and which word carries it is an implementation detail of the sender
+/// rather than something this side should assume. `slot` holds the first fd
+/// seen; a second one cannot legitimately appear, so it is closed instead of
+/// being leaked or silently replacing the first.
+fn read_u32_capture_fd(fd: i32, slot: &mut i32) -> std::io::Result<u32> {
+    let mut buf = [0u8; 4];
+    if let Some(received) = recv_fd_with_payload(fd, &mut buf)? {
+        if *slot >= 0 {
+            unsafe { libc::close(received) };
+        } else {
+            *slot = received;
+        }
+    }
+
+    Ok(u32::from_ne_bytes(buf))
+}
+
+/// Drop an fd captured before the request turned out to be unusable.
+fn release_captured_fd(slot: &mut i32) {
+    if *slot >= 0 {
+        unsafe { libc::close(*slot) };
+        *slot = -1;
+    }
 }
 
 /// daemon.c `rezygiskd_remove_module`: u8 reply == 1 means removed.

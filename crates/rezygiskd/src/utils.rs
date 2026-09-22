@@ -21,6 +21,33 @@ macro_rules! dloge {
 }
 pub(crate) use {dlogi, dlogw, dloge};
 
+/// Credentials of the process on the other end of an accepted cp socket, as
+/// captured by the kernel at `connect()` time.
+///
+/// Used for the mount-namespace request record: the caller's uid is the one
+/// fact that decides whether its `setns(CLONE_NEWNS)` can succeed at all, and
+/// the daemon is the only party that can observe it without logging from
+/// inside an app process.
+pub fn peer_creds(fd: RawFd) -> Option<(i32, u32, u32)> {
+    let mut cred: libc::ucred = unsafe { std::mem::zeroed() };
+    let mut len = std::mem::size_of::<libc::ucred>() as libc::socklen_t;
+
+    let ret = unsafe {
+        libc::getsockopt(
+            fd,
+            libc::SOL_SOCKET,
+            libc::SO_PEERCRED,
+            (&mut cred as *mut libc::ucred).cast::<libc::c_void>(),
+            &mut len,
+        )
+    };
+    if ret == -1 || len as usize != std::mem::size_of::<libc::ucred>() {
+        return None;
+    }
+
+    Some((cred.pid, cred.uid, cred.gid))
+}
+
 /// utils.c `switch_mount_namespace`.
 pub fn switch_mount_namespace(pid: i32) -> bool {
     let path = std::ffi::CString::new(format!("/proc/{pid}/ns/mnt")).unwrap();

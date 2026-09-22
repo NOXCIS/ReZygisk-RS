@@ -9,7 +9,7 @@ pub mod maps;
 pub mod owned_fd;
 
 pub use consts::*;
-pub use fdpass::{recv_fd, send_fd};
+pub use fdpass::{recv_fd, recv_fd_with_payload, send_fd, send_fd_with_payload};
 pub use generation::{
     abi_label, generation_line, log_generation, log_generation_and_check, manifest_generation, manifest_path,
     DeploymentCheck, RZ_GENERATION, RZ_GENERATION_BANNER,

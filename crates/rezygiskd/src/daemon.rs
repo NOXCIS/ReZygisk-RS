@@ -10,8 +10,8 @@ use rz_common::{
 };
 use rz_ipc::{
     build_error_info_message, build_set_info_message, controller_code, read_string_bounded, read_u8,
-    read_u32, read_usize, send_fd, write_u8, write_u32, write_usize, write_string, ControllerCode,
-    DaemonSocketAction, MountNamespaceState, ProcessFlags,
+    read_u32, read_usize, send_fd, send_fd_with_payload, write_u8, write_u32, write_usize,
+    write_string, ControllerCode, DaemonSocketAction, MountNamespaceState, ProcessFlags,
 };
 
 use crate::root_impl::{self, SetupKind};
@@ -419,7 +419,41 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
                 return Ok(());
             }
 
-            write_u32(client_fd, ns_fd as u32).map_err(|_| ClientError::MidFrame)?;
+            // Hand the namespace fd over too, attached to the word the caller
+            // blocks on (the C reply is `daemon_pid` then `ns_fd`; the fd rides
+            // with the second one). The caller used to open
+            // `/proc/<this pid>/fd/<ns_fd>` instead, which asks it to ptrace
+            // this process: routine EACCES for a caller that is not root, and
+            // it makes the clean-namespace switch silently never happen. With
+            // the fd in hand the caller needs no access to this process at all.
+            //
+            // Additive, so both directions of a mixed-generation install keep
+            // working: a caller that predates the fd reads the word and ignores
+            // the ancillary data (the kernel drops it for a plain read), and
+            // this daemon still writes the path for a caller that only uses
+            // that. Attaching it to the word rather than sending it as its own
+            // message is what makes it race-free — the caller cannot finish
+            // reading the reply and then find no fd that was merely late.
+            if send_fd_with_payload(client_fd, &(ns_fd as u32).to_ne_bytes(), ns_fd).is_err() {
+                dloge!(
+                    "Failed to send mount namespace fd {ns_fd} to pid {pid}: {}",
+                    io::Error::last_os_error()
+                );
+                return Ok(());
+            }
+
+            // Who asked. The caller's identity decides whether the switch *can*
+            // succeed at all: joining a namespace owned by the initial user
+            // namespace needs CAP_SYS_ADMIN, so a caller already running as an
+            // app uid fails at setns() even with the fd in hand. Recorded here
+            // because the loader cannot usefully report it about itself — it
+            // runs in app processes whose logcat an integrity scanner reads,
+            // while this line goes to the root-only daemon log.
+            let who = match crate::utils::peer_creds(client_fd) {
+                Some((peer_pid, peer_uid, _)) => format!("pid={peer_pid} uid={peer_uid}"),
+                None => "pid=? uid=?".to_string(),
+            };
+            dlogi!("UpdateMountNamespace: {who} app_pid={pid} state={mns_state} ns_fd={ns_fd}");
         }
         DaemonSocketAction::RemoveModule => {
             let index = read_usize(client_fd).map_err(|_| ClientError::MidFrame)?;
