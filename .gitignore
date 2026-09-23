@@ -8,10 +8,9 @@ Cargo.lock.bak
 module/private_key
 **/private_key
 
-# Bulky, regenerable diag artifacts: soak/repro raw logcat and app dumps plus
-# the bisect ladder's build scratch. The small evidence files (SUMMARY.txt,
-# samples.tsv, app_starts.tsv, state.json, verbose.log) stay tracked.
-diag/bisect/scratch/
-diag/**/logcat*.txt
-diag/**/applog_*.txt
-diag/rollback-*/
+# Device evidence is generated output. Whole bundle directories are ignored so
+# a soak/repro run does not clutter the tree with untracked files: soak and
+# repro snapshots, raw logcat, app dumps, the bisect ladder's build scratch and
+# the duck detector reports. Bundles tracked before this rule stay tracked, and
+# `git add -f diag/<bundle>/<file>` still keeps a run whose evidence matters.
+diag/*/
