@@ -1,15 +1,18 @@
-//! PLTI (Pure Library Hooking) port: PLT/GOT hooking inside the current
-//! process, mirroring `loader/src/external/plti/src/{plti.c, elf_util.c}`.
+//! PLTI: PLT/GOT hooking inside the current process.
 //!
-//! The C parses ELF headers straight out of the mapped image; the port
-//! copies that same mapped window once per library ([`read_mapped_image`])
-//! and parses it through `rz_elf`, so runtime addresses stay
-//! `bias_addr + vaddr` where `bias_addr = base_addr - load0.p_vaddr`
-//! exactly like `elfutil_init` — and the file system is never touched
-//! (csoloader-loaded, memfd-backed or since-deleted images hook identically
-//! to the C). Everything that only touches program headers / relocation
-//! tables is host-testable; the GOT write helpers mirror the C
-//! mprotect/mremap dances 1:1.
+//! Hooks function calls by patching the Global Offset Table (GOT) entries
+//! that the Procedure Linkage Table (PLT) stubs indirect through. Works on
+//! any mapped ELF image — filesystem-backed, memfd-backed, or csoloader-loaded.
+//!
+//! # Key concepts
+//! - `bias_addr = base_addr - load0.p_vaddr`: the runtime load bias
+//! - GOT entries hold runtime addresses; PLT stubs jump through them
+//! - Hooking replaces the GOT entry with a callback, saving the original
+//!
+//! # Design
+//! Parses ELF headers directly from the mapped image (no filesystem access),
+//! using `rz_elf` for parsing. GOT writes use `mprotect`/`mremap` to handle
+//! read-only and RELRO-protected pages.
 
 #![allow(clippy::missing_safety_doc)]
 

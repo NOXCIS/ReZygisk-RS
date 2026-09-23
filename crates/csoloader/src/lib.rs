@@ -1,13 +1,16 @@
-//! fd-based custom ELF loader (port of CSOLoader).
+//! fd-based custom ELF loader.
 //!
-//! - `image`: ELF image parser (csoloader_elf) — ported.
-//! - `tls`: TLS segment machinery — ported.
-//! - `linker_*` / `runtime`: in-process linker port (linker.c, csoloader.c).
-//! - `backtrace`: `g_custom_libs` registry + `__register_frame` hooks
-//!   (backtrace-support.c registry half).
-//! - `misc`: carray + sleb128 + backtrace-support ports.
-//! - `linker`: the small cross-module shim image.rs/tls.rs were written
-//!   against (`page_size`, `handle_indirect_symbol`).
+//! Loads shared libraries from file descriptors (including memfd) without
+//! touching the filesystem, enabling injection of Zygisk modules into the
+//! zygote process where the original ELF may be deleted or inaccessible.
+//!
+//! # Modules
+//! - `image`: ELF image parser
+//! - `tls`: TLS segment allocation and management
+//! - `linker_*` / `runtime`: in-process dynamic linker (symbol resolution,
+//!   relocation, initialization)
+//! - `backtrace`: custom library registry for unwinder integration
+//! - `misc`: helper utilities (sleb128 encoding, arrays)
 
 // The C keeps `g_custom_libs`/its mutex as file-scope globals; the Rust port
 // uses `static Mutex<[T; N]>` for sound interior mutability (see `backtrace.rs`).
