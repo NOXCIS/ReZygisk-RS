@@ -1,5 +1,5 @@
-//! hook.c PLT hook commit v4: `api_plt_hook_register_v4` (hook.c 615-681)
-//! and `api_plt_hook_commit_v4` (hook.c 695-720). Modules using api version
+//! hook.c PLT hook commit v4: `api_plt_hook_register_v4`
+//! and `api_plt_hook_commit_v4`. Modules using api version
 //! >= 4 register hooks by (dev_t, ino_t) instead of a regex: register
 //! resolves the pair to the first matching self-maps entry up front, adds
 //! that library to PLTI as a manual lib, and queues a `PltHookEntry` on the
@@ -9,7 +9,7 @@
 //! C-parity notes:
 //! - The C's file-static `plt_hook_list` / `struct plt_hook_entry` live in
 //!   the shared spine as `context::{PLT_HOOK_LIST, PltHookEntry}` (the
-//!   context.rs mirror of hook.c lines 128-129). A Rust `Vec` aborts on OOM
+//!   context.rs mirror of hook.c). A Rust `Vec` aborts on OOM
 //!   where the C realloc fails, so the C's `strdup`/realloc failure branches
 //!   below are unreachable (existing port-wide convention).
 //! - `entry->dev` is `makedev(dev_major, dev_minor)` (misc.c); the raw
@@ -17,9 +17,10 @@
 //!   `entry->dev != dev` stays a direct `dev_t` comparison.
 //! - Neither function takes `hook_info_lock` (the C doesn't lock here).
 
-use std::ffi::{c_char, c_void, CStr};
+use std::ffi::{c_char, c_void};
 
 use crate::context::{ctx_mut, take_plt_hook_list, with_plti, with_plt_hook_list, PltHookEntry};
+use crate::jni_utils::cstr_to_owned;
 
 const TAG: &str = rz_common::LOG_TAG;
 
@@ -59,7 +60,7 @@ fn makedev(major: u32, minor: u32) -> dev_ty {
     dev as dev_ty
 }
 
-/// hook.c `api_plt_hook_register_v4` (615-681): resolve the module-supplied
+/// hook.c `api_plt_hook_register_v4`: resolve the module-supplied
 /// (dev, inode) pair to the first matching self-maps entry, add that library
 /// to PLTI as a manual lib, and queue the hook on the shared PLT hook list.
 pub unsafe extern "C" fn api_plt_hook_register_v4(
@@ -75,7 +76,7 @@ pub unsafe extern "C" fn api_plt_hook_register_v4(
         return;
     }
 
-    let symbol_str = unsafe { CStr::from_ptr(symbol) }.to_string_lossy();
+    let symbol_str = cstr_to_owned(symbol).unwrap_or_default();
 
     let Some(maps) = rz_common::parse_maps_safe("self") else {
         rz_common::loge!(TAG, "Failed to scan maps for plt_hook_register_v4");
@@ -117,7 +118,7 @@ pub unsafe extern "C" fn api_plt_hook_register_v4(
 
     // hook.c strdup(lib_path) cannot fail in Rust (a String allocation
     // aborts on OOM), so the C "Failed to duplicate library path" branch
-    // (hook.c 646-652) is dropped.
+    // is dropped.
     let lib_path = found_path.to_string();
     // hook.c free_maps(maps)
     drop(maps);
@@ -137,19 +138,19 @@ pub unsafe extern "C" fn api_plt_hook_register_v4(
     }
 
     // hook.c strdup(symbol) + plt_hook_list_add are infallible in Rust, so
-    // the C "Failed to duplicate symbol name" (hook.c 665-671) and
-    // "Failed to add plt_hook entry" (hook.c 674-680) branches are dropped.
+    // the C "Failed to duplicate symbol name" and
+    // "Failed to add plt_hook entry" branches are dropped.
     with_plt_hook_list(|list| {
         list.push(PltHookEntry {
             lib_path,
-            symbol: symbol_str.into_owned(),
+            symbol: symbol_str,
             new_func: fn_ptr,
             backup,
         })
     });
 }
 
-/// hook.c `api_plt_hook_commit_v4` (695-720): apply every queued v4 PLT
+/// hook.c `api_plt_hook_commit_v4`: apply every queued v4 PLT
 /// hook through PLTI, then free the list and reset it to NULL.
 pub unsafe extern "C" fn api_plt_hook_commit_v4() -> bool {
     if ctx_mut().is_none() {
@@ -161,8 +162,7 @@ pub unsafe extern "C" fn api_plt_hook_commit_v4() -> bool {
     // hook.c `for (i = 0; i < plt_hook_list_count; i++)` — a NULL list
     // iterates zero times. `take_plt_hook_list` leaves PLT_HOOK_LIST = None
     // (the C `plt_hook_list = NULL`), and the moved Vec's drop frees the
-    // strdup'd lib_path/symbol of every entry plus the list itself
-    // (hook.c 708-717).
+    // strdup'd lib_path/symbol of every entry plus the list itself.
     if let Some(list) = take_plt_hook_list() {
         for entry in &list {
             let backup = if entry.backup.is_null() {

@@ -150,7 +150,7 @@ pub fn sigabbrev_np(sig: i32) -> &'static str {
     }
 }
 
-/// utils.c `parse_status`: "0x%x exited with %d" / "signaled with ..." /
+/// C-parity wait-status text: "0x%x exited with %d" / "signaled with ..." /
 /// "stopped by signal=%s(%d),event=%s".
 pub fn parse_status(status: i32) -> String {
     let mut buf = format!("0x{status:x} ");
@@ -172,7 +172,7 @@ pub fn parse_status(status: i32) -> String {
     buf
 }
 
-/// utils.c `get_program`: readlink /proc/<pid>/exe.
+/// readlink /proc/<pid>/exe.
 pub fn get_program(pid: i32) -> io::Result<String> {
     let path = std::ffi::CString::new(format!("/proc/{pid}/exe")).unwrap();
     let mut buf = [0u8; libc::PATH_MAX as usize];
@@ -227,7 +227,7 @@ pub fn get_ppid(pid: i32) -> Option<i32> {
     s[after_comm..].split_whitespace().nth(1)?.parse().ok()
 }
 
-/// utils.c `fork_dont_care`: double fork so the grandchild is reparented away
+/// Double fork so the grandchild is reparented away
 /// from the tracer (no SIGCHLD back to us). Returns 0 in the grandchild, the
 /// intermediate pid in the parent, or -1 when the chain could not be started.
 pub fn fork_dont_care() -> i32 {
@@ -284,7 +284,6 @@ pub fn fork_dont_care() -> i32 {
 // Remote memory access (process_vm_readv/writev)
 // ---------------------------------------------------------------------------
 
-/// utils.c `write_proc`.
 pub fn write_proc(pid: i32, remote_addr: usize, buf: &[u8]) -> isize {
     dlogv!("write to remote addr {remote_addr:x} size {}", buf.len());
 
@@ -308,7 +307,6 @@ pub fn write_proc(pid: i32, remote_addr: usize, buf: &[u8]) -> isize {
     l
 }
 
-/// utils.c `read_proc`.
 pub fn read_proc(pid: i32, remote_addr: usize, buf: &mut [u8]) -> isize {
     let len = buf.len();
     let local = libc::iovec {
@@ -447,7 +445,7 @@ impl UserRegs {
     pub fn set_reg_sysnr(&mut self, v: i64) { self.orig_eax = v as u32; }
 }
 
-/// utils.c `get_regs` - Result-returning version.
+/// Result-returning variant.
 pub fn try_get_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
     unsafe {
@@ -479,12 +477,12 @@ pub fn try_get_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     Ok(())
 }
 
-/// utils.c `get_regs` - bool-returning version for backward compatibility.
+/// Bool-returning variant.
 pub fn get_regs(pid: i32, regs: &mut UserRegs) -> bool {
     try_get_regs(pid, regs).is_ok()
 }
 
-/// utils.c `set_regs` - Result-returning version.
+/// Result-returning variant.
 pub fn try_set_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
     unsafe {
@@ -516,12 +514,12 @@ pub fn try_set_regs(pid: i32, regs: &mut UserRegs) -> Result<(), RegsError> {
     Ok(())
 }
 
-/// utils.c `set_regs` - bool-returning version for backward compatibility.
+/// Bool-returning variant.
 pub fn set_regs(pid: i32, regs: &mut UserRegs) -> bool {
     try_set_regs(pid, regs).is_ok()
 }
 
-/// utils.c `align_stack` (~0xf is negative; cast through signed).
+/// Stack alignment: ~0xf is negative; cast through signed.
 pub fn align_stack(regs: &mut UserRegs, preserve: i64) {
     let sp = regs.reg_sp() as i64;
     regs.set_reg_sp(((sp - preserve) & !0xf) as u64);
@@ -531,7 +529,7 @@ pub fn align_stack(regs: &mut UserRegs, preserve: i64) {
 // Remote calls
 // ---------------------------------------------------------------------------
 
-/// utils.c `remote_call`: run a remote function, return its return value.
+/// Run a remote function, return its return value.
 /// Returns 0 on failure (matching the C sentinel).
 pub fn remote_call(pid: i32, regs: &mut UserRegs, func_addr: u64, return_addr: u64, args: &[i64]) -> u64 {
     align_stack(regs, 0);
@@ -673,7 +671,7 @@ pub fn remote_call(pid: i32, regs: &mut UserRegs, func_addr: u64, return_addr: u
     }
 }
 
-/// utils.c `find_syscall_gadget`: scan executable regions (vdso first) for an
+/// Scan executable regions (vdso first) for an
 /// svc/syscall instruction.
 pub fn find_syscall_gadget(pid: i32, remote_map: &[rz_common::MapEntry]) -> u64 {
     #[cfg(target_arch = "aarch64")]
@@ -752,7 +750,7 @@ pub fn find_syscall_gadget(pid: i32, remote_map: &[rz_common::MapEntry]) -> u64 
     0
 }
 
-/// utils.c `tracee_skip_syscall`: set syscall number to -1 so the seccomp
+/// Set syscall number to -1 so the seccomp
 /// trap becomes a no-op. On arm/arm64 the NT_PRSTATUS write alone doesn't
 /// commit the syscall number -- the kernel-side override is required, or the
 /// trapped syscall (the loader's exit_group seccomp probe) executes for real.
@@ -790,7 +788,7 @@ pub fn tracee_skip_syscall(pid: i32) {
     }
 }
 
-/// utils.c `wait_for_trace`: wait a tracee, swallowing SIGCHLD group noise and
+/// Wait a tracee, swallowing SIGCHLD group noise and
 /// seccomp traps. On wait failure sets status to `255 << 8` (WIFEXITED=255).
 pub fn wait_for_trace(pid: i32, status: &mut i32, flags: i32) {
     loop {
@@ -878,7 +876,7 @@ pub fn wait_for_trace_deadline(pid: i32, status: &mut i32, flags: i32, timeout: 
     }
 }
 
-/// utils.c `wait_for_event_stop`: drain stops until PTRACE_EVENT_STOP.
+/// Drain stops until PTRACE_EVENT_STOP.
 pub fn wait_for_event_stop(pid: i32) -> bool {
     loop {
         let mut status = 0;
@@ -900,7 +898,6 @@ pub fn wait_for_event_stop(pid: i32) -> bool {
     }
 }
 
-/// utils.c `wait_for_ptrace_syscall_stop`.
 pub fn wait_for_ptrace_syscall_stop(pid: i32, status: &mut i32) -> bool {
     let mut step_retries = 0;
     loop {
@@ -1019,7 +1016,7 @@ pub fn wait_for_ptrace_syscall_stop_deadline(pid: i32, status: &mut i32, timeout
     }
 }
 
-/// utils.c `remote_syscall`: run a syscall in the tracee via a syscall gadget.
+/// Run a syscall in the tracee via a syscall gadget.
 pub fn remote_syscall(pid: i32, regs: &mut UserRegs, syscall_gadget: u64, sysnr: i64, args: &[i64]) -> i64 {
     dlogv!("Remote syscall {sysnr} args {} at gadget {syscall_gadget:#x}", args.len());
 
@@ -1151,7 +1148,7 @@ pub fn remote_syscall(pid: i32, regs: &mut UserRegs, syscall_gadget: u64, sysnr:
 // Module / symbol locating on maps
 // ---------------------------------------------------------------------------
 
-/// utils.c `position_after`: strrchr + 1 without modifying the string.
+/// strrchr + 1 without modifying the string.
 pub fn position_after(s: &str, needle: char) -> &str {
     match s.rfind(needle) {
         Some(pos) => &s[pos + needle.len_utf8()..],
@@ -1159,7 +1156,7 @@ pub fn position_after(s: &str, needle: char) -> &str {
     }
 }
 
-/// utils.c `find_module_return_addr`: first non-exec mapping whose file name
+/// First non-exec mapping whose file name
 /// starts with `suffix`.
 pub fn find_module_return_addr(map: &[rz_common::MapEntry], suffix: &str) -> usize {
     for m in map {
@@ -1178,7 +1175,7 @@ pub fn find_module_return_addr(map: &[rz_common::MapEntry], suffix: &str) -> usi
     0
 }
 
-/// utils.c `find_module_base`: first mapping of `file` with offset 0.
+/// First mapping of `file` with offset 0.
 pub fn find_module_base(map: &[rz_common::MapEntry], file: &str) -> usize {
     for m in map {
         if m.path.is_empty() || m.offset != 0 {
@@ -1242,7 +1239,7 @@ unsafe fn call_ifunc_resolver(resolver_addr: usize) -> usize {
     }
 }
 
-/// utils.c `find_func_addr`: resolve `func` in `module` via the local file,
+/// Resolve `func` in `module` via the local file,
 /// then translate to the remote address space through the two bases.
 pub fn find_func_addr(
     local_info: &[rz_common::MapEntry],
@@ -1303,7 +1300,6 @@ pub fn find_func_addr(
     addr as u64
 }
 
-/// utils.c `get_addr_mem_region`.
 pub fn get_addr_mem_region(map: &[rz_common::MapEntry], addr: usize) -> String {
     for m in map {
         if m.start <= addr && m.end > addr {
@@ -1320,7 +1316,7 @@ pub fn get_addr_mem_region(map: &[rz_common::MapEntry], addr: usize) -> String {
     "<unknown>".to_string()
 }
 
-/// utils.c `ptrace_poke_u32`: POKEDATA lane write, bypasses RELRO.
+/// POKEDATA lane write, bypasses RELRO.
 /// Live only in the arm32 tango path; exercised by tests on other targets.
 #[cfg_attr(not(target_arch = "arm"), allow(dead_code))]
 pub fn ptrace_poke_u32(pid: i32, addr: u64, value: u32) -> bool {
@@ -1367,7 +1363,7 @@ pub fn ptrace_poke_u32(pid: i32, addr: u64, value: u32) -> bool {
     true
 }
 
-/// utils.c `find_tramp_padding`: find `needed` bytes of zero padding at the
+/// Find `needed` bytes of zero padding at the
 /// tail of an RX region (up to 8 pages), 4-byte aligned.
 /// Live only in the arm32 tango path; exercised by tests on other targets.
 #[cfg_attr(not(target_arch = "arm"), allow(dead_code))]
@@ -1412,7 +1408,7 @@ pub fn find_tramp_padding(pid: i32, rx_start: u32, rx_end: u32, needed: usize) -
     0
 }
 
-// --- Tango linker watch (utils.c tango_wait_linker_ready) ---
+// --- Tango linker watch ---
 
 /// utils.h `struct tango_linker_watch`.
 #[derive(Debug, Default, Clone, Copy)]
@@ -1422,7 +1418,7 @@ pub struct TangoLinkerWatch {
     pub libc_init_resolved: u32,
 }
 
-/// utils.c `find_jump_slot_got_offset_elf32`: locate `symbol`'s JUMP_SLOT GOT
+/// Locate `symbol`'s JUMP_SLOT GOT
 /// offset in an ELF32 file. Returns (min PT_LOAD vaddr, GOT slot offset).
 pub fn find_jump_slot_got_offset_elf32(elf_path: &str, symbol: &str) -> Option<(u32, u32)> {
     let raw = std::fs::read(elf_path).ok()?;
@@ -1447,7 +1443,7 @@ pub fn find_jump_slot_got_offset_elf32(elf_path: &str, symbol: &str) -> Option<(
     None
 }
 
-/// utils.c `tango_wait_linker_ready`: step the tracee with PTRACE_SYSCALL until
+/// Step the tracee with PTRACE_SYSCALL until
 /// the `__libc_init` GOT slot in app_process32 is resolved by the linker.
 pub fn tango_wait_linker_ready(pid: i32, watch: &mut TangoLinkerWatch) -> bool {
     loop {
@@ -1474,7 +1470,7 @@ pub fn tango_wait_linker_ready(pid: i32, watch: &mut TangoLinkerWatch) -> bool {
                     continue;
                 };
 
-                // utils.c:694: ((uint32_t)(uintptr_t)m->start - bias) + got_off
+                // C parity: ((uint32_t)(uintptr_t)m->start - bias) + got_off
                 // is unsigned wrapping arithmetic on the 32-bit values.
                 watch.libc_init_got_slot = (m.start as u32).wrapping_sub(bias).wrapping_add(got_off);
 

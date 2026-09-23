@@ -2,7 +2,7 @@
 //! `rz_module_call_pre/post_app_specialize` (api_version 1-5 dispatch with
 //! the v1/v4 narrowing copies), `rz_module_call_pre/post_server_specialize`.
 //!
-//! Port of loader/src/injector/module.h lines 173-301. NOTE (from the C):
+//! Port of loader/src/injector/module.h. NOTE (from the C):
 //! the original Zygisk API expects all modules to have all specialize
 //! functions; not doing so causes a null pointer dereference in Magisk's
 //! Zygisk — hence LOGW-and-skip instead of a call.
@@ -43,7 +43,7 @@ unsafe fn img_path(m: *const ReZygiskModule) -> &'static str {
     }
 }
 
-/// module.h `rz_module_call_on_load` (lines 173-175).
+/// module.h `rz_module_call_on_load`.
 ///
 /// # Safety
 /// `m` must point at a live table slot with a valid `zygisk_module_entry`.
@@ -58,7 +58,7 @@ pub unsafe fn module_on_load(m: *mut ReZygiskModule, env: *mut c_void) {
     }
 }
 
-/// module.h `rz_module_call_pre_app_specialize` (lines 177-226).
+/// module.h `rz_module_call_pre_app_specialize`.
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid v5 args struct.
@@ -144,7 +144,7 @@ pub unsafe fn module_pre_app_specialize(
     }
 }
 
-/// module.h `rz_module_call_post_app_specialize` (lines 228-277).
+/// module.h `rz_module_call_post_app_specialize`.
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid v5 args struct.
@@ -230,7 +230,7 @@ pub unsafe fn module_post_app_specialize(
     }
 }
 
-/// module.h `rz_module_call_pre_server_specialize` (lines 279-289).
+/// module.h `rz_module_call_pre_server_specialize`.
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid args struct.
@@ -255,7 +255,7 @@ pub unsafe fn module_pre_server_specialize(
     }
 }
 
-/// module.h `rz_module_call_post_server_specialize` (lines 291-301).
+/// module.h `rz_module_call_post_server_specialize`.
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid args struct.

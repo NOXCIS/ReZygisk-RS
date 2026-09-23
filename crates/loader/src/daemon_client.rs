@@ -18,11 +18,10 @@
 //!   `io::Error::last_os_error()`; the macro emits one "msg failed with %d:
 //!   %s" line as two log lines (the established RS convention).
 
-use rz_common::{logd, loge, logi, plog};
+use rz_common::{logi, loge, plog};
 use rz_ipc::{
     read_string, read_u8, read_u32, read_usize, recv_fd, recv_fd_with_payload, write_string,
-    write_u8, write_u32, write_usize, DaemonSocketAction, MountNamespaceState, ProcessFlags,
-    RootImplKind,
+    write_u8, write_u32, write_usize, DaemonSocketAction, MountNamespaceState,
 };
 
 /// daemon.c `LOG_TAG` ("zygisk" in the RS port).
@@ -37,15 +36,6 @@ pub struct ZygiskModules {
     /// Raw SCM_RIGHTS fds backing the `/proc/self/fd/N` paths in `modules`;
     /// kept open until the libs are loaded.
     pub fds: Vec<i32>,
-}
-
-/// daemon.h `struct rezygisk_info`.
-pub struct ReZygiskInfo {
-    pub modules: ZygiskModules,
-    /// daemon.h `enum root_impl`.
-    pub root_impl: RootImplKind,
-    pub pid: i32,
-    pub running: bool,
 }
 
 /// daemon.c `safe_write`: on write failure, log, close and return.
@@ -105,7 +95,7 @@ pub fn rezygiskd_connect(retry: u8) -> i32 {
 
         unsafe { libc::close(fd) };
 
-        // daemon.c 45-49: the log + 1s sleep sit inside `if (retry)` — they
+        // daemon.c: the log + 1s sleep sit inside `if (retry)` — they
         // happen only when another attempt remains, never after the final
         // failure. `attempts` here is the C's post-decrement `retry`.
         if attempts > 0 {
@@ -151,125 +141,6 @@ pub fn rezygiskd_get_process_flags(uid: u32, process: &str) -> u32 {
     unsafe { libc::close(fd) };
 
     res
-}
-
-/// daemon.c `rezygiskd_get_info`: flags/pid + per-module display names read
-/// from each module's `/data/adb/modules/<name>/module.prop` `name=` line.
-pub fn rezygiskd_get_info(info: &mut ReZygiskInfo) {
-    let fd = rezygiskd_connect(1);
-    if fd == -1 {
-        plog!(TAG, "connection to ReZygiskd");
-
-        info.running = false;
-
-        return;
-    }
-
-    info.running = true;
-    info.modules.fds.clear(); // C: info->modules.fds = NULL
-
-    safe_write!(fd, write_u8(fd, DaemonSocketAction::GetInfo as u8), "GetInfo action", ());
-
-    let flags: u32 = safe_read!(fd, read_u32(fd), "info flags", ());
-    info.root_impl = if flags & ProcessFlags::ROOT_IS_APATCH.bits() != 0 {
-        RootImplKind::APatch
-    } else if flags & ProcessFlags::ROOT_IS_KSU.bits() != 0 {
-        RootImplKind::KernelSU
-    } else if flags & ProcessFlags::ROOT_IS_MAGISK.bits() != 0 {
-        RootImplKind::Magisk
-    } else {
-        RootImplKind::None
-    };
-
-    info.pid = safe_read!(fd, read_u32(fd), "pid", ()) as i32;
-
-    let count = safe_read!(fd, read_usize(fd), "modules count", ());
-    if count == 0 {
-        info.modules.modules.clear(); // C: info->modules.modules = NULL
-
-        unsafe { libc::close(fd) };
-
-        return;
-    }
-
-    // C: modules = malloc(count * sizeof(char *)). A failed malloc logs and
-    // bails (info_cleanup); try_reserve_exact reproduces that fail-soft path
-    // instead of aborting the zygote on a daemon-supplied garbage count.
-    if info.modules.modules.try_reserve_exact(count).is_err() {
-        loge!(TAG, "Failed to allocate memory for modules");
-
-        unsafe { libc::close(fd) };
-
-        return;
-    }
-
-    'outer: for _ in 0..count {
-        let module_name = match read_string(fd) {
-            Ok(v) => v,
-            Err(_) => {
-                plog!(TAG, "reading module name");
-
-                info.modules.modules.clear();
-
-                break 'outer; // info_cleanup
-            }
-        };
-
-        let module_path = format!("{}/{}/module.prop", rz_common::PATH_MODULES_DIR, module_name);
-
-        let prop = match std::fs::File::open(&module_path) {
-            Ok(f) => f,
-            Err(_) => {
-                plog!(TAG, "failed to open module prop file {}", module_path);
-
-                info.modules.modules.clear();
-
-                break 'outer;
-            }
-        };
-
-        let mut display: Option<String> = None;
-        let mut reader = std::io::BufReader::new(prop);
-        while let Some(line) = fgets_1024(&mut reader) {
-            let Some(rest) = line.strip_prefix("name=") else {
-                continue;
-            };
-
-            // C: name_len == 0 || line[name_len + 4] != '\n' (the last byte
-            // of the line must be the newline; fgets truncates at 1023 so a
-            // longer line cannot pass either).
-            if rest.is_empty() || !rest.ends_with('\n') {
-                loge!(TAG, "Invalid module name in {}", module_path);
-
-                info.modules.modules.clear();
-
-                break 'outer;
-            }
-
-            display = Some(rest[..rest.len() - 1].to_string());
-
-            break;
-        }
-
-        match display {
-            Some(name) => info.modules.modules.push(name),
-            None => {
-                plog!(TAG, "failed to read module name from {}", module_path);
-
-                info.modules.modules.clear();
-
-                break 'outer;
-            }
-        }
-    }
-
-    unsafe { libc::close(fd) };
-}
-
-/// daemon.c `free_rezygisk_info`. The C does not touch `modules.fds` here
-/// (get_info always NULLs it) — mirrored.
-pub fn free_rezygisk_info(info: &mut ReZygiskInfo) {
-    info.modules.modules.clear();
 }
 
 /// daemon.c `rezygiskd_read_modules`: module count + per-module
@@ -413,25 +284,6 @@ pub fn rezygiskd_get_module_dir(index: usize) -> i32 {
     unsafe { libc::close(fd) };
 
     dirfd
-}
-
-/// daemon.c `rezygiskd_zygote_restart` (including the C's ENOENT wording
-/// quirk: "Failed to connect to connect, ...").
-pub fn rezygiskd_zygote_restart() {
-    let fd = rezygiskd_connect(1);
-    if fd == -1 {
-        if std::io::Error::last_os_error().raw_os_error() == Some(libc::ENOENT) {
-            logd!(TAG, "Failed to connect to connect, file nonexistent (ReZygiskd not running?)");
-        } else {
-            plog!(TAG, "connection to ReZygiskd");
-        }
-
-        return;
-    }
-
-    safe_write!(fd, write_u8(fd, DaemonSocketAction::ZygoteRestart as u8), "ZygoteRestart action", ());
-
-    unsafe { libc::close(fd) };
 }
 
 /// daemon.c `rezygiskd_update_mns`: report the mount namespace state, get
@@ -583,30 +435,4 @@ fn read_fd_c(fd: i32) -> i32 {
             -1
         }
     }
-}
-
-/// `fgets(line, sizeof(line) = 1024, f)` for the module.prop parsing in
-/// rezygiskd_get_info: up to 1023 bytes or until '\n'. None at EOF/error
-/// (fgets returns NULL on both, so the C does not distinguish either).
-fn fgets_1024(reader: &mut impl std::io::BufRead) -> Option<String> {
-    let mut line = Vec::with_capacity(128);
-    let mut byte = [0u8; 1];
-    loop {
-        let n = reader.read(&mut byte).ok()?;
-        if n == 0 {
-            if line.is_empty() {
-                return None;
-            }
-
-            break;
-        }
-
-        line.push(byte[0]);
-
-        if byte[0] == b'\n' || line.len() == 1023 {
-            break;
-        }
-    }
-
-    Some(String::from_utf8_lossy(&line).into_owned())
 }

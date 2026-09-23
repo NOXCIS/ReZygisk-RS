@@ -1,15 +1,17 @@
 //! Port of `loader/src/external/csoloader/src/linker.c` manual-loading
 //! machinery:
 //!
-//! - `_linker_find_library_path` (linker.c:369-419) — the DT_NEEDED search
-//!   path list.
-//! - `phdr_get_load_size` (linker.c:605-620), `_linker_load_one_segment`
-//!   (linker.c:622-686) and `linker_load_library_manually`
-//!   (linker.c:688-797) — the fd-based segment loader.
-//! - `_linker_find_highest_gap_start` (linker.c:183-213) — needed by the
-//!   LP64 reservation path of `linker_load_library_manually`; it sits inside
-//!   linker_core's line range but is ported here so the loader is
-//!   self-contained (linker_core's port may re-home it).
+//! - `_linker_find_library_path` — the DT_NEEDED search path list.
+//! - `phdr_get_load_size`, `_linker_load_one_segment` and
+//!   `linker_load_library_manually` — the fd-based segment loader.
+//! - `_linker_find_highest_gap_start` — needed by the LP64 reservation path
+//!   of `linker_load_library_manually`; it sits inside linker_core's source
+//!   range but is ported here so the loader is self-contained (linker_core's
+//!   port may re-home it).
+//!
+//! Accepted gap, inherited from the C (its `_linker_find_library_path` carries
+//! the same open TODO): the search path list is the hardcoded `SEARCH_PATHS`
+//! below; ld.config.txt namespace paths are intentionally not ported.
 //!
 //! Control flow, log messages and error handling mirror the C line for line;
 //! no behavior changes.
@@ -64,8 +66,8 @@ const PHDR_SIZE: usize = 56;
 #[cfg(target_pointer_width = "32")]
 const PHDR_SIZE: usize = 32;
 
-// linker.c:370-405: the `__LP64__`/`__ANDROID__` search path table. The C
-// appends "/usr/local/lib/" after the compiled-in list, then NULL.
+// The C `__LP64__`/`__ANDROID__` search path table. The C appends
+// "/usr/local/lib/" after the compiled-in list, then NULL.
 #[cfg(all(target_pointer_width = "64", target_os = "android"))]
 const SEARCH_PATHS: &[&str] = &[
     "/apex/com.android.tethering/lib64/",
@@ -101,14 +103,12 @@ const SEARCH_PATHS: &[&str] = &[
 #[cfg(all(target_pointer_width = "32", not(target_os = "android")))]
 const SEARCH_PATHS: &[&str] = &["/lib/", "/usr/lib/", "/lib/i386-linux-gnu/"];
 
-/// `_linker_find_library_path` (linker.c:369-419): try each search path with
+/// linker.c `_linker_find_library_path`: try each search path with
 /// `access(..., F_OK)` on `dir + lib_name`. On success the full path is
 /// written NUL-terminated into `full_path` (`char full_path[PATH_MAX]` in
 /// the C); on failure it is emptied and the C error is logged.
 pub fn linker_find_library_path(lib_name: &str, full_path: &mut [u8]) -> bool {
     let search_paths = SEARCH_PATHS.iter().copied().chain(["/usr/local/lib/"]);
-
-    // TODO: Read ldconfig
 
     for dir in search_paths {
         snprintf_full_path(full_path, dir, lib_name);
@@ -143,18 +143,18 @@ fn snprintf_full_path(full_path: &mut [u8], dir: &str, lib_name: &str) {
     full_path[n] = 0;
 }
 
-/// linker.c `_page_start` (linker.c:175-177): ALIGN_DOWN(addr, system_page_size).
+/// linker.c `_page_start`: ALIGN_DOWN(addr, system_page_size).
 fn page_start(addr: usize) -> usize {
     addr & !page_size().wrapping_sub(1)
 }
 
-/// linker.c `_page_end` (linker.c:179-181):
+/// linker.c `_page_end`:
 /// ALIGN_DOWN(addr + system_page_size - 1, system_page_size).
 fn page_end(addr: usize) -> usize {
     addr.wrapping_add(page_size().wrapping_sub(1)) & !page_size().wrapping_sub(1)
 }
 
-/// `_linker_find_highest_gap_start` (linker.c:183-213): start of the highest
+/// linker.c `_linker_find_highest_gap_start`: start of the highest
 /// 4GiB+ gap in /proc/self/maps that fits `needed_size`.
 ///
 /// INFO: Pick the start of the highest parsed 4GiB+ gap so the mapping stays
@@ -199,7 +199,7 @@ fn find_highest_gap_start(needed_size: usize) -> *mut c_void {
     hint as *mut c_void
 }
 
-/// `phdr_get_load_size` (linker.c:605-620): page-aligned span of the PT_LOAD
+/// linker.c `phdr_get_load_size`: page-aligned span of the PT_LOAD
 /// segments. `min_vaddr` receives the page-aligned lowest vaddr, exactly like
 /// the C out-param (including the C's wrap-around result for an empty phdr
 /// table).
@@ -230,7 +230,7 @@ fn phdr_get_load_size(phdrs: &[(u32, LoadSegment)], min_vaddr: &mut u64) -> usiz
     hi.wrapping_sub(lo) as usize
 }
 
-/// `_linker_load_one_segment` (linker.c:622-686): map one PT_LOAD into the
+/// linker.c `_linker_load_one_segment`: map one PT_LOAD into the
 /// reserved region — file-backed part, anonymous BSS tail, writable-tail
 /// zero-fill, and the W+X mprotect dance. Returns 0 / -1 like the C.
 fn load_one_segment(fd: libc::c_int, seg: &LoadSegment, bias: usize, file_off: libc::off_t) -> i32 {
@@ -336,13 +336,13 @@ fn load_one_segment(fd: libc::c_int, seg: &LoadSegment, bias: usize, file_off: l
     0
 }
 
-/// `linker_load_library_manually` (linker.c:688-797): open the library,
+/// linker.c `linker_load_library_manually`: open the library,
 /// reserve a PROT_NONE region spanning all PT_LOAD segments, map each
 /// segment in and return the mapping start. Fills `out` exactly like the C
 /// `struct loaded_dep`: `map_size`, `is_manual_load`, `load_bias`.
 pub fn linker_load_library_manually(lib_path: &str, out: &mut LoadedDep) -> *mut c_void {
     // C: _linker_internal_init(); — the sysconf(_SC_PAGESIZE) cache and its
-    // "System page size" LOGD live in linker_core (linker.c:356-366); this
+    // "System page size" LOGD live in linker_core; this
     // module consumes page_size().
 
     // C: int fd = open(lib_path, O_RDONLY | O_CLOEXEC);
@@ -534,11 +534,11 @@ fn c_string_upto_nul(path: &str) -> Vec<u8> {
 // ---------------------------------------------------------------------------
 // CSOLOADER_MAKE_LINKER_HOOKS stubs
 // ---------------------------------------------------------------------------
-// The C builds with the macro UNDEFINED (linker.c 1367-1407 are compiled
-// out), so the linker never redirects dlopen/dlsym/dlclose through these.
+// The C builds with the macro undefined (compiled out), so the linker never
+// redirects dlopen/dlsym/dlclose through these.
 // The port keeps the same default: inert bodies that are unreachable while
 // MAKE_LINKER_HOOKS is false; a faithful port of the real custom_* bodies
-// (linker.c 407-505 + backtrace-support.c) is only needed if the build flag
+// (plus backtrace-support.c) is only needed if the build flag
 // is ever enabled.
 
 /// Inert until CSOLOADER_MAKE_LINKER_HOOKS is enabled (see module docs).

@@ -53,7 +53,7 @@ static ART_METHOD_SIZE: AtomicUsize = AtomicUsize::new(0);
 static ENTRY_POINT_OFFSET: AtomicUsize = AtomicUsize::new(0);
 static DATA_OFFSET: AtomicUsize = AtomicUsize::new(0);
 
-/// art_method.h line 89: `4 * 9 + 3 * sizeof(void *)` sanity bound.
+/// art_method.h: `4 * 9 + 3 * sizeof(void *)` sanity bound.
 const MAX_ASSUMED_ART_METHOD_SIZE: usize = 4 * 9 + 3 * size_of::<*mut c_void>();
 
 /// art_method.h `amethod_init`: probe the ART `ArtMethod` layout from the
@@ -231,7 +231,7 @@ pub fn amethod_from_reflected_method(env_ptr: *mut jni::sys::JNIEnv, method: job
     }
 }
 
-/// art_method.h lines 95-96: entrypoint/data offsets sit at the tail of the
+/// art_method.h: entrypoint/data offsets sit at the tail of the
 /// ArtMethod object (unsigned wrapping arithmetic, like the C). Split out so
 /// the offset arithmetic is host-testable.
 #[inline]

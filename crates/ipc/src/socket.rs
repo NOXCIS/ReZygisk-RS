@@ -35,7 +35,7 @@ pub fn connect_abstract(name: &str, retry: u8) -> io::Result<i32> {
     let mut addr: libc::sockaddr_un = unsafe { std::mem::zeroed() };
     let addr_len = set_abstract_name(&mut addr, name)?;
 
-    // daemon.c 31-32: exactly `retry` attempts in total.
+    // daemon.c: exactly `retry` attempts in total.
     let mut attempts = retry as u32;
     while attempts > 0 {
         attempts -= 1;
@@ -59,7 +59,7 @@ pub fn connect_abstract(name: &str, retry: u8) -> io::Result<i32> {
 
         unsafe { libc::close(fd) };
 
-        // daemon.c 45-49: log + 1s sleep only when a retry remains; the
+        // daemon.c: log + 1s sleep only when a retry remains; the
         // final failure returns immediately. (The log lives in the callers,
         // which tag it per binary.)
         if attempts > 0 {

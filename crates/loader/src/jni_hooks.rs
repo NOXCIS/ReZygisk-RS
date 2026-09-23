@@ -1,18 +1,18 @@
 //! Port of hook.c's JNI hooking machinery:
-//! - `hook_jni_methods` (hook.c 381-445) — also the module API entry:
+//! - `hook_jni_methods` — also the module API entry:
 //!   the C installs it as `api->hook_jni_native_methods = hook_jni_methods`
-//!   (module.h:134) from `rezygisk_module_register` (the module_api.rs
+//!   (module.h) from `rezygisk_module_register` (the module_api.rs
 //!   slice), so modules register JNI hooks through this same function.
-//! - `initialize_jni_hook` (hook.c 450-518) — called from the strdup PLT
+//! - `initialize_jni_hook` — called from the strdup PLT
 //!   hook (fork_hooks.rs) when the zygote strdup's
 //!   "com.android.internal.os.ZygoteInit".
-//! - `do_hook_zygote` (jni_hooks.h 422-458) — hooks every entry of
+//! - `do_hook_zygote` (jni_hooks.h) — hooks every entry of
 //!   `crate::jni_tables::JNI_HOOKS` and records the unhook list.
 //!
 //! Sibling contracts:
 //! - `abi::JNINativeMethod { name, signature, fn_ptr }` — jni.h layout.
 //! - `context::{JniHookEntry, jni_hook_list()}` — hook.c `jni_hook_list`
-//!   (replayed by the cleanup path, hook.c 1235-1255).
+//!   (replayed by the cleanup path).
 //! - `crate::jni_tables::JNI_HOOKS: &[(&str, &str, &str, usize)]` =
 //!   (class_name, method_name, signature, wrapper_fn_ptr) — the flat port
 //!   of jni_hooks.h's three per-API-level method tables.
@@ -32,7 +32,7 @@
 //!   from a misbehaving module), the port takes the closest well-defined
 //!   path (lookup failure: fnPtr = NULL) instead of crashing.
 
-use std::ffi::{c_char, c_void, CStr, CString};
+use std::ffi::{c_char, c_void, CString};
 use std::mem::{size_of, transmute};
 use std::os::raw::c_int;
 use std::ptr::NonNull;
@@ -46,17 +46,18 @@ use jni::JNIEnv;
 
 use crate::abi::JNINativeMethod;
 use crate::context;
+use crate::jni_utils::cstr_to_owned;
 
 /// Module-local logcat tag (the whole library logs as "zygisk" in the C).
 const TAG: &str = rz_common::LOG_TAG;
 
-// hook.c file-scope statics (lines 377-379). Use atomics for sound access.
+// hook.c file-scope statics. Use atomics for sound access.
 static CAN_HOOK_JNI: AtomicBool = AtomicBool::new(false);
 static MODIFIER_NATIVE: AtomicI32 = AtomicI32::new(0);
 static MEMBER_GET_MODIFIERS: AtomicPtr<_jmethodID> = AtomicPtr::new(std::ptr::null_mut());
 
 // ---------------------------------------------------------------------------
-// hook.c `hook_jni_methods` (381-445): rewrite a native methods array in
+// hook.c `hook_jni_methods`: rewrite a native methods array in
 // place — fnPtr becomes the original entry point, and the wrappers get
 // registered with RegisterNatives.
 // ---------------------------------------------------------------------------
@@ -79,11 +80,7 @@ pub unsafe extern "C" fn hook_jni_methods(
         let _ = env.exception_clear();
     }
 
-    let class_name = if clz.is_null() {
-        None
-    } else {
-        Some(unsafe { CStr::from_ptr(clz) }.to_string_lossy())
-    };
+    let class_name = cstr_to_owned(clz);
 
     let class = class_name.as_deref().and_then(|name| env.find_class(name).ok());
 
@@ -114,27 +111,19 @@ pub unsafe extern "C" fn hook_jni_methods(
 
         // C: GetMethodID(env, clazz, nm->name, nm->signature). NULL name or
         // signature would crash the C; take the lookup-failure path instead.
-        let name = if nm.name.is_null() {
-            None
-        } else {
-            Some(unsafe { CStr::from_ptr(nm.name) }.to_string_lossy())
-        };
-        let sig = if nm.signature.is_null() {
-            None
-        } else {
-            Some(unsafe { CStr::from_ptr(nm.signature) }.to_string_lossy())
-        };
+        let name = cstr_to_owned(nm.name);
+        let sig = cstr_to_owned(nm.signature);
         let Some((name, sig)) = name.zip(sig) else {
             nm.fn_ptr = std::ptr::null_mut();
             continue;
         };
 
-        let mid = match env.get_method_id(&class, name.as_ref(), sig.as_ref()) {
+        let mid = match env.get_method_id(&class, name.as_str(), sig.as_str()) {
             Ok(mid) => mid.into_raw(),
             Err(_) => {
                 let _ = env.exception_clear();
                 is_static = true;
-                match env.get_static_method_id(&class, name.as_ref(), sig.as_ref()) {
+                match env.get_static_method_id(&class, name.as_str(), sig.as_str()) {
                     Ok(mid) => mid.into_raw(),
                     Err(_) => {
                         let _ = env.exception_clear();
@@ -209,11 +198,8 @@ pub unsafe extern "C" fn hook_jni_methods(
     let native_methods: Vec<jni::NativeMethod> = hooks
         .iter()
         .map(|h| jni::NativeMethod {
-            name: unsafe { CStr::from_ptr(h.name) }.to_string_lossy().into_owned().into(),
-            sig: unsafe { CStr::from_ptr(h.signature) }
-                .to_string_lossy()
-                .into_owned()
-                .into(),
+            name: cstr_to_owned(h.name).unwrap_or_default().into(),
+            sig: cstr_to_owned(h.signature).unwrap_or_default().into(),
             fn_ptr: h.fn_ptr,
         })
         .collect();
@@ -238,8 +224,7 @@ pub unsafe extern "C" fn hook_jni_methods(
 }
 
 // ---------------------------------------------------------------------------
-// hook.c `initialize_jni_hook` (450-518) + jni_hooks.h `do_hook_zygote`
-// (422-458).
+// hook.c `initialize_jni_hook` + jni_hooks.h `do_hook_zygote`
 // ---------------------------------------------------------------------------
 
 pub unsafe fn initialize_jni_hook() {
@@ -267,9 +252,16 @@ pub unsafe fn initialize_jni_hook() {
                 continue;
             }
 
-            // C: /* TODO: Add RTLD_NOLOAD? */
+            // The library is already mapped (it came from maps), so try
+            // RTLD_NOLOAD first: it can only attach to an existing load, never
+            // force a fresh one. Fall back to the C's plain dlopen when the
+            // linker does not know the name (its "TODO: Add RTLD_NOLOAD?").
             let path = CString::new(map.path.as_str()).expect("map path contains NUL");
-            let handle = unsafe { libc::dlopen(path.as_ptr(), libc::RTLD_LAZY) };
+            let mut handle =
+                unsafe { libc::dlopen(path.as_ptr(), libc::RTLD_LAZY | libc::RTLD_NOLOAD) };
+            if handle.is_null() {
+                handle = unsafe { libc::dlopen(path.as_ptr(), libc::RTLD_LAZY) };
+            }
             if handle.is_null() {
                 rz_common::loge!(TAG, "Failed to dlopen {}: {}", map.path, dlerror_str());
                 break;
@@ -373,7 +365,7 @@ pub unsafe fn initialize_jni_hook() {
     }
 }
 
-/// jni_hooks.h `do_hook_zygote` (422-458): hook every method table and
+/// jni_hooks.h `do_hook_zygote`: hook every method table and
 /// record the unhook entries in `context::JNI_HOOK_LIST` (hook.c
 /// `jni_hook_list_add`).
 ///
@@ -500,7 +492,7 @@ unsafe fn hook_zygote_methods_str(
                 fn_ptr: wrapper as *mut c_void,
             });
             // First surviving original per family becomes that family's
-            // `_orig` backup (jni_hooks.h 431/441/451) — every wrapper calls
+            // `_orig` backup (jni_hooks.h) — every wrapper calls
             // through it.
             match name.as_bytes() {
                 b"nativeForkAndSpecialize" => {
@@ -566,9 +558,5 @@ unsafe fn hook_zygote_methods_str(
 /// C's `%s` of a NULL pointer).
 fn dlerror_str() -> String {
     let ptr = unsafe { libc::dlerror() };
-    if ptr.is_null() {
-        String::from("(null)")
-    } else {
-        unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned()
-    }
+    cstr_to_owned(ptr).unwrap_or_else(|| String::from("(null)"))
 }

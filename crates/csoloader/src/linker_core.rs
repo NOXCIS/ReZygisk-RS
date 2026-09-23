@@ -1,12 +1,11 @@
 //! In-process CSOLoader linker core — port of
-//! `loader/src/external/csoloader/src/linker.c` ranges:
-//! 124-368 (registration list, ctor/dtor callers, dep lookup, manual
-//! constructors, GNU RELRO, `_linker_internal_init`), 506-604
-//! (`linker_init`, dependency release, `linker_destroy`, `linker_abandon`),
-//! 1122-1150 (`_linker_unregister_tls_segment` — the tracked tls_index
-//! cleanup half; the module-table half is `crate::tls`),
-//! 1956-2347 (`_linker_is_library_loaded`, `_linker_restore_protections`,
-//! `linker_link`, `linker_deinit`).
+//! `loader/src/external/csoloader/src/linker.c`: the registration list,
+//! ctor/dtor callers, dep lookup, manual constructors, GNU RELRO and
+//! `_linker_internal_init`; `linker_init`, dependency release,
+//! `linker_destroy`, `linker_abandon`; `_linker_unregister_tls_segment`
+//! (the tracked tls_index cleanup half; the module-table half is
+//! `crate::tls`); `_linker_is_library_loaded`, `_linker_restore_protections`,
+//! `linker_link` and `linker_deinit`.
 //!
 //! `Linker`/`LoadedDep` are `#[repr(C)]` mirrors of `include/linker.h` —
 //! rz-loader's `abi::CsoLib` embeds `Linker` by value, so the layout is the
@@ -108,14 +107,14 @@ unsafe impl Send for Linker {}
 unsafe impl Sync for Linker {}
 
 // ---------------------------------------------------------------------------
-// linker.c globals (1-124): page size cache, active linker list, ctor args
+// linker.c globals: page size cache, active linker list, ctor args
 // ---------------------------------------------------------------------------
 
-/// linker.c `system_page_size` + `_linker_internal_init` (118, 356-367).
+/// linker.c `system_page_size` + `_linker_internal_init`.
 static SYSTEM_PAGE_SIZE: std::sync::atomic::AtomicUsize =
     std::sync::atomic::AtomicUsize::new(0);
 
-/// linker.c `MAX_ACTIVE_LINKERS` (120).
+/// linker.c `MAX_ACTIVE_LINKERS`.
 const MAX_ACTIVE_LINKERS: usize = 16;
 
 /// linker.c `g_active_linkers` / `g_active_linker_count` (121-122).
@@ -143,7 +142,7 @@ unsafe impl Sync for ActiveLinkers {}
 static ACTIVE_LINKERS: std::sync::Mutex<ActiveLinkers> =
     std::sync::Mutex::new(ActiveLinkers::new());
 
-/// linker.c `g_argc` / `g_argv` / `g_envp` (217-219). csoloader never
+/// linker.c `g_argc` / `g_argv` / `g_envp`. csoloader never
 /// preinits, so these stay at their initializers.
 const G_ARGC: c_int = 0;
 const G_ARGV: *mut *mut c_char = std::ptr::null_mut();
@@ -158,7 +157,7 @@ const PT_LOAD: u32 = 1;
 /// <limits.h> `PATH_MAX` (linker.c `char lib_full_path[PATH_MAX]`).
 const PATH_MAX: usize = 4096;
 
-/// linker.c `_linker_internal_init` (356-367): the C static page-size cache.
+/// linker.c `_linker_internal_init`: the C static page-size cache.
 fn internal_init() {
     page_size();
 }
@@ -189,7 +188,7 @@ pub fn page_size() -> usize {
     new_system_page_size
 }
 
-/// ALIGN_DOWN(x, system_page_size) (linker.c 110-112).
+/// ALIGN_DOWN(x, system_page_size) (linker.c macro).
 #[inline]
 fn page_start(addr: usize) -> usize {
     addr & !(page_size() - 1)
@@ -201,7 +200,7 @@ fn page_end(addr: usize) -> usize {
     (addr.wrapping_add(page_size() - 1)) & !(page_size() - 1)
 }
 
-/// linker.c `_linker_register` (124-136). The C aborts on registry saturation
+/// linker.c `_linker_register`. The C aborts on registry saturation
 /// in debug builds; here saturation logs and skips registration — the module
 /// keeps running without linker-registry services rather than killing the
 /// zygote. The no-dangling invariant is guarded by the caller's `try_reserve`.
@@ -227,7 +226,7 @@ fn register_linker(linker: &mut Linker) {
     active.count += 1;
 }
 
-/// linker.c `_linker_unregister` (138-147): swap-with-last, then NULL the
+/// linker.c `_linker_unregister`: swap-with-last, then NULL the
 /// vacated slot.
 fn unregister_linker(linker: &mut Linker) {
     let mut guard = ACTIVE_LINKERS.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
@@ -250,7 +249,7 @@ fn unregister_linker(linker: &mut Linker) {
 // constructor / destructor callers (236-270)
 // ---------------------------------------------------------------------------
 
-/// linker.c `_linker_call_constructors` (236-252).
+/// linker.c `_linker_call_constructors`.
 fn call_constructors(img: &CsoElf) {
     let init_func = img.init_func_addr();
     if init_func != 0 {
@@ -275,7 +274,7 @@ fn call_constructors(img: &CsoElf) {
     }
 }
 
-/// linker.c `_linker_call_destructors` (254-270).
+/// linker.c `_linker_call_destructors`.
 fn call_destructors(img: &CsoElf) {
     let (fini_array, fini_array_count) = img.fini_array();
     if fini_array != 0 {
@@ -298,7 +297,7 @@ fn call_destructors(img: &CsoElf) {
     }
 }
 
-/// linker.c `_path_basename` (272-277).
+/// linker.c `_path_basename`.
 fn path_basename(path: &str) -> &str {
     match path.rfind('/') {
         Some(slash) => &path[slash + 1..],
@@ -306,7 +305,7 @@ fn path_basename(path: &str) -> &str {
     }
 }
 
-/// linker.c `_linker_find_dep_index` (279-288): manual deps match on the
+/// linker.c `_linker_find_dep_index`: manual deps match on the
 /// basename of the loaded path (soname).
 fn find_dep_index(linker: &Linker, soname: &str) -> i32 {
     for i in 0..linker.dep_count as usize {
@@ -323,7 +322,7 @@ fn find_dep_index(linker: &Linker, soname: &str) -> i32 {
     -1
 }
 
-/// linker.c `_linker_call_manual_constructors` (289-325): DFS over the
+/// linker.c `_linker_call_manual_constructors`: DFS over the
 /// manual DT_NEEDED graph (`ld-android.so` skipped, like linker_link).
 fn call_manual_constructors(
     linker: &mut Linker,
@@ -368,7 +367,7 @@ fn call_manual_constructors(
     true
 }
 
-/// linker.c `_linker_protect_gnu_relro` (327-354). Returns 0 / -1 like the C.
+/// linker.c `_linker_protect_gnu_relro`. Returns 0 / -1 like the C.
 fn protect_gnu_relro(img: &CsoElf) -> i32 {
     let load_bias = img.load_bias();
 
@@ -415,7 +414,7 @@ fn protect_gnu_relro(img: &CsoElf) -> i32 {
 // linker_init / dependency release / destroy / abandon (506-604)
 // ---------------------------------------------------------------------------
 
-/// linker.c `linker_init` (506-520).
+/// linker.c `linker_init`.
 pub fn linker_init(linker: &mut Linker, img: *mut CsoElf) -> bool {
     internal_init();
 
@@ -435,7 +434,7 @@ pub fn linker_init(linker: &mut Linker, img: *mut CsoElf) -> bool {
     true
 }
 
-/// linker.c `_linker_run_dependency_destructors` (524-530).
+/// linker.c `_linker_run_dependency_destructors`.
 fn run_dependency_destructors(dep: &LoadedDep) {
     if dep.img.is_null() || !dep.is_manual_load {
         return;
@@ -447,7 +446,7 @@ fn run_dependency_destructors(dep: &LoadedDep) {
     unregister_custom_library_for_backtrace(img);
 }
 
-/// linker.c `_linker_unregister_tls_segment` (1122-1150). The TLS-module
+/// linker.c `_linker_unregister_tls_segment`. The TLS-module
 /// unregister lives in `crate::tls::unregister_tls_segment`; this adds the
 /// tracked `tls_index` cleanup the C performs in the same function (the
 /// tracking itself is linker_sym's `_track_tls_index` writing
@@ -461,11 +460,11 @@ fn unregister_tls_segment(img: &CsoElf, indices: &mut TlsIndicesData) {
 
     crate::tls::unregister_tls_segment(img);
 
-    // C: Free all tracked tls_index structures (linker.c 1139-1149).
+    // C: Free all tracked tls_index structures.
     crate::linker_sym::free_tls_indices(indices);
 }
 
-/// linker.c `_linker_release_dependency` (532-546).
+/// linker.c `_linker_release_dependency`.
 fn release_dependency(linker: &mut Linker, index: usize, unload: bool) {
     let dep = &mut linker.dependencies[index];
     if dep.img.is_null() {
@@ -490,7 +489,7 @@ fn release_dependency(linker: &mut Linker, index: usize, unload: bool) {
     }
 }
 
-/// linker.c `_linker_release_dependencies` (548-557).
+/// linker.c `_linker_release_dependencies`.
 fn release_dependencies(linker: &mut Linker, unload: bool, run_destructors: bool) {
     if run_destructors {
         for i in 0..linker.dep_count as usize {
@@ -504,7 +503,7 @@ fn release_dependencies(linker: &mut Linker, unload: bool, run_destructors: bool
     }
 }
 
-/// linker.c `linker_destroy` (559-583). The C derefs `linker->img`
+/// linker.c `linker_destroy`. The C derefs `linker->img`
 /// unconditionally; callers guarantee a valid image (crash-parity).
 pub fn linker_destroy(linker: &mut Linker) {
     let main_base = unsafe { (*linker.img).base() };
@@ -539,7 +538,7 @@ pub fn linker_destroy(linker: &mut Linker) {
     linker.main_map_size = 0;
 }
 
-/// linker.c `linker_abandon` (586-603): release the bookkeeping without
+/// linker.c `linker_abandon`: release the bookkeeping without
 /// unloading the main image. (`csoloader_elf_destroy(NULL)` is a no-op in the
 /// C, so the NULL guards match its behavior.)
 pub fn linker_abandon(linker: &mut Linker) {
@@ -595,7 +594,7 @@ fn elf_create_loaded(name: &str) -> *mut CsoElf {
 // linker_link pipeline (1956-2332)
 // ---------------------------------------------------------------------------
 
-/// linker.c `_linker_is_library_loaded` (1956-1964): `strstr(img->elf,
+/// linker.c `_linker_is_library_loaded`: `strstr(img->elf,
 /// lib_name)` over the main image and every dependency.
 fn is_library_loaded(linker: &Linker, lib_name: &str) -> bool {
     let main_img = unsafe { &*linker.img };
@@ -660,7 +659,7 @@ fn clear_cache(beg: usize, end: usize) {
     let _ = (beg, end);
 }
 
-/// linker.c `_linker_restore_protections` (1966-2034): recompute the
+/// linker.c `_linker_restore_protections`: recompute the
 /// per-page OR of the PT_LOAD flags and mprotect the whole image span back.
 fn restore_protections(image: &CsoElf) {
     // Find the minimum and maximum addresses of all loadable segments.
@@ -750,7 +749,7 @@ fn restore_protections(image: &CsoElf) {
     }
 }
 
-/// linker.c `linker_link` (2045-2332).
+/// linker.c `linker_link`.
 pub fn linker_link(linker: &mut Linker) -> bool {
     // C: struct carray *loaded_libs = carray_create(64); (the carray.c port
     // lives in crate::misc; linker_link only needs these semantics — Rust
@@ -928,7 +927,6 @@ pub fn linker_link(linker: &mut Linker) -> bool {
         }
     }
     dlogd!("Bumping TLS generation for all threads");
-    // C: g_tls_generation++; (linker.c 2218-2219)
     crate::tls::bump_tls_generation();
 
     // C 2221-2247: make non-writable PT_LOADs writable for relocations.
@@ -1096,7 +1094,7 @@ pub fn linker_link(linker: &mut Linker) -> bool {
     true
 }
 
-/// linker.c `linker_deinit` (2334-2348): the TLS teardown half lives in
+/// linker.c `linker_deinit`: the TLS teardown half lives in
 /// crate::tls (`deinit`), already ported.
 pub fn linker_deinit() {
     crate::tls::deinit();

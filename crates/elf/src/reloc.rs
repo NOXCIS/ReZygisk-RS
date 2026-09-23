@@ -88,7 +88,7 @@ pub fn decode_android_packed(table: &[u8], is_rela: bool, is_64: bool) -> crate:
     let (num_relocs, p) = sleb128_decode(table, pos)?;
     pos = p;
 
-    // linker.c 1843-1845: the value right after num_relocs is the ABSOLUTE
+    // linker.c: the value right after num_relocs is the ABSOLUTE
     // initial r_offset — group fields are deltas on top of it. Skipping this
     // desyncs the whole stream on real lld output (the initial offset gets
     // read as the first group's size).

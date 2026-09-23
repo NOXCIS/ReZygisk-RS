@@ -29,8 +29,15 @@
 //! app_specialize wrappers — `rz_app_specialize_pre/post` are called from
 //! within the `rz_native*_pre/post` ports, not from here.
 
+// File-level allows for ABI wrapper code:
+// - non_snake_case / non_upper_case_globals: JNI symbol names are Android ABI contracts
+// - unsafe_op_in_unsafe_fn: every wrapper follows the same init/pre/orig/post/cleanup
+//   pattern; per-op blocks would clutter without adding safety documentation value
+// - function_casts_as_integer: function pointer to usize for JNI hook table entries
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
+#![allow(unsafe_op_in_unsafe_fn)]
+#![allow(function_casts_as_integer)]
 
 use std::ffi::c_void;
 use std::mem::transmute;
@@ -40,10 +47,6 @@ use jni::sys::{jarray, jboolean, jclass, jint, jlong, jobjectArray, jstring};
 
 use crate::abi::{AppSpecializeArgsV5, ServerSpecializeArgsV1};
 use crate::context::{ZygiskArgs, ZygiskContext, MAX_EXEMPTED_FDS, MAX_FD_SIZE};
-
-/// hook.c `LOG_TAG` (the RS port uses "zygisk"). jni_hooks.h itself never
-/// logs; kept per module convention.
-pub const TAG: &str = rz_common::LOG_TAG;
 
 // ---------------------------------------------------------------------------
 // Orig backups (jni_hooks.h `static void *..._orig = NULL`).
@@ -92,7 +95,7 @@ fn new_zygisk_context() -> ZygiskContext {
 }
 
 // ---------------------------------------------------------------------------
-// nativeForkAndSpecialize overloads (jni_hooks.h lines 6-191).
+// nativeForkAndSpecialize overloads (jni_hooks.h).
 // ---------------------------------------------------------------------------
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -821,7 +824,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_grapheneos_u(
 }
 
 // ---------------------------------------------------------------------------
-// nativeSpecializeAppProcess overloads (jni_hooks.h lines 256-380).
+// nativeSpecializeAppProcess overloads (jni_hooks.h).
 // ---------------------------------------------------------------------------
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -1140,7 +1143,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_grapheneos_u(
 }
 
 // ---------------------------------------------------------------------------
-// nativeForkSystemServer overloads (jni_hooks.h lines 382-420).
+// nativeForkSystemServer overloads (jni_hooks.h).
 // ---------------------------------------------------------------------------
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]

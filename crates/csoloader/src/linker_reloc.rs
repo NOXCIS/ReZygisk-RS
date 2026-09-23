@@ -1,6 +1,6 @@
 //! Port of linker.c relocation processing:
-//! - `_linker_process_unified_relocation` (linker.c 1303-1651)
-//! - `_linker_process_relocations` (linker.c 1653-1954)
+//! - `_linker_process_unified_relocation`
+//! - `_linker_process_relocations`
 //!
 //! Processing order matches the C exactly: RELR first, then DT_RELA and
 //! DT_REL, then the Android packed (APS2) table, then DT_JMPREL (PLT).
@@ -48,7 +48,7 @@
 //!     pub map_base: *mut c_void,
 //!     pub map_size: usize,
 //! }
-//! // linker_sym.rs (linker.c 805-869, 1173-1191)
+//! // linker_sym.rs
 //! pub(crate) struct LinkerSymbolInfo {
 //!     pub addr: usize,
 //!     pub img: *mut CsoElf,         // NULL like the C
@@ -59,7 +59,7 @@
 //! pub(crate) fn allocate_tls_index_for_symbol(
 //!     img: &CsoElf, tls_indices: &mut TlsIndicesData, dynsym_img: &CsoElf,
 //!     sym_idx: usize, addend: u64) -> *mut crate::tls::TlsIndex;
-//! // linker_load.rs (linker.c 421-502, CSOLOADER_MAKE_LINKER_HOOKS)
+//! // linker_load.rs (CSOLOADER_MAKE_LINKER_HOOKS)
 //! pub unsafe extern "C" fn custom_dlopen(filename: *const c_char, flags: c_int) -> *mut c_void;
 //! pub unsafe extern "C" fn custom_dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
 //! pub unsafe extern "C" fn custom_dlclose(handle: *mut c_void) -> c_int;
@@ -96,7 +96,7 @@ macro_rules! dloge {
     ($($arg:tt)*) => {{ rz_common::loge!(TAG, $($arg)*); }};
 }
 
-// Dynamic tags consumed by _linker_process_relocations (linker.c 1702-1738).
+// Dynamic tags consumed by _linker_process_relocations.
 // The classic DT_* numbers; the Android/RELR ones come from rz_elf.
 const DT_STRTAB: u64 = 5;
 const DT_SYMTAB: u64 = 6;
@@ -114,27 +114,27 @@ const DT_JMPREL: u64 = 23;
 const PT_DYNAMIC: u32 = 2;
 
 /// e_machine of riscv (elf.h EM_RISCV); the C compiles a riscv R_GENERIC_*
-/// branch too (linker.c 68-78) which rz_elf's classifier does not cover.
+/// branch too, which rz_elf's classifier does not cover.
 const EM_RISCV: u16 = 243;
 
-/// linker.c `CSOLOADER_MAKE_LINKER_HOOKS` (1367-1407). The C build leaves
+/// linker.c `CSOLOADER_MAKE_LINKER_HOOKS`. The C build leaves
 /// the macro undefined (csoloader/CMakeLists.txt only adds CSOLOADER_DEBUG
 /// for Debug), so the dl-family hooks are compiled out — mirrored here.
 /// Flip to `true` only if the Rust build adopts the macro.
-/// `__tls_get_addr` is hooked ALWAYS (linker.c 1409-1419), regardless.
+/// `__tls_get_addr` is hooked ALWAYS, regardless.
 const MAKE_LINKER_HOOKS: bool = false;
 
-// Relocation group flags (linker.c 1853-1856 / AOSP packed format).
+// Relocation group flags (AOSP packed format).
 const RELOCATION_GROUPED_BY_INFO_FLAG: u64 = 1;
 const RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG: u64 = 2;
 const RELOCATION_GROUPED_BY_ADDEND_FLAG: u64 = 4;
 const RELOCATION_GROUP_HAS_ADDEND_FLAG: u64 = 8;
 
-/// linker.c `_linker_unified_r` (1266-1271).
+/// linker.c `_linker_unified_r`.
 ///
 /// `addend` is the raw table value: for RELA entries the explicit addend
 /// (two's-complement bits of `r_addend`), for REL entries 0 (the addend is
-/// read from the target word at apply time, linker.c 1818 / 1432).
+/// read from the target word at apply time).
 #[derive(Debug, Clone, Copy)]
 struct UnifiedReloc {
     sym_idx: u32,
@@ -143,7 +143,7 @@ struct UnifiedReloc {
     addend: u64,
 }
 
-/// ELF64/ELF32_R_SYM and _R_TYPE (linker.c 98-104). The C decodes `r_info`
+/// ELF64/ELF32_R_SYM and _R_TYPE. The C decodes `r_info`
 /// into `ElfW(Addr)` first, so the 32-bit split truncates to 32 bits.
 fn split_r_info(r_info: u64, is_64: bool) -> (u32, u32) {
     if is_64 {
@@ -154,7 +154,7 @@ fn split_r_info(r_info: u64, is_64: bool) -> (u32, u32) {
     }
 }
 
-/// linker.c per-arch R_GENERIC_* mapping (33-90). The C relies on the host
+/// linker.c per-arch R_GENERIC_* mapping. The C relies on the host
 /// arch matching the loaded image (compile-time switch); in-process loading
 /// guarantees that, and classifying by the image's own `e_machine` keeps the
 /// crate host-testable like the rest of rz_elf.
@@ -162,7 +162,7 @@ fn classify_reloc(img: &CsoElf, rtype: u32) -> GenericReloc {
     if img.machine() == EM_RISCV {
         return classify_riscv(rtype);
     }
-    // linker.c 1334-1336/1440-1446 handle R_X86_64_32 (10) in the x86_64
+    // linker.c handles R_X86_64_32 (10) in the x86_64
     // branch; rz_elf's x86_64 classifier table omits it (its GenericReloc
     // has the variant but no mapping), so map it here instead of LOGF.
     if img.machine() == rz_elf::arch::EM_X86_64 && rtype == 10 {
@@ -171,7 +171,7 @@ fn classify_reloc(img: &CsoElf, rtype: u32) -> GenericReloc {
     img.classify(rtype)
 }
 
-/// linker.c 68-78 riscv branch. NOTE: the C maps GLOB_DAT and ABSOLUTE to
+/// linker.c riscv branch. NOTE: the C maps GLOB_DAT and ABSOLUTE to
 /// the same number (R_RISCV_64), producing a duplicate case label that would
 /// not compile; the ABSOLUTE semantics used here are identical for the
 /// RELA-only riscv ABI.
@@ -241,7 +241,7 @@ fn read_rela_entry(entry: &[u8], is_64: bool) -> (u64, u64, u64) {
     }
 }
 
-/// One ElfW(Rel) entry: (r_offset, r_info). No addend (linker.c 1818).
+/// One ElfW(Rel) entry: (r_offset, r_info). No addend.
 fn read_rel_entry(entry: &[u8], is_64: bool) -> (u64, u64) {
     if is_64 {
         let offset = u64::from_le_bytes(entry[0..8].try_into().unwrap());
@@ -304,11 +304,11 @@ fn decode_relr_entries(entries: &[u8], word_size: usize) -> Vec<(u64, bool)> {
     out
 }
 
-/// C-exact Android packed (APS2) walk (linker.c 1835-1912), including the
+/// C-exact Android packed (APS2) walk, including the
 /// group log lines (the per-reloc r_info log uses `j`, the group logs `i`,
 /// exactly like the C). `apply` consumes each decoded relocation; production
 /// applies it, tests collect entries. The caller verifies the APS2 magic and
-/// logs "Processing Android ..." first (linker.c 1827-1833).
+/// logs "Processing Android ..." first.
 fn walk_android_packed(
     table: &[u8],
     is_rela: bool,
@@ -320,8 +320,8 @@ fn walk_android_packed(
 
     let num_relocs = decoder.decode_or_zero();
 
-    // The first post-count value is the ABSOLUTE initial r_offset
-    // (linker.c 1843-1845); group offsets are deltas on top of it.
+    // The first post-count value is the ABSOLUTE initial r_offset;
+    // group offsets are deltas on top of it.
     let mut unified = UnifiedReloc {
         sym_idx: 0,
         rtype: 0,
@@ -419,7 +419,7 @@ fn walk_android_packed(
     true
 }
 
-/// linker.c `_linker_process_unified_relocation` (1303-1651).
+/// linker.c `_linker_process_unified_relocation`.
 ///
 /// Writes use unaligned accesses (the C dereferences `ElfW(Addr) *` which is
 /// UB for unaligned offsets; the values written are identical).
@@ -453,7 +453,7 @@ fn linker_process_unified_relocation(
             let resolver = load_bias.wrapping_add(if is_rela {
                 r.addend as usize
             } else {
-                // SAFETY: target_addr points into the mapped image (linker.c
+                // SAFETY: target_addr points into the mapped image (the C
                 // reads the embedded addend the same way).
                 unsafe { target_addr.read_unaligned() }
             });
@@ -977,7 +977,7 @@ fn linker_process_unified_relocation(
     true
 }
 
-/// linker.c `_linker_process_relocations` (1653-1954).
+/// linker.c `_linker_process_relocations`.
 pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> bool {
     let img_ptr = dep.img;
     let img = unsafe { &*img_ptr };
@@ -993,7 +993,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
     let is_64 = elf.is_64();
     let word_size = if is_64 { 8 } else { 4 };
 
-    // linker.c 1653-1668: bail out early only when there is no PT_DYNAMIC
+    // linker.c: bail out early only when there is no PT_DYNAMIC
     // segment at all. A PT_DYNAMIC that is present but empty falls through
     // to the DT_SYMTAB error below (the C fails closed).
     if !elf
@@ -1005,7 +1005,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         return true;
     }
 
-    // Dynamic scan (linker.c 1702-1738); only the DT_ANDROID_RELRENT check
+    // Dynamic scan; only the DT_ANDROID_RELRENT check
     // has an observable effect beyond collecting the table locations.
     if let Some(rent) = elf.dynamic_find(DT_ANDROID_RELRENT)
         && rent != word_size as u64
@@ -1018,7 +1018,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         return false;
     }
 
-    // 1. RELR first (linker.c 1746-1785): *target += load_bias. The C maps
+    // 1. RELR first: *target += load_bias. The C maps
     // both DT_RELR and DT_ANDROID_RELR onto one variable (last tag wins); lld
     // emits only one of them, so prefer-DT_RELR matches every real input.
     let relr_vaddr = elf.dynamic_find(DT_RELR).or_else(|| elf.dynamic_find(DT_ANDROID_RELR));
@@ -1045,7 +1045,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         }
     }
 
-    // 2. DT_RELA then DT_REL (linker.c 1787-1823) — both processed when both
+    // 2. DT_RELA then DT_REL — both processed when both
     // present, exactly like the C (no else between them).
     if let Some(rela_vaddr) = elf.dynamic_find(DT_RELA) {
         dlogd!("Processing RELA relocations for {}", path);
@@ -1105,7 +1105,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         }
     }
 
-    // 3. Android packed relocations (linker.c 1825-1914). NOTE: the C maps
+    // 3. Android packed relocations. NOTE: the C maps
     // DT_ANDROID_RELA and DT_ANDROID_REL onto one variable and DT_ANDROID_REL
     // does NOT reset is_rela; lld never emits both, so prefer-RELA matches
     // every real input.
@@ -1143,7 +1143,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         }
     }
 
-    // 4. PLT relocations (linker.c 1916-1951).
+    // 4. PLT relocations.
     if let Some(jmprel_vaddr) = elf.dynamic_find(DT_JMPREL) {
         let jmprel_sz = elf.dynamic_find(DT_PLTRELSZ).unwrap_or(0);
         let is_rela = elf.dynamic_find(DT_PLTREL) == Some(DT_RELA);
@@ -1292,7 +1292,7 @@ mod tests {
 
     /// The audit's diverging case, kept as this walker's own regression: the
     /// C decodes the first post-count value as an ABSOLUTE initial r_offset
-    /// (linker.c 1843-1845) and every group field is a delta on top of it.
+    /// and every group field is a delta on top of it.
     /// lld emits 0 there; non-lld packers emit nonzero and the offsets below
     /// prove the accumulator starts from the absolute value.
     #[test]
@@ -1323,7 +1323,7 @@ mod tests {
     }
 
     /// GROUPED_BY_ADDEND accumulates across groups: the C never resets
-    /// r_addend unless the flags demand it (linker.c 1880-1883).
+    /// r_addend unless the flags demand it.
     #[test]
     fn android_packed_grouped_addend_accumulates_across_groups() {
         let flags = RELOCATION_GROUPED_BY_INFO_FLAG
@@ -1390,8 +1390,7 @@ mod tests {
     }
 
     /// RELR: even word = direct offset, odd word = bitmap over the next
-    /// `bits_per_entry - 1` words; base_offset advances identically to the C
-    /// (linker.c 1746-1785).
+    /// `bits_per_entry - 1` words; base_offset advances identically to the C.
     #[test]
     fn relr_walk_matches_c_structure() {
         let words = [0x108u64, 7, 0x300];

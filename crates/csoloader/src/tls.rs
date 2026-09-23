@@ -1,4 +1,4 @@
-//! TLS support, ported from linker.c lines 972–1264: module registration,
+//! TLS support, ported from linker.c: module registration,
 //! per-thread blocks, `__tls_get_addr` (always hooked, unlike the
 //! `CSOLOADER_MAKE_LINKER_HOOKS` family), the TLSDESC dynamic resolver and
 //! the tpidr helper.
@@ -200,7 +200,7 @@ fn log_degraded(what: TlsDegraded) {
     }
 }
 
-/// linker.c `_linker_destroy_thread_tls` (96-101): free the per-module
+/// linker.c `_linker_destroy_thread_tls`: free the per-module
 /// blocks (arena-carved fallback slices are cleared, not freed), then the
 /// struct itself.
 unsafe fn destroy_thread_tls(ttls: *mut ThreadTls) {
@@ -320,7 +320,7 @@ unsafe fn allocate_module_tls(mod_: &TlsModule) -> *mut u8 {
     if page > 0 && align > page {
         align = page;
     }
-    // The C (linker.c 1024-1045) has no power-of-two fallback: a non-power
+    // The C has no power-of-two fallback: a non-power
     // of-two p_align makes posix_memalign fail with EINVAL and the module
     // gets no TLS block. Match that instead of silently re-aligning.
 
@@ -372,7 +372,6 @@ pub fn register_tls_segment(img: &CsoElf) -> bool {
         memsz: seg.memsz as usize,
         filesz: seg.filesz as usize,
         init_image: img.runtime(seg.vaddr),
-        // C: `mod->owner = img;` (linker.c 1104-1113)
         owner: img as *const CsoElf as usize,
     };
 
@@ -397,7 +396,7 @@ pub fn unregister_tls_segment(img: &CsoElf) {
         return;
     }
 
-    // C (linker.c 1127-1135): only clear the slot when this image still owns
+    // C: only clear the slot when this image still owns
     // it — the slot may have been re-registered by another image — and only
     // then reset the stale caller's tls_mod_id.
     if let Ok(mut modules) = TLS_MODULES.lock()
@@ -411,7 +410,7 @@ pub fn unregister_tls_segment(img: &CsoElf) {
     }
 }
 
-/// linker.c 2218-2219: the extra `g_tls_generation++` after the per-module
+/// linker.c `linker_link`: the extra `g_tls_generation++` after the per-module
 /// registrations in `linker_link`.
 pub(crate) fn bump_tls_generation() {
     TLS_GENERATION.fetch_add(1, std::sync::atomic::Ordering::SeqCst);

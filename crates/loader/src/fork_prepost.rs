@@ -1,8 +1,5 @@
 //! hook.c `sigmask` helper + `rz_fork_pre` / `rz_fork_post`.
 //!
-//! PORT TASK: hook.c lines 814-823 (sigmask), 824-860 (rz_fork_pre) and
-//! 929-933 (rz_fork_post).
-//!
 //! C-parity notes:
 //! - The C forks via `old_fork()` (the PLT backup, bypassing the `fork`
 //!   hook). The Rust call goes through `libc::fork()`; libzygisk.so's own
@@ -16,9 +13,8 @@
 //!   `nativeFork*`/`app_specialize` wrappers, not to this slice.
 //! - `rz_fork_post` does NOT call `rz_cleanup` — the C only unblocks
 //!   SIGCHLD and clears `g_ctx` here.
-//! - `parse_int` is a local port of common/misc.c lines 20-33 (it is also
-//!   needed by fd_sanitize.rs); misc_port.rs is the intended home when that
-//!   slice gets ported.
+//! - `parse_int` is a local port of common/misc.c (misc_port.rs carries
+//!   the same port for fd_sanitize.rs).
 
 use libc::c_char;
 
@@ -46,7 +42,7 @@ fn parse_int(str: *const c_char) -> i32 {
     val
 }
 
-/// hook.c `sigmask` (814-823): sigprocmask over a single signum.
+/// hook.c `sigmask`: sigprocmask over a single signum.
 pub fn sigmask(how: i32, signum: i32) -> i32 {
     let mut set: libc::sigset_t = unsafe { std::mem::zeroed() };
     unsafe {
@@ -56,7 +52,7 @@ pub fn sigmask(how: i32, signum: i32) -> i32 {
     }
 }
 
-/// hook.c `rz_fork_pre` (824-860). Do our own fork before loading any 3rd
+/// hook.c `rz_fork_pre`. Do our own fork before loading any 3rd
 /// party code: block SIGCHLD, fork, and in the child record all currently
 /// open fds into `allowed_fds` so the later sanitization keeps them.
 pub fn fork_pre(ctx: &mut ZygiskContext) {
@@ -103,7 +99,7 @@ pub fn fork_pre(ctx: &mut ZygiskContext) {
     unsafe { libc::closedir(dir) };
 }
 
-/// hook.c `rz_fork_post` (929-933): unblock SIGCHLD and drop the current
+/// hook.c `rz_fork_post`: unblock SIGCHLD and drop the current
 /// context (`g_ctx = NULL`). The C marks `ctx` unused here too.
 pub fn fork_post(_ctx: &mut ZygiskContext) {
     sigmask(libc::SIG_UNBLOCK, libc::SIGCHLD);

@@ -6,8 +6,8 @@
 //! stripped Android image):
 //!
 //! - PLTI chain `dynsym_index_by_name`
-//!   (`external/plti/src/elf_util.c` elfutil_gnu_lookup 422-471 →
-//!    elfutil_elf_lookup 473-495 → elfutil_linear_lookup 496-520)
+//!   (`external/plti/src/elf_util.c` elfutil_gnu_lookup →
+//!    elfutil_elf_lookup → elfutil_linear_lookup)
 //! - csoloader chain `symbol_by_name` / `symbol_by_name_ex`
 //!   (`external/csoloader/src/elf_util.c` GnuLookup → ElfLookup →
 //!    LinearLookup + is_dynamic_symbol_visible)
@@ -21,7 +21,7 @@ use rz_elf::{
     ElfImage, STB_LOCAL, STT_FUNC, STT_NOTYPE, STV_HIDDEN, SHN_UNDEF,
 };
 
-// --- in-test hash implementations (elf_util.c: gnu_hash 231-239, elf_hash 219-229)
+// --- in-test hash implementations (elf_util.c gnu_hash / elf_hash)
 
 fn gnu_hash_c(name: &str) -> u32 {
     let mut h: u32 = 5381;
@@ -337,7 +337,7 @@ fn sysv_fixture() -> Fixture {
     build(&syms, &sysv_chain, &[], false)
 }
 
-// --- PLTI chain (external/plti/src/elf_util.c 422-520) ---------------------
+// --- PLTI chain (external/plti/src/elf_util.c) -----------------------------
 
 #[test]
 fn plti_chain_gnu_present_matches_c() {
@@ -350,7 +350,7 @@ fn plti_chain_gnu_present_matches_c() {
     // to the PLTI chain (elfutil_gnu_lookup has no bind/vis check).
     assert_eq!(img.dynsym_index_by_name("local_hidden"), Some(6));
     // No SHN_UNDEF filter either: imports referenced by relocations must
-    // resolve (elf_util.c 422-471 compares raw names).
+    // resolve (elf_util.c compares raw names).
     assert_eq!(img.dynsym_index_by_name("undefsym"), Some(3));
     // Below symoffset and outside the GNU table: found by the linear scan
     // over [1, symoffset).

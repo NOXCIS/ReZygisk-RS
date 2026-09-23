@@ -1,15 +1,15 @@
-//! hook.c misc helpers: `update_mnt_ns` (hook.c lines 191-225) plus the gap
-//! audit of loader/src/common/misc.c (392 lines) against rz_common / rz-ptracer.
+//! hook.c misc helpers: `update_mnt_ns` plus the gap
+//! audit of loader/src/common/misc.c against rz_common / rz-ptracer.
 //!
-//! # Gap audit of common/misc.c (392 lines)
+//! # Gap audit of common/misc.c
 //!
-//! | misc.c symbol (lines)            | status            | existing Rust impl |
+//! | misc.c symbol                    | status            | existing Rust impl |
 //! |----------------------------------|-------------------|--------------------|
-//! | `parse_int` (20-33)              | GAP — ported here | [`parse_int`] below |
-//! | `parse_kversion` (35-51)         | already available | `rz_common::KernelVersion::{parse,current}` — `crates/common/src/kversion.rs` |
-//! | `parse_maps_safe` (58-262)       | already available | `rz_common::parse_maps_safe` — `crates/common/src/maps.rs` |
-//! | `parse_maps` (270-383)           | already available | `rz_common::parse_maps` — `crates/common/src/maps.rs` |
-//! | `free_maps` (385-392)            | N/A               | ownership: `Vec<MapEntry>` `drop` (no port needed) |
+//! | `parse_int`                      | GAP — ported here | [`parse_int`] below |
+//! | `parse_kversion`                 | already available | `rz_common::KernelVersion::{parse,current}` — `crates/common/src/kversion.rs` |
+//! | `parse_maps_safe`                | already available | `rz_common::parse_maps_safe` — `crates/common/src/maps.rs` |
+//! | `parse_maps`                     | already available | `rz_common::parse_maps` — `crates/common/src/maps.rs` |
+//! | `free_maps`                      | N/A               | ownership: `Vec<MapEntry>` `drop` (no port needed) |
 //! | `IS_ISOLATED_SERVICE` (misc.h)   | already available | `rz_common::is_isolated_service` — `crates/common/src/lib.rs` |
 //! | `LP_SELECT` (misc.h)             | already available | `rz_common::lp_select!` — `crates/common/src/lib.rs` |
 //! | `struct kernel_version` (misc.h) | already available | `rz_common::KernelVersion` — `crates/common/src/kversion.rs` |
@@ -26,9 +26,9 @@
 //! `dev_major`, `dev_minor`, `inode`, `path`. The C `struct map_entry` stores
 //! `dev` as `makedev(major, minor)` (`dev_t`) instead of the raw pair. The
 //! loader call sites are satisfied:
-//! - `plt_commit.rs` (C `api_plt_hook_commit`, hook.c:553-613) needs
+//! - `plt_commit.rs` (C `api_plt_hook_commit`) needs
 //!   `offset == 0`, `is_private`, `perms & PROT_READ` and `path` — all present.
-//! - `plt_commit_v4.rs` (C `api_plt_hook_register_v4`, hook.c:615-681) compares
+//! - `plt_commit_v4.rs` (C `api_plt_hook_register_v4`) compares
 //!   `dev`/`inode` per entry against the module-supplied pair; the raw
 //!   `dev_major`+`dev_minor` pair is recombined there with the full bionic
 //!   `makedev` formula (sys/sysmacros.h), including the LP32 `dev_t`
@@ -61,7 +61,7 @@
 //! - `update_mnt_ns` depends on the daemon_client sibling
 //!   `crate::daemon_client::rezygiskd_update_mns(state, buf: &mut [u8],
 //!   buf_size: usize, ns_fd_out: &mut i32) -> bool` (C
-//!   `rezygiskd_update_mns`, daemon.c:403-434) filling `buf` with the
+//!   `rezygiskd_update_mns`) filling `buf` with the
 //!   `snprintf`'d `"/proc/%u/fd/%u"` ns path — always NUL-terminated. The
 //!   defensive no-NUL failure below cannot trigger against a C-parity sibling.
 //!   `ns_fd_out` is an RS extension: the daemon also attaches the namespace
@@ -84,7 +84,7 @@ use rz_common::{logd, loge, plog};
 /// `"zygisk"`).
 pub const TAG: &str = rz_common::LOG_TAG;
 
-/// misc.c `parse_int` (lines 20-33): decimal parse with C-parity semantics.
+/// misc.c `parse_int`: decimal parse with C-parity semantics.
 ///
 /// - Empty input parses to 0 (the C loop body never runs).
 /// - Any non-digit character returns -1.
@@ -102,7 +102,7 @@ pub fn parse_int(s: &str) -> i32 {
     val
 }
 
-/// hook.c `update_mnt_ns` (lines 191-225): ask ReZygiskd for the target mount
+/// hook.c `update_mnt_ns`: ask ReZygiskd for the target mount
 /// namespace, optionally only `dry_run` it, then `open`/`setns(CLONE_NEWNS)`/
 /// `close` with the exact C messages and clean/mounted string mapping.
 ///

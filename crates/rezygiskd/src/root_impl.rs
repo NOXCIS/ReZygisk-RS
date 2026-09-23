@@ -87,7 +87,6 @@ fn get_impl() -> RootImpl {
     }
 }
 
-/// utils.c `stringify_root_impl_name`.
 pub fn stringify_root_impl_name(impl_: RootImpl) -> &'static str {
     match impl_.kind {
         RootImplKind::KernelSU => {

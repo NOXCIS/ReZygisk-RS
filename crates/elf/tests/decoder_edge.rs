@@ -3,9 +3,9 @@
 //! Expected values are derived from the C reference:
 //! - sleb128: loader/src/external/csoloader/src/sleb128.c (also duplicated in
 //!   external/plti/src/elf_util.c)
-//! - APS2: loader/src/external/csoloader/src/linker.c 1825-1913
+//! - APS2: loader/src/external/csoloader/src/linker.c
 //!   (`_linker_process_relocations` Android packed handling)
-//! - RELR: loader/src/external/csoloader/src/linker.c 1740-1790
+//! - RELR: loader/src/external/csoloader/src/linker.c
 //!
 //! These complement the in-crate unit tests (src/tests.rs) which already
 //! cover the absolute-initial-offset consumption, zero-group and
@@ -14,7 +14,7 @@
 use rz_elf::{decode_android_packed, decode_relr, sleb128_decode, Reloc};
 
 // Android packed-relocation group flags (lld/reloc.h RELOCATION_GROUP*_FLAG;
-// linker.c 1847-1904 interprets these exact bits). The rz-elf reloc module is
+// linker.c interprets these exact bits). The rz-elf reloc module is
 // private, so the format constants are spelled out here.
 const RELOCATION_GROUPED_BY_INFO_FLAG: i64 = 1;
 const RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG: i64 = 2;
@@ -63,7 +63,7 @@ fn rel(offset: u64, sym_idx: u32, rtype: u32, addend: u64, has_addend: bool) -> 
 }
 
 // ---------------------------------------------------------------------------
-// SLEB128 (sleb128.c 20-40)
+// SLEB128 (sleb128.c)
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -115,14 +115,14 @@ fn sleb128_edges_match_sleb128_c() {
 }
 
 // ---------------------------------------------------------------------------
-// APS2 (linker.c 1825-1913)
+// APS2 (linker.c)
 // ---------------------------------------------------------------------------
 
 #[test]
 fn aps2_32bit_r_info_split_and_absolute_initial_offset() {
     // ELF32 layout (linker.c: ELF_R_SYM(info) = info >> 8 for 32-bit): the
     // same encoded r_info splits differently than on 64-bit. Initial offset
-    // is ABSOLUTE (linker.c 1843-1845: unified_r.r_offset = next sleb).
+    // is ABSOLUTE (unified_r.r_offset = next sleb, per linker.c).
     let mut t = b"APS2".to_vec();
     t.extend(sleb(2)); // num_relocs
     t.extend(sleb(0x100)); // absolute initial r_offset
@@ -154,7 +154,7 @@ fn aps2_32bit_r_info_split_and_absolute_initial_offset() {
 #[test]
 fn aps2_negative_deltas() {
     // Offset deltas are signed sleb values added to the running absolute
-    // offset (linker.c 1893: unified_r.r_offset += sleb128_decode()).
+    // offset (unified_r.r_offset += sleb128_decode(), per linker.c).
     let mut t = b"APS2".to_vec();
     t.extend(sleb(3));
     t.extend(sleb(0x2000));
@@ -180,7 +180,7 @@ fn aps2_negative_deltas() {
 #[test]
 fn aps2_offset_wrap_around() {
     // The C accumulates into ElfW(Addr) (unsigned) — overflow wraps, it does
-    // not saturate or fail (linker.c 1890-1894).
+    // not saturate or fail.
     let mut t = b"APS2".to_vec();
     t.extend(sleb(3));
     t.extend(sleb(i64::MAX - 2)); // initial offset near u64::MAX
@@ -207,8 +207,8 @@ fn aps2_offset_wrap_around() {
 
 #[test]
 fn aps2_grouped_info_with_group_offset_delta() {
-    // flags = GROUPED_BY_INFO | GROUPED_BY_OFFSET_DELTA (linker.c 1858-1869,
-    // 1890-1891): one r_info and one delta per group, applied to every reloc
+    // flags = GROUPED_BY_INFO | GROUPED_BY_OFFSET_DELTA (linker.c): one
+    // r_info and one delta per group, applied to every reloc
     // in that group; sym/type carry into later groups only when a new r_info
     // is present.
     let mut t = b"APS2".to_vec();
@@ -238,7 +238,7 @@ fn aps2_grouped_info_with_group_offset_delta() {
 
 #[test]
 fn aps2_addend_accumulation_across_groups() {
-    // linker.c 1872-1904 addend state machine:
+    // linker.c addend state machine:
     // - HAS_ADDEND|GROUPED_BY_ADDEND: r_addend += one group delta; r_addend is
     //   NOT reset between groups, so groups accumulate.
     // - HAS_ADDEND alone: per-reloc deltas accumulate onto the running
@@ -294,7 +294,7 @@ fn aps2_addend_accumulation_across_groups() {
 
 #[test]
 fn aps2_error_paths() {
-    // Bad magic (linker.c 1829-1833: returns false on non-"APS2").
+    // Bad magic (linker.c returns false on non-"APS2").
     assert!(aps2(b"XPS2", true, true).is_err());
     // Truncated: num_relocs present but the stream ends mid-group.
     let mut t = b"APS2".to_vec();
@@ -308,7 +308,7 @@ fn aps2_error_paths() {
     // Truncated to just the magic: even num_relocs is missing.
     assert!(aps2(b"APS2", false, true).is_err());
     // Zero-sized group: the C `i += group_size` would loop forever
-    // (linker.c 1847-1909); the Rust port rejects the malformed stream.
+    // (infinite loop in the C); the Rust port rejects the malformed stream.
     let mut t = b"APS2".to_vec();
     t.extend(sleb(1));
     t.extend(sleb(0));
@@ -316,7 +316,7 @@ fn aps2_error_paths() {
     t.extend(sleb(0));
     assert!(aps2(&t, false, true).is_err());
     // REL table with HAS_ADDEND: the C LOGFs "REL relocations should not
-    // have addends" (linker.c 1885-1886); the Rust port errors.
+    // have addends"; the Rust port errors.
     let mut t = b"APS2".to_vec();
     t.extend(sleb(1));
     t.extend(sleb(0));
@@ -328,7 +328,7 @@ fn aps2_error_paths() {
 }
 
 // ---------------------------------------------------------------------------
-// RELR (linker.c 1740-1790)
+// RELR (linker.c)
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -352,8 +352,8 @@ fn relr_64_walker_matches_linker_c() {
 #[test]
 fn relr_64_top_entry_bit_is_last_bitmap_bit() {
     // Entry with the marker and bit 63 set: after `entry >> 1` that top bit
-    // becomes bitmap bit 62, which the C walker (linker.c 1774,
-    // `bit < bits_per_entry - 1`) DOES process as the last relocation bit —
+    // becomes bitmap bit 62, which the C walker (`bit < bits_per_entry - 1`)
+    // DOES process as the last relocation bit —
     // it is not ignored. Relocation lands at base + 62 * 8.
     let entry: u64 = 1 | (1 << 63);
     let entries: Vec<u8> = entry.to_le_bytes().to_vec();

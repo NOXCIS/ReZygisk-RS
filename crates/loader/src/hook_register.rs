@@ -28,7 +28,7 @@ macro_rules! dloge {
     ($($arg:tt)*) => {{ rz_common::loge!(crate::hook_register::TAG, $($arg)*); }};
 }
 
-/// hook.c `hook_register` (1291-1301): forward one PLT hook to PLTI.
+/// hook.c `hook_register`: forward one PLT hook to PLTI.
 ///
 /// `backup` is the address of the old_* static (NULL when the caller does
 /// not keep a backup); plti writes it only while the slot is still 0,
@@ -63,7 +63,7 @@ pub unsafe fn hook_register(
     true
 }
 
-/// hook.c `hook_unregister` (1303-1313): remove one PLT hook from PLTI.
+/// hook.c `hook_unregister`: remove one PLT hook from PLTI.
 ///
 /// The C `plti_remove_hook` reads the original callback out of `*backup`
 /// and rejects NULL (logged by the plti crate); a NULL `backup` slot
@@ -97,7 +97,7 @@ pub unsafe fn hook_unregister(
     true
 }
 
-/// hook.c `hook_functions` (1327-1336): init PLTI, add libandroid_runtime.so
+/// hook.c `hook_functions`: init PLTI, add libandroid_runtime.so
 /// and register the four core loader hooks.
 pub fn hook_functions() -> u32 {
     // Status bitmask — 0 = all four hooks registered.
@@ -119,7 +119,7 @@ pub fn hook_functions() -> u32 {
             "libandroid_runtime.so",
             "fork",
             false,
-            crate::fork_hooks::fork as usize as *mut c_void,
+            crate::fork_hooks::fork as *mut c_void,
             crate::fork_hooks::OLD_FORK.as_ptr() as *mut *mut c_void,
         ) {
             status |= 0x2;
@@ -128,7 +128,7 @@ pub fn hook_functions() -> u32 {
             "libandroid_runtime.so",
             "strdup",
             false,
-            crate::fork_hooks::strdup as usize as *mut c_void,
+            crate::fork_hooks::strdup as *mut c_void,
             crate::fork_hooks::OLD_STRDUP.as_ptr() as *mut *mut c_void,
         ) {
             status |= 0x4;
@@ -137,7 +137,7 @@ pub fn hook_functions() -> u32 {
             "libandroid_runtime.so",
             "property_get",
             false,
-            crate::fork_hooks::property_get as usize as *mut c_void,
+            crate::fork_hooks::property_get as *mut c_void,
             crate::fork_hooks::OLD_PROPERTY_GET.as_ptr() as *mut *mut c_void,
         ) {
             status |= 0x8;
@@ -146,7 +146,7 @@ pub fn hook_functions() -> u32 {
             "libandroid_runtime.so",
             "_ZNK18FileDescriptorInfo14ReopenOrDetach",
             true,
-            crate::fork_hooks::_ZNK18FileDescriptorInfo14ReopenOrDetach as usize as *mut c_void,
+            crate::fork_hooks::_ZNK18FileDescriptorInfo14ReopenOrDetach as *mut c_void,
             crate::fork_hooks::OLD__ZNK18FileDescriptorInfo14ReopenOrDetach.as_ptr() as *mut *mut c_void,
         ) {
             status |= 0x10;
@@ -156,7 +156,7 @@ pub fn hook_functions() -> u32 {
     status
 }
 
-/// hook.c `hook_unloader` (1338-1355): once libart.so is mapped, hook
+/// hook.c `hook_unloader`: once libart.so is mapped, hook
 /// pthread_attr_setstacksize, drop the property_get hook that got us here,
 /// then load modules early (before the system server fork) to spread them
 /// through all Zygotes.
@@ -172,7 +172,7 @@ pub fn hook_unloader() {
             "libart.so",
             "pthread_attr_setstacksize",
             false,
-            crate::fork_hooks::pthread_attr_setstacksize as usize as *mut c_void,
+            crate::fork_hooks::pthread_attr_setstacksize as *mut c_void,
             crate::fork_hooks::OLD_PTHREAD_ATTR_SETSTACKSIZE.as_ptr() as *mut *mut c_void,
         );
     }

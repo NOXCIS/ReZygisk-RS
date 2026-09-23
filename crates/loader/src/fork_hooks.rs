@@ -14,6 +14,8 @@ use std::ffi::{c_char, c_int, c_void, CStr};
 use std::mem::{offset_of, transmute};
 use std::sync::atomic::{AtomicPtr, Ordering};
 
+use crate::jni_utils::cstr_to_owned;
+
 // ---------------------------------------------------------------------------
 // Logging (hook.c LOGD/LOGV/LOGW with tag "zygisk")
 // ---------------------------------------------------------------------------
@@ -136,6 +138,8 @@ impl Drop for LoaderGuard {
 /// hook.c `old_fork`.
 pub(crate) static OLD_FORK: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
 /// hook.c `old__ZNK18FileDescriptorInfo14ReopenOrDetach`.
+/// Name follows OLD_ + C++ mangled symbol pattern for grep-ability with the C code.
+#[allow(non_upper_case_globals)]
 pub(crate) static OLD__ZNK18FileDescriptorInfo14ReopenOrDetach: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
 /// hook.c `old_pthread_attr_setstacksize`.
 pub(crate) static OLD_PTHREAD_ATTR_SETSTACKSIZE: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
@@ -145,7 +149,7 @@ pub(crate) static OLD_STRDUP: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_
 pub(crate) static OLD_PROPERTY_GET: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
 
 // ---------------------------------------------------------------------------
-// fork (hook.c lines 232-239)
+// fork (hook.c)
 // ---------------------------------------------------------------------------
 
 type OldForkFn = unsafe extern "C" fn() -> c_int;
@@ -186,7 +190,7 @@ pub unsafe extern "C" fn fork() -> c_int {
 }
 
 // ---------------------------------------------------------------------------
-// _ZNK18FileDescriptorInfo14ReopenOrDetach (hook.c lines 241-290)
+// _ZNK18FileDescriptorInfo14ReopenOrDetach (hook.c)
 // ---------------------------------------------------------------------------
 
 // INFO: file_path is a std::string in the actual class. We represent it as
@@ -270,7 +274,7 @@ pub unsafe extern "C" fn _ZNK18FileDescriptorInfo14ReopenOrDetach(
     if unsafe { libc::access(file_path, libc::F_OK) } == -1 {
         dlogd!(
             "Failed to open file {}, detaching it",
-            unsafe { CStr::from_ptr(file_path) }.to_string_lossy()
+            cstr_to_owned(file_path).unwrap_or_default()
         );
 
         unsafe { libc::close(fd) };
@@ -282,7 +286,7 @@ pub unsafe extern "C" fn _ZNK18FileDescriptorInfo14ReopenOrDetach(
 }
 
 // ---------------------------------------------------------------------------
-// pthread_attr_setstacksize (hook.c lines 292-342)
+// pthread_attr_setstacksize (hook.c)
 // ---------------------------------------------------------------------------
 
 type OldPthreadAttrSetStacksizeFn = unsafe extern "C" fn(*mut c_void, usize) -> c_int;
@@ -558,7 +562,7 @@ pub unsafe extern "C" fn pthread_attr_setstacksize(target: *mut c_void, size: us
 }
 
 // ---------------------------------------------------------------------------
-// strdup (hook.c lines 345-353)
+// strdup (hook.c)
 // ---------------------------------------------------------------------------
 
 type OldStrdupFn = unsafe extern "C" fn(*const c_char) -> *mut c_char;
@@ -576,16 +580,18 @@ pub unsafe extern "C" fn strdup(str: *const c_char) -> *mut c_char {
     let _guard = LoaderGuard::new();
 
     if unsafe { libc::strcmp(str, c"com.android.internal.os.ZygoteInit".as_ptr()) } == 0 {
-        dlogv!("strdup {}", unsafe { CStr::from_ptr(str) }.to_string_lossy());
+        dlogv!("strdup {}", cstr_to_owned(str).unwrap_or_default());
 
-        crate::jni_hooks::initialize_jni_hook();
+        // SAFETY: Called after the zygote loads libart.so; the function's
+        // prerequisites (JNI globals, art_method offsets) are satisfied.
+        unsafe { crate::jni_hooks::initialize_jni_hook() };
     }
 
     unsafe { old_strdup()(str) }
 }
 
 // ---------------------------------------------------------------------------
-// property_get (hook.c lines 355-373)
+// property_get (hook.c)
 // ---------------------------------------------------------------------------
 
 type OldPropertyGetFn =

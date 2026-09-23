@@ -1,13 +1,16 @@
-//! hook.c native specialize hooks (1161-1216): the six
+//! hook.c native specialize hooks: the six
 //! `rz_native*Specialize*_pre/_post` entry points that the JNI method hooks
 //! (jni_tables.rs) call around the zygote's own `nativeSpecializeAppProcess`,
 //! `nativeForkSystemServer` and `nativeForkAndSpecialize` methods.
+
+// Function names follow the C hook.c naming convention for grep-ability.
+#![allow(non_snake_case)]
 //!
 //! C-parity notes:
 //! - The `native*` hooks do NOT fork themselves. `rz_fork_pre` (hook.c
 //!   824-860, fork_prepost.rs) forks and caches the pid in `ctx.pid`; the
 //!   zygote's own subsequent `fork` call is answered with that cached pid
-//!   by the DCL_HOOK_FUNC(fork) hook (hook.c 231-236 / fork_hooks.rs).
+//!   by the DCL_HOOK_FUNC(fork) hook (fork_hooks.rs).
 //!   Only the child (`is_zygote_child` -> `ctx.pid == 0` here) runs the
 //!   specialize pipeline; the parent returns right after `rz_fork_pre`.
 //! - The C keeps the `GetStringUTFChars` buffer alive until
@@ -24,16 +27,15 @@
 //!   (rezygiskd/src/daemon.rs), so this matches the spine. ASCII package
 //!   names (the practical case) are byte-identical to the C.
 
-use jni::sys::JNIEnv;
-
 use crate::context::{
     flag_set, is_zygote_child, ZygiskContext, APP_FORK_AND_SPECIALIZE,
     SERVER_FORK_AND_SPECIALIZE, SKIP_FD_SANITIZATION,
 };
+use crate::jni_utils::JniStringGuard;
 
 const TAG: &str = rz_common::LOG_TAG;
 
-/// hook.c 1162 / 1197: `ctx->process = (*env)->GetStringUTFChars(env,
+/// hook.c: `ctx->process = (*env)->GetStringUTFChars(env,
 /// *args.app->nice_name, NULL)` plus the matching `ReleaseStringUTFChars`
 /// once the bytes are copied into the owned `ctx.process` String.
 ///
@@ -42,43 +44,33 @@ const TAG: &str = rz_common::LOG_TAG;
 /// string. A Rust `String` cannot be NULL, so we store an empty string
 /// instead (and skip the release, since no buffer was returned).
 fn set_process_from_nice_name(ctx: &mut ZygiskContext) {
-    let env: *mut JNIEnv = ctx.env;
-    let fns = unsafe { &**env };
-    let Some(get_chars) = fns.GetStringUTFChars else {
-        rz_common::loge!(TAG, "JNIEnv::GetStringUTFChars is unavailable");
+    let nice_name = unsafe { *(*ctx.args.app).nice_name };
+    let Some(guard) = JniStringGuard::new(ctx.env, nice_name) else {
         ctx.process.clear();
         return;
     };
-    let chars = unsafe { get_chars(env, *(*ctx.args.app).nice_name, std::ptr::null_mut()) };
-    if chars.is_null() {
-        ctx.process.clear();
-        return;
-    }
-    ctx.process = unsafe { std::ffi::CStr::from_ptr(chars) }
-        .to_string_lossy()
-        .into_owned();
-    match fns.ReleaseStringUTFChars {
-        Some(release) => unsafe { release(env, *(*ctx.args.app).nice_name, chars) },
-        None => rz_common::loge!(TAG, "JNIEnv::ReleaseStringUTFChars is unavailable"),
-    }
+    ctx.process = guard.as_cstr().to_string_lossy().into_owned();
+    // guard auto-releases on drop
 }
 
-/// hook.c `rz_nativeSpecializeAppProcess_pre` (1161-1167).
+/// hook.c `rz_nativeSpecializeAppProcess_pre`.
 pub unsafe fn rz_nativeSpecializeAppProcess_pre(ctx: &mut ZygiskContext) {
     set_process_from_nice_name(ctx);
     rz_common::logv!(TAG, "pre specialize [{}]", ctx.process);
 
     flag_set(ctx, SKIP_FD_SANITIZATION);
-    crate::app_specialize::app_specialize_pre(ctx);
+    // SAFETY: ctx is valid; called from JNI wrapper with proper context.
+    unsafe { crate::app_specialize::app_specialize_pre(ctx) };
 }
 
-/// hook.c `rz_nativeSpecializeAppProcess_post` (1169-1172).
+/// hook.c `rz_nativeSpecializeAppProcess_post`.
 pub unsafe fn rz_nativeSpecializeAppProcess_post(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "post specialize [{}]", ctx.process);
-    crate::app_specialize::app_specialize_post(ctx);
+    // SAFETY: ctx is valid; called from JNI wrapper after specialize.
+    unsafe { crate::app_specialize::app_specialize_post(ctx) };
 }
 
-/// hook.c `rz_nativeForkSystemServer_pre` (1174-1184).
+/// hook.c `rz_nativeForkSystemServer_pre`.
 pub unsafe fn rz_nativeForkSystemServer_pre(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "pre forkSystemServer");
     flag_set(ctx, SERVER_FORK_AND_SPECIALIZE);
@@ -88,23 +80,25 @@ pub unsafe fn rz_nativeForkSystemServer_pre(ctx: &mut ZygiskContext) {
         return;
     }
 
-    crate::load_modules::run_modules_pre(ctx);
+    // SAFETY: ctx is valid; in child process after fork.
+    unsafe { crate::load_modules::run_modules_pre(ctx) };
 
     crate::fd_sanitize::sanitize_fds(ctx);
 }
 
-/// hook.c `rz_nativeForkSystemServer_post` (1186-1194).
+/// hook.c `rz_nativeForkSystemServer_post`.
 pub unsafe fn rz_nativeForkSystemServer_post(ctx: &mut ZygiskContext) {
     if ctx.pid == 0 {
         rz_common::logv!(TAG, "post forkSystemServer");
 
-        crate::load_modules::run_modules_post(ctx);
+        // SAFETY: ctx is valid; in child process (pid == 0).
+        unsafe { crate::load_modules::run_modules_post(ctx) };
     }
 
     crate::fork_prepost::fork_post(ctx);
 }
 
-/// hook.c `rz_nativeForkAndSpecialize_pre` (1196-1206).
+/// hook.c `rz_nativeForkAndSpecialize_pre`.
 pub unsafe fn rz_nativeForkAndSpecialize_pre(ctx: &mut ZygiskContext) {
     set_process_from_nice_name(ctx);
     rz_common::logv!(TAG, "pre forkAndSpecialize [{}]", ctx.process);
@@ -115,16 +109,17 @@ pub unsafe fn rz_nativeForkAndSpecialize_pre(ctx: &mut ZygiskContext) {
         return;
     }
 
-    crate::app_specialize::app_specialize_pre(ctx);
+    // SAFETY: ctx is valid; in child process after fork.
+    unsafe { crate::app_specialize::app_specialize_pre(ctx) };
     crate::fd_sanitize::sanitize_fds(ctx);
 }
 
-/// hook.c `rz_nativeForkAndSpecialize_post` (1208-1215).
+/// hook.c `rz_nativeForkAndSpecialize_post`.
 pub unsafe fn rz_nativeForkAndSpecialize_post(ctx: &mut ZygiskContext) {
     if ctx.pid == 0 {
         rz_common::logv!(TAG, "post forkAndSpecialize [{}]", ctx.process);
         // SAFETY: called from the hooked zygote after a successful fork,
-        // with the child context in `ctx` (hook.c 1208-1215).
+        // with the child context in `ctx`.
         unsafe { crate::app_specialize::app_specialize_post(ctx) };
     }
 

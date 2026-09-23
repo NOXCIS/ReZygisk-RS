@@ -134,7 +134,7 @@ pub fn companion_entry(fd: RawFd) -> ! {
                 break 'cleanup;
             }
 
-            // companion.c 164-172: a failed pthread_create breaks the serve
+            // companion.c: a failed pthread_create breaks the serve
             // loop (after closing the client fd) and exits the companion.
             if std::thread::Builder::new()
                 .name("companion-req".into())

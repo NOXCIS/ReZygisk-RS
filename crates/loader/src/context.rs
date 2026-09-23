@@ -280,6 +280,65 @@ pub struct ModuleSnapshot {
     pub len: usize,
 }
 
+impl ModuleSnapshot {
+    /// Returns a reference to the module at index `i`, or `None` if out of bounds.
+    ///
+    /// # Safety
+    /// The snapshot must be valid (base points to allocated memory, len is accurate).
+    /// This is guaranteed by `module_snapshot()`.
+    #[inline]
+    pub fn get(&self, i: usize) -> Option<&crate::abi::ReZygiskModule> {
+        if i >= self.len || self.base.is_null() {
+            return None;
+        }
+        // SAFETY: bounds checked above, base is valid per snapshot discipline
+        Some(unsafe { &*self.base.add(i) })
+    }
+
+    /// Returns a mutable reference to the module at index `i`, or `None` if out of bounds.
+    ///
+    /// # Safety
+    /// The snapshot must be valid (base points to allocated memory, len is accurate).
+    /// This is guaranteed by `module_snapshot()`.
+    #[inline]
+    pub fn get_mut(&mut self, i: usize) -> Option<&mut crate::abi::ReZygiskModule> {
+        if i >= self.len || self.base.is_null() {
+            return None;
+        }
+        // SAFETY: bounds checked above, base is valid per snapshot discipline
+        Some(unsafe { &mut *self.base.add(i) })
+    }
+
+    /// Returns an iterator over references to all modules in the snapshot.
+    #[inline]
+    pub fn iter(&self) -> impl Iterator<Item = &crate::abi::ReZygiskModule> {
+        (0..self.len).filter_map(|i| self.get(i))
+    }
+
+    /// Returns an iterator over mutable references to all modules in the snapshot.
+    ///
+    /// Note: This creates multiple mutable references, but they point to different
+    /// elements so there's no aliasing. Use with care.
+    #[inline]
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut crate::abi::ReZygiskModule> {
+        let base = self.base;
+        let len = self.len;
+        (0..len).filter_map(move |i| {
+            if base.is_null() {
+                return None;
+            }
+            // SAFETY: bounds checked, base is valid, each index yields a distinct element
+            Some(unsafe { &mut *base.add(i) })
+        })
+    }
+
+    /// Returns `true` if the snapshot is empty or invalid.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.len == 0 || self.base.is_null()
+    }
+}
+
 pub fn module_snapshot() -> ModuleSnapshot {
     let _guard = lock_ok(&ZYGISK_MODULES.lock);
     // SAFETY: the guard gives exclusive access to the table; the reference

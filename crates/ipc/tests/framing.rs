@@ -1,11 +1,11 @@
 //! Host integration tests for the IPC wire protocol:
 //!
 //! - golden-byte frames written with the public stream API, derived from
-//!   loader/src/common/daemon.c 97-99 (`rezygiskd_get_process_flags`) and
+//!   loader/src/common/daemon.c (`rezygiskd_get_process_flags`) and
 //!   common/socket_utils.c `write_uint8_t`/`write_uint32_t`/`write_string`;
 //! - `read_string` / `read_string_bounded` receiver semantics vs
-//!   zygiskd/src/zygiskd.c 422-435 (`read_string(fd, buf, buf_size)`);
-//! - `connect_abstract` retry/timing semantics vs daemon.c 31-49
+//!   zygiskd/src/zygiskd.c (`read_string(fd, buf, buf_size)`);
+//! - `connect_abstract` retry/timing semantics vs daemon.c
 //!   (`rezygiskd_connect`: exactly `retry` attempts, 1s after each failure);
 //! - filesystem datagram delivery via `datagram_sendto` with the
 //!   controller report messages (zygiskd.c `zygiskd_start`).
@@ -44,7 +44,7 @@ fn read_some(fd: i32, n: usize) -> Vec<u8> {
 }
 
 // ---------------------------------------------------------------------------
-// Golden wire frames (daemon.c 97-99, socket_utils.c write_*)
+// Golden wire frames (daemon.c, socket_utils.c write_*)
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -57,8 +57,8 @@ fn get_process_flags_request_frame_is_daemon_c_golden() {
     f.string(proc).unwrap();
 
     let mut expected = Vec::new();
-    expected.push(DaemonSocketAction::GetProcessFlags as u8); // daemon.c 97
-    expected.extend_from_slice(&0xdead_beefu32.to_ne_bytes()); // daemon.c 98
+    expected.push(DaemonSocketAction::GetProcessFlags as u8); // daemon.c
+    expected.extend_from_slice(&0xdead_beefu32.to_ne_bytes()); // daemon.c
     expected.extend_from_slice(&proc.len().to_ne_bytes()); // string len (size_t)
     expected.extend_from_slice(proc.as_bytes()); // no NUL
 
@@ -98,7 +98,7 @@ fn string_write_is_size_t_len_plus_bytes_no_nul() {
 }
 
 // ---------------------------------------------------------------------------
-// Receiver semantics (zygiskd.c 422-435 read_string(fd, buf, buf_size))
+// Receiver semantics (zygiskd.c read_string(fd, buf, buf_size))
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -183,7 +183,7 @@ fn stream_roundtrip_symmetry() {
 }
 
 // ---------------------------------------------------------------------------
-// connect_abstract retry semantics (daemon.c 31-49 rezygiskd_connect)
+// connect_abstract retry semantics (daemon.c rezygiskd_connect)
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -199,7 +199,7 @@ fn connect_abstract_zero_retries_fails_fast() {
 #[test]
 fn connect_abstract_sleeps_only_between_attempts() {
     // retry == 2 → attempt, 1s sleep (retry remains), attempt, no sleep on
-    // the final failure → error. Elapsed covers one sleep (daemon.c 45-49).
+    // the final failure → error. Elapsed covers one sleep.
     let name = format!("rz-absent-two-{:x}", std::process::id());
     let start = Instant::now();
     assert!(connect_abstract(&name, 2).is_err());

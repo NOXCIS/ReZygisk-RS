@@ -1,12 +1,9 @@
 //! hook.c app specialize hooks: `rz_app_specialize_pre` / `_post`
-//! (hook.c lines 1041-1160).
+//! (hook.c).
 //!
 //! C-parity notes:
-//! - The isolated-service UID fixup uses the raw `JNIEnv` function table
-//!   (`GetStringUTFChars` / `ReleaseStringUTFChars`) exactly like the C.
-//!   `cpp_strings` is not involved in this slice: the C only reads the
-//!   `app_data_dir` jstring here (the pkg_data_info std::string walking
-//!   belongs to the fd_sanitize slice).
+//! - The isolated-service UID fixup uses `JniStringGuard` for safe JNI string
+//!   access (the C uses raw `GetStringUTFChars` / `ReleaseStringUTFChars`).
 //! - The C in this range does NOT touch `mount_external`,
 //!   `mount_data_dirs` / `mount_storage_dirs`, `fds_to_ignore` or any
 //!   truman builtin logic — those are handled by other hook.c slices — so
@@ -22,44 +19,17 @@
 //!   (ctx: &mut ZygiskContext)`, `daemon_client::rezygiskd_get_process_flags
 //!   (uid: u32, process: &str) -> u32`.
 
-use std::ffi::CStr;
-
 use rz_common::{is_isolated_service, logd, loge, plog};
 use rz_ipc::{MountNamespaceState, ProcessFlags};
 
 use crate::context::{
     flag_get, flag_set, set_ctx, APP_SPECIALIZE, DO_REVERT_UNMOUNT, ZygiskContext,
 };
+use crate::jni_utils::JniStringGuard;
 
 const TAG: &str = rz_common::LOG_TAG;
 
-/// `(*env)->GetStringUTFChars(env, s, NULL)`. A missing table entry returns
-/// NULL — every caller null-checks — instead of aborting the zygote.
-unsafe fn get_string_utf_chars(env: *mut jni::sys::JNIEnv, s: jni::sys::jstring) -> *const libc::c_char {
-    match unsafe { (**env).GetStringUTFChars } {
-        Some(get) => unsafe { get(env, s, std::ptr::null_mut()) },
-        None => {
-            loge!(TAG, "JNIEnv::GetStringUTFChars is unavailable");
-            std::ptr::null()
-        }
-    }
-}
-
-/// `(*env)->ReleaseStringUTFChars(env, s, chars)`. A missing table entry
-/// leaks the chars buffer (harmless in a short-lived app process) instead of
-/// aborting the zygote.
-unsafe fn release_string_utf_chars(
-    env: *mut jni::sys::JNIEnv,
-    s: jni::sys::jstring,
-    chars: *const libc::c_char,
-) {
-    match unsafe { (**env).ReleaseStringUTFChars } {
-        Some(release) => unsafe { release(env, s, chars) },
-        None => loge!(TAG, "JNIEnv::ReleaseStringUTFChars is unavailable"),
-    }
-}
-
-/// hook.c `rz_app_specialize_pre` (1041-1151).
+/// hook.c `rz_app_specialize_pre`.
 pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
     flag_set(ctx, APP_SPECIALIZE);
 
@@ -74,7 +44,9 @@ pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
     //        one, however it is unlikely they will create an isolated process,
     //        and even if so, it should not impact in detections, performance or
     //        any area.
-    let app = ctx.args.app;
+    // SAFETY: ctx.args is a union; caller guarantees it was initialized as .app
+    // by the JNI wrapper (jni_tables.rs) for app-specialize paths.
+    let app = unsafe { ctx.args.app };
     let mut uid = unsafe { *(*app).uid } as u32;
     let app_data_dir = unsafe { (*app).app_data_dir };
     if is_isolated_service(uid) && !app_data_dir.is_null() {
@@ -82,23 +54,18 @@ pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
         //         app's process data directory, which is the UID of the
         //         app itself, which root implementations actually use.
         let jstr = unsafe { *app_data_dir };
-        let data_dir = unsafe { get_string_utf_chars(ctx.env, jstr) };
-        if data_dir.is_null() {
+        let Some(data_dir_guard) = JniStringGuard::new(ctx.env, jstr) else {
             loge!(TAG, "Failed to get app data directory");
-
             return;
-        }
+        };
 
         let mut st: libc::stat = unsafe { std::mem::zeroed() };
-        if unsafe { libc::stat(data_dir, &mut st) } == -1 {
+        if unsafe { libc::stat(data_dir_guard.as_ptr(), &mut st) } == -1 {
             plog!(
                 TAG,
                 "Failed to stat app data directory [{}]",
-                CStr::from_ptr(data_dir).to_string_lossy()
+                data_dir_guard.as_cstr().to_string_lossy()
             );
-
-            unsafe { release_string_utf_chars(ctx.env, jstr, data_dir) };
-
             return;
         }
 
@@ -107,10 +74,9 @@ pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
             TAG,
             "Isolated service being related to UID {}, app data dir: {}",
             uid,
-            CStr::from_ptr(data_dir).to_string_lossy()
+            data_dir_guard.as_cstr().to_string_lossy()
         );
-
-        unsafe { release_string_utf_chars(ctx.env, jstr, data_dir) };
+        // data_dir_guard auto-releases on drop
     }
 
     ctx.info_flags = crate::daemon_client::rezygiskd_get_process_flags(uid, &ctx.process);
@@ -171,7 +137,8 @@ pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
 
     // INFO: Executed after setns to ensure a module can update the mounts of an
     //         application without worrying about it being overwritten by setns.
-    crate::load_modules::run_modules_pre(ctx);
+    // SAFETY: ctx is valid; modules have been loaded by load_modules_only().
+    unsafe { crate::load_modules::run_modules_pre(ctx) };
 
     // INFO: The modules may request that although the process is NOT in
     //         the DenyList, it has its mount namespace switched to the clean
@@ -185,17 +152,18 @@ pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
     }
 }
 
-/// hook.c `rz_app_specialize_post` (1153-1160).
+/// hook.c `rz_app_specialize_post`.
 pub unsafe fn app_specialize_post(ctx: &mut ZygiskContext) {
-    crate::load_modules::run_modules_post(ctx);
+    // SAFETY: ctx is valid; called after specialize with module context intact.
+    unsafe { crate::load_modules::run_modules_post(ctx) };
 
-    // INFO: Allow the process name string to be released
+    // INFO: Allow the process name string to be released.
+    // The C does GetStringUTFChars + ReleaseStringUTFChars; we use JniStringGuard
+    // which auto-releases on drop.
     let nice_name = unsafe { (*ctx.args.app).nice_name };
     let jstr = unsafe { *nice_name };
-    let process = unsafe { get_string_utf_chars(ctx.env, jstr) };
-    if !process.is_null() {
-        unsafe { release_string_utf_chars(ctx.env, jstr, process) };
-    }
+    // Create and immediately drop the guard to trigger release
+    let _release_guard = JniStringGuard::new(ctx.env, jstr);
 
     set_ctx(std::ptr::null_mut());
 }

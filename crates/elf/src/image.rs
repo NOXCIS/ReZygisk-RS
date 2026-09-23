@@ -55,7 +55,7 @@ impl Symbol {
 }
 
 /// Which symbol filter a lookup applies. PLTI's elf_util.c
-/// (`elfutil_gnu_lookup` / `elfutil_elf_lookup`, elf_util.c 422-495)
+/// (`elfutil_gnu_lookup` / `elfutil_elf_lookup`)
 /// compares raw names with NO shndx/visibility filter — even SHN_UNDEF
 /// imports resolve, since relocations reference them directly. The
 /// common/csoloader chains (`GnuLookup`/`ElfLookup` + `is_dynamic_symbol_visible`)
@@ -85,7 +85,7 @@ impl<'a> ElfImage<'a> {
         let is_64 = elf.is_64;
 
         let mut dyn_entries = Vec::new();
-        // elf_util.c 147-167: the phdr scan has no `break`, so the LAST
+        // C: the phdr scan has no `break`, so the LAST
         // PT_DYNAMIC wins, and the dynamic-table entry count comes from
         // `p_memsz` (`dynamic_size_`), not `p_filesz`.
         if let Some(ph) = elf
@@ -151,8 +151,7 @@ impl<'a> ElfImage<'a> {
         self.dyn_entries.iter().find(|(t, _)| *t == tag).map(|(_, v)| *v)
     }
 
-    /// The C dynamic-table scans assign scalar fields per occurrence
-    /// (elf_util.c 169-262, linker.c 1702-1737), so the LAST occurrence of a
+    /// The C dynamic-table scans assign scalar fields per occurrence, so the LAST occurrence of a
     /// tag in the table is the one that sticks. `dynamic_find` keeps the
     /// first-wins lookup for consumers that expect it; this is the C-faithful
     /// variant.
@@ -301,7 +300,7 @@ impl<'a> ElfImage<'a> {
             }
         }
 
-        // Fall back to DT_SYMTAB/DT_STRTAB (plti elf_util.c 169-262: last
+        // Fall back to DT_SYMTAB/DT_STRTAB (last
         // occurrence of each tag wins). The C never bounds the table
         // (`dyn_sym_` is a raw pointer), so the count here is only a safety
         // bound: DT_HASH nchain when present, otherwise the bytes remaining
@@ -558,8 +557,8 @@ impl<'a> ElfImage<'a> {
     /// dynsym *index* of the first symbol matching `name`.
     ///
     /// Mirrors the C lookup-chain quirks exactly:
-    /// - raw name match only — no SHN_UNDEF/visibility filter (elf_util.c
-    ///   422-495: imports referenced by relocations must resolve);
+    /// - raw name match only — no SHN_UNDEF/visibility filter (imports
+    ///   referenced by relocations must resolve);
     /// - with a GNU hash table (DT_GNU_HASH) the SysV lookup is skipped
     ///   entirely (`elfutil_elf_lookup` returns 0 when `bloom_` is set);
     /// - `elfutil_linear_lookup` only runs when DT_GNU_HASH was parsed
@@ -743,8 +742,8 @@ impl<'a> ElfImage<'a> {
     }
 
     /// All relocations in linker.c processing order: DT_RELA, DT_REL, the
-    /// Android packed table (the last DT_ANDROID_REL/RELA occurrence wins,
-    /// linker.c 1702-1737), then DT_JMPREL. RELR is separate (see
+    /// Android packed table (the last DT_ANDROID_REL/RELA occurrence wins),
+    /// then DT_JMPREL. RELR is separate (see
     /// [`relr_offsets`]) because its effect is "add bias to target", not a
     /// value write. Scalar tags use last-wins like the C's flat assignments.
     pub fn relocations(&self) -> Result<Vec<Reloc>> {
@@ -762,11 +761,11 @@ impl<'a> ElfImage<'a> {
         {
             out.extend(self.read_rel_table(b));
         }
-        // linker.c 1721-1724: only ONE android table is processed — whichever
+        // linker.c: only ONE android table is processed — whichever
         // of DT_ANDROID_REL/DT_ANDROID_RELA occurs last (the C pointer is
         // overwritten per occurrence). The sticky `is_rela` of linker.c
         // (DT_ANDROID_REL never resets it) is NOT copied: the winning tag
-        // decides, like plti's elf_util.c 219-230.
+        // decides, like plti's elf_util.c.
         let android_vaddr = self
             .dyn_entries
             .iter()
@@ -814,7 +813,7 @@ impl<'a> ElfImage<'a> {
     /// Relocations split by dynamic-table origin, in the order PLTI /
     /// CSOLoader process them: DT_JMPREL (PLT), then DT_REL/DT_RELA, then the
     /// Android packed table. Order inside each table is preserved. Scalar tags
-    /// use the C's last-wins assignments (elf_util.c 186-236); REL/RELA and
+    /// use the C's last-wins assignments; REL/RELA and
     /// the two Android tables pair the last table tag with the last size tag,
     /// exactly like the C's flat `rel_dyn_`/`rel_dyn_size_` fields.
     pub fn relocations_grouped(&self) -> Result<RelocTables> {
@@ -897,7 +896,7 @@ impl<'a> ElfImage<'a> {
     pub fn relr_offsets(&self) -> Result<Vec<u64>> {
         let word_size = if self.is_64 { 8 } else { 4 };
 
-        // linker.c 1712-1726: one `relr` pointer, overwritten by whichever of
+        // linker.c: one `relr` pointer, overwritten by whichever of
         // DT_RELR/DT_ANDROID_RELR comes last, sized by the last of the two
         // size tags (cross-paired, like the C's flat assignments).
         let relr_vaddr = self

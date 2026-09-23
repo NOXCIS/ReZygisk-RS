@@ -1,9 +1,9 @@
-//! Port of linker.c lines 805-1192: `_linker_find_symbol_in_linker_scope`
-//! (the global-group symbol resolution), the `tls_index` bookkeeping that
-//! `crate::tls` does not cover, and elf_util.c's `handle_indirect_symbol`
-//! (lines 892-948) — the IFUNC resolver execution. linker.c carries a second
-//! copy of `handle_indirect_symbol` (lines 946-970) taking a raw resolver
-//! address; that is the shape `image.rs` calls, so it is the one ported here.
+//! Port of linker.c `_linker_find_symbol_in_linker_scope` (the global-group
+//! symbol resolution), the `tls_index` bookkeeping that `crate::tls` does
+//! not cover, and elf_util.c's `handle_indirect_symbol` — the IFUNC resolver
+//! execution. linker.c carries a second copy of `handle_indirect_symbol`
+//! taking a raw resolver address; that is the shape `image.rs` calls, so it
+//! is the one ported here.
 //!
 //! Reused from `crate::tls` (already ported, NOT duplicated here):
 //! `register_tls_segment`, `unregister_tls_segment`, the pthread key
@@ -62,8 +62,8 @@ macro_rules! dloge {
 }
 
 // ---------------------------------------------------------------------------
-// IFUNC resolver execution — elf_util.c `handle_indirect_symbol` (892-948),
-// the `(resolver_addr)` variant also duplicated in linker.c (946-970).
+// IFUNC resolver execution — elf_util.c `handle_indirect_symbol`
+// (the `(resolver_addr)` variant also duplicated in linker.c).
 // ---------------------------------------------------------------------------
 
 /// elf_util.c `struct __ifunc_arg_t` (aarch64 only).
@@ -132,7 +132,7 @@ unsafe extern "C" fn riscv_hwprobe(
     ret.wrapping_neg() as i32
 }
 
-/// elf_util.c `handle_indirect_symbol` / linker.c 946-970 (raw-address form):
+/// elf_util.c `handle_indirect_symbol` (the linker.c raw-address form):
 /// execute the GNU IFUNC resolver at the runtime address `addr` with the
 /// per-arch calling convention and return the selected implementation.
 ///
@@ -195,8 +195,7 @@ pub fn handle_indirect_symbol(addr: usize) -> usize {
 }
 
 // ---------------------------------------------------------------------------
-// Global-group symbol resolution — linker.c `_linker_find_symbol_in_linker_scope`
-// (lines 805-869).
+// Global-group symbol resolution — linker.c `_linker_find_symbol_in_linker_scope`.
 // ---------------------------------------------------------------------------
 
 /// linker.c `struct linker_symbol_info`.
@@ -204,7 +203,7 @@ pub fn handle_indirect_symbol(addr: usize) -> usize {
 pub(crate) struct LinkerSymbolInfo {
     pub addr: usize,
     /// Image that owns the symbol (NULL when unresolved). Relocation callers
-    /// use the NULL case for the STB_WEAK fallback (linker.c 1345-1361).
+    /// use the NULL case for the STB_WEAK fallback.
     pub img: *mut CsoElf,
     /// `tls_indices` of the module the symbol belongs to.
     pub tls_indices: *mut TlsIndicesData,
@@ -308,8 +307,8 @@ pub(crate) fn find_symbol_in_linker_scope_info(
 }
 
 // ---------------------------------------------------------------------------
-// TLS index bookkeeping — linker.c `_track_tls_index` (1152-1171),
-// `allocate_tls_index_for_symbol` (1173-1191) and the `tls_indices` teardown
+// TLS index bookkeeping — linker.c `_track_tls_index`,
+// `allocate_tls_index_for_symbol` and the `tls_indices` teardown
 // half of `_linker_unregister_tls_segment` (1139-1149). Everything else from
 // this block (module registration, per-thread blocks, `__tls_get_addr`)
 // already lives in `crate::tls`.
@@ -389,8 +388,8 @@ pub(crate) fn allocate_tls_index_for_symbol(
     ti
 }
 
-/// The `tls_indices` teardown of linker.c `_linker_unregister_tls_segment`
-/// (lines 1139-1149): free every tracked `tls_index`, then the array itself,
+/// The `tls_indices` teardown of linker.c `_linker_unregister_tls_segment`:
+/// free every tracked `tls_index`, then the array itself,
 /// and reset the bookkeeping. The module-table half is
 /// `crate::tls::unregister_tls_segment`; callers unregistering a `LoadedDep`
 /// run both.

@@ -122,7 +122,7 @@ pub fn magisk_uid_is_manager(uid: u32) -> bool {
 
     let mut stat_path = "/data/user_de/0/com.topjohnwu.magisk".to_string();
     if !output.is_empty() {
-        // magisk.c 104-105: C unconditionally skips strlen("value=") = 6
+        // magisk.c: C unconditionally skips strlen("value=") = 6
         // bytes of the sqlite output ("value=<package>").
         stat_path = format!("/data/user_de/0/{}", output.get(6..).unwrap_or(""));
     }

@@ -1,5 +1,5 @@
 //! cpp_strings.c port: read C++ std::string (libc++ SSO layout) from raw
-//! memory — injector/cpp_strings.c (42 lines) + cpp_strings.h (14 lines).
+//! memory — injector/cpp_strings.c + cpp_strings.h.
 //! Host-testable; the #[cfg(test)] suite covers short/long modes.
 //!
 //! libc++ layout:

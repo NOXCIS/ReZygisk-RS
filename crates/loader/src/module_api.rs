@@ -1,6 +1,6 @@
-//! hook.c module api: `api_exempt_fd` (683-694), `api_connect_companion`
-//! (728-739), `api_set_option` (740-763), `api_get_module_dir` (764-775),
-//! `api_get_flags` (776-781), `rezygisk_module_register` (782-813).
+//! hook.c module api: `api_exempt_fd`, `api_connect_companion`,
+//! `api_set_option`, `api_get_module_dir`,
+//! `api_get_flags`, `rezygisk_module_register`.
 //!
 //! Every api entry receives the module id encoded as `impl + RZID_MAGIC`
 //! (`abi::{RZID_MAGIC, decode_id}`); the range check against
@@ -48,7 +48,7 @@ const TAG: &str = rz_common::LOG_TAG;
 /// that slice lands; kept local until then.
 const PRIVATE_MASK: u32 = 1u32 << 31;
 
-/// hook.c `api_exempt_fd` (683-694): record an fd the zygote must keep open
+/// hook.c `api_exempt_fd`: record an fd the zygote must keep open
 /// during fd sanitization. Only meaningful during forkAndSpecialize, before
 /// post-specialize, when sanitization was not already skipped.
 pub unsafe extern "C" fn api_exempt_fd(fd: c_int) {
@@ -67,7 +67,7 @@ pub unsafe extern "C" fn api_exempt_fd(fd: c_int) {
     ctx.exempted_fds_count += 1;
 }
 
-/// hook.c `api_connect_companion` (728-739).
+/// hook.c `api_connect_companion`.
 pub unsafe extern "C" fn api_connect_companion(id: *mut c_void) -> c_int {
     if ctx_ref().is_none() {
         return -1;
@@ -82,7 +82,7 @@ pub unsafe extern "C" fn api_connect_companion(id: *mut c_void) -> c_int {
     crate::daemon_client::rezygiskd_connect_companion(decode_id(id))
 }
 
-/// hook.c `api_set_option` (740-763).
+/// hook.c `api_set_option`.
 pub unsafe extern "C" fn api_set_option(id: *mut c_void, opt: c_int) {
     let Some(ctx) = ctx_mut() else { return };
 
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn api_set_option(id: *mut c_void, opt: c_int) {
     }
 }
 
-/// hook.c `api_get_module_dir` (764-775).
+/// hook.c `api_get_module_dir`.
 pub unsafe extern "C" fn api_get_module_dir(id: *mut c_void) -> c_int {
     if ctx_ref().is_none() {
         return -1;
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn api_get_module_dir(id: *mut c_void) -> c_int {
     crate::daemon_client::rezygiskd_get_module_dir(decode_id(id))
 }
 
-/// hook.c `api_get_flags` (776-781): the process info flags with the private
+/// hook.c `api_get_flags`: the process info flags with the private
 /// bit stripped.
 pub unsafe extern "C" fn api_get_flags() -> u32 {
     let Some(ctx) = ctx_ref() else { return 0 };
@@ -132,29 +132,31 @@ pub unsafe extern "C" fn api_get_flags() -> u32 {
     ctx.info_flags & !PRIVATE_MASK
 }
 
-/// hook.c `rezygisk_module_register` (782-813).
+/// hook.c `rezygisk_module_register`.
 pub unsafe extern "C" fn rezygisk_module_register(
     api: *mut ReZygiskApi,
     abi: *const ReZygiskAbi,
 ) -> bool {
+    // SAFETY: api and abi are module-provided; null checks below guard all derefs.
     if ctx_ref().is_none()
         || api.is_null()
         || abi.is_null()
-        || (*abi).api_version > REZYGISK_API_VERSION
+        || unsafe { (*abi).api_version } > REZYGISK_API_VERSION
     {
         return false;
     }
 
-    logd!(TAG, "Registering module with API version {}", (*abi).api_version);
+    logd!(TAG, "Registering module with API version {}", unsafe { (*abi).api_version });
 
     // Called from inside a module entry (on_load): the table lock is free by
     // design (module_snapshot released it before the callback ran), so this
     // short borrow cannot deadlock. Bounds-checked instead of the C's blind
     // index.
-    let idx = decode_id((*api).impl_);
+    let idx = decode_id(unsafe { (*api).impl_ });
     if with_module(idx, |m| {
-        m.abi = std::ptr::read(abi);
-        m.api = std::ptr::read(api);
+        // SAFETY: abi/api are non-null (checked above) and point to valid module structures.
+        m.abi = unsafe { std::ptr::read(abi) };
+        m.api = unsafe { std::ptr::read(api) };
     })
     .is_none()
     {
@@ -162,29 +164,41 @@ pub unsafe extern "C" fn rezygisk_module_register(
         return false;
     }
 
-    (*api).hook_jni_native_methods = Some(crate::jni_hooks::hook_jni_methods);
-    if (*abi).api_version >= 4 {
-        (*api).plt_hook_register = PltRegisterSlot {
-            v4: Some(crate::plt_commit_v4::api_plt_hook_register_v4),
-        };
-        (*api).plt_hook_exclude = PltExcludeSlot { exempt_fd: Some(api_exempt_fd) };
-        (*api).plt_hook_commit = Some(crate::plt_commit_v4::api_plt_hook_commit_v4);
+    // SAFETY: api is non-null and points to a valid ReZygiskApi; we're writing
+    // the loader's vtable entries into slots the module left for us.
+    unsafe {
+        (*api).hook_jni_native_methods = Some(crate::jni_hooks::hook_jni_methods);
+    }
+    if unsafe { (*abi).api_version } >= 4 {
+        unsafe {
+            (*api).plt_hook_register = PltRegisterSlot {
+                v4: Some(crate::plt_commit_v4::api_plt_hook_register_v4),
+            };
+            (*api).plt_hook_exclude = PltExcludeSlot { exempt_fd: Some(api_exempt_fd) };
+            (*api).plt_hook_commit = Some(crate::plt_commit_v4::api_plt_hook_commit_v4);
+        }
     } else {
-        (*api).plt_hook_register = PltRegisterSlot {
-            v3: Some(crate::plt_commit::api_plt_hook_register),
-        };
-        (*api).plt_hook_exclude = PltExcludeSlot {
-            plt_hook_exclude: Some(crate::plt_commit::api_plt_hook_exclude),
-        };
-        (*api).plt_hook_commit = Some(crate::plt_commit::api_plt_hook_commit);
+        unsafe {
+            (*api).plt_hook_register = PltRegisterSlot {
+                v3: Some(crate::plt_commit::api_plt_hook_register),
+            };
+            (*api).plt_hook_exclude = PltExcludeSlot {
+                plt_hook_exclude: Some(crate::plt_commit::api_plt_hook_exclude),
+            };
+            (*api).plt_hook_commit = Some(crate::plt_commit::api_plt_hook_commit);
+        }
     }
 
-    (*api).connect_companion = Some(api_connect_companion);
-    (*api).set_option = Some(api_set_option);
+    unsafe {
+        (*api).connect_companion = Some(api_connect_companion);
+        (*api).set_option = Some(api_set_option);
+    }
 
-    if (*abi).api_version >= 2 {
-        (*api).get_module_dir = Some(api_get_module_dir);
-        (*api).get_flags = Some(api_get_flags);
+    if unsafe { (*abi).api_version } >= 2 {
+        unsafe {
+            (*api).get_module_dir = Some(api_get_module_dir);
+            (*api).get_flags = Some(api_get_flags);
+        }
     }
 
     true

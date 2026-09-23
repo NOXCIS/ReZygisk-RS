@@ -771,7 +771,7 @@ impl Monitor {
                 self.tracing_state = TracingState::Stopped;
                 dlogi!("stop tracing init");
 
-                // monitor.c:624-632: after detaching init, C `continue`s the
+                // monitor.c: after detaching init, C `continue`s the
                 // SIGCHLD loop — the generic stopped-handling below must not
                 // PTRACE_CONT an already-detached tracee.
                 return;
@@ -1076,7 +1076,7 @@ impl Monitor {
             }
         }
 
-        // monitor.c:745 `sigchld_status = 0`: the handoff above already
+        // monitor.c `sigchld_status = 0`: the handoff above already
         // detached the process; clearing the status keeps the outer SIGCHLD
         // handler from PTRACE_DETACH-ing it a second time.
         *status = 0;
@@ -1363,7 +1363,7 @@ fn claim_init_tracer(monitor: &mut Monitor) -> bool {
         if err.raw_os_error() == Some(libc::EPERM) {
             dlogw!("Another process is already tracing init");
 
-            // monitor.c:553: a second Zygisk instance was started — surface
+            // monitor.c: a second Zygisk instance was started — surface
             // it in module.prop so the user can see why injection stopped.
             monitor.update_status(Some("❌ Multiple Zygisks functioning"));
         } else {

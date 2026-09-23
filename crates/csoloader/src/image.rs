@@ -102,9 +102,9 @@ impl CsoElf {
 
     /// `csoloader_elf_create(elf, NULL)`: resolve the base of an already
     /// loaded library via `dl_iterate_phdr` (substring match on the soname,
-    /// like the C `dl_cb`). The C `dl_cb` (elf_util.c:89-117) replaces
+    /// like the C `dl_cb`). The C `dl_cb` replaces
     /// `img->elf` with the matched `dlpi_name` and the subsequent
-    /// `open(img->elf)` at elf_util.c:199-206 reads *that* full path — a
+    /// `open(img->elf)` reads *that* full path — a
     /// soname like "libc.so" is not itself openable. Mirror that: read the
     /// file from the resolved path and store it.
     pub fn create_loaded(path: &str) -> Result<Self> {
@@ -311,7 +311,7 @@ impl CsoElf {
     }
 
     fn resolve_runtime(&self, name: &str, exported_only: bool) -> Option<usize> {
-        // elf_util.c 954/883: `offset == 0 || !img->base` → 0.
+        // C: `offset == 0 || !img->base` → 0.
         if self.base == 0 {
             return None;
         }
@@ -352,7 +352,7 @@ impl CsoElf {
             return 0;
         };
 
-        // elf_util.c 969: `offset == 0 || !img->base` → 0.
+        // C: `offset == 0 || !img->base` → 0.
         if sym.value == 0 || self.base == 0 {
             return 0;
         }
@@ -479,7 +479,7 @@ impl CsoElf {
             }
         }
 
-        // backtrace-support.c 230-276: walk *every* PT_GNU_EH_FRAME segment,
+        // backtrace-support.c: walk *every* PT_GNU_EH_FRAME segment,
         // skipping ones that fail (too small / bad version / undecodable)
         // and only give up after all of them.
         for (p_type, seg) in self.img.all_segments() {
@@ -497,7 +497,7 @@ impl CsoElf {
 
 /// Decode a `.eh_frame_hdr` (version 1) into the .eh_frame pointer it
 /// encodes (backtrace-support.c `decode_eh_value` for eh_frame_ptr_enc,
-/// lines 122-205, called by `locate_eh_frame_ptr` at 230-281).
+/// called by `locate_eh_frame_ptr`).
 const PT_GNU_EH_FRAME: u32 = 0x6474e550;
 
 #[cfg_attr(target_arch = "arm", allow(dead_code))] // EHABI: no .eh_frame registration
@@ -512,7 +512,7 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
     let end = hdr_size;
 
     // Bounds-checked LE readers; the C `read_u16/read_u32/read_u64`
-    // (backtrace-support.c:51-60) return -1 when fewer bytes remain, which
+    // return -1 when fewer bytes remain, which
     // `decode_eh_value` turns into a 0 result.
     let u16_at = |i: usize| -> Option<u16> {
         if i + 2 > end {
@@ -580,7 +580,7 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
             }
         }
         0x01 => {
-            // DW_EH_PE_uleb128 (read_uleb128, backtrace-support.c:43-48:
+            // DW_EH_PE_uleb128 (read_uleb128:
             // OR, then `shift += 7` and break at >= 64, so shifts stay <= 63).
             let mut v = 0usize;
             let mut shift = 0u32;
@@ -613,7 +613,7 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
 
     // pcrel base is the address of the encoded field (C passes `p` after
     // the 4 header bytes); datarel is the header start. Unknown application
-    // bits leave the value unchanged (C `default: break`, lines 196-200).
+    // bits leave the value unchanged (C `default: break`).
     let value = match app {
         0x00 => value,
         0x10 => value.wrapping_add(hdr.wrapping_add(4)),
@@ -636,7 +636,7 @@ fn decode_eh_frame_ptr(hdr: usize, hdr_size: usize) -> Option<usize> {
 }
 
 /// `csoloader_elf_create(name, NULL)`'s `find_module_base` +
-/// `dl_cb` (elf_util.c:89-117, 199-206): `dl_iterate_phdr` substring match
+/// `dl_cb` (elf_util.c): `dl_iterate_phdr` substring match
 /// returning `(dlpi_addr, dlpi_name)`. The C replaces `img->elf` with the
 /// matched `dlpi_name` and only succeeds when `dlpi_addr != 0`.
 pub fn find_loaded_module(name: &str) -> Option<(usize, String)> {

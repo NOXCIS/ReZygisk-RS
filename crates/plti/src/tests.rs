@@ -82,8 +82,8 @@ fn phdr64(ptype: u32, flags: u32, off: u64, vaddr: u64, filesz: u64, memsz: u64)
 ///   RELRO    [rw_vaddr, rw_vaddr+RELRO_SZ)         first GOT page area
 /// Symbols: 0 null, 1 "hook_me" (func), 2 "glob" (object), 3 "imported_fn" UNDEF.
 ///
-/// DT_RELAENT is deliberately omitted: elf_util.c has no DT_RELAENT case
-/// (169-262), and leaving it out keeps the table region ≤ 0x300 so the
+/// DT_RELAENT is deliberately omitted: elf_util.c has no DT_RELAENT case,
+/// and leaving it out keeps the table region ≤ 0x300 so the
 /// gapped fixture's R LOAD is exactly filesz 0x300.
 struct SoSpec {
     /// p_vaddr of the first PT_LOAD (which keeps p_offset == 0).
@@ -452,7 +452,7 @@ fn add_manual_lib_reads_mapped_image() {
     assert_eq!(plti.elf_infos[0].file.len(), total);
     assert_eq!(&plti.elf_infos[0].file[..so.len()], &so[..]);
 
-    // Re-adding the same base is a no-op (elf_util.c 62-64).
+    // Re-adding the same base is a no-op (elf_util.c).
     assert!(plti.add_manual_lib("mapped_fixture.so", base));
     assert_eq!(plti.elf_infos.len(), 1);
 
@@ -466,7 +466,7 @@ fn add_manual_lib_reads_mapped_image() {
 }
 
 /// Header validation gates: no ELF magic, and a machine mismatch against the
-/// build target (elf_util.c 121-137).
+/// build target (elf_util.c).
 #[test]
 fn add_manual_lib_rejects_garbage_and_machine_mismatch() {
     let mut so = build_so();
@@ -569,7 +569,7 @@ fn build_phdrs_only(phdrs: &[Vec<u8>]) -> Vec<u8> {
     b.data
 }
 
-/// Finding #3 (add_manual_lib window walk, elf_util.c 115-159): the snapshot
+/// Finding #3 (add_manual_lib window walk): the snapshot
 /// window spans `bias + max(p_vaddr + p_memsz)` over PT_LOADs, so a gap
 /// between two LOADs' runtime ranges is inside the window even though it is
 /// not backed by the file. The C only ever dereferences pointers that lie in
@@ -615,7 +615,7 @@ fn add_manual_lib_skips_unmapped_hole_between_loads() {
     }
 }
 
-/// Finding #2/#3 (bias for a nonzero load0 p_vaddr, elf_util.c 147-154):
+/// Finding #2/#3 (bias for a nonzero load0 p_vaddr):
 /// ehdr lives at file offset 0 ↔ vaddr 0x1000, so bias = base - 0x1000 and
 /// every runtime address is bias + vaddr. p_offset == p_vaddr - 0x1000 keeps
 /// the file offsets compact.
@@ -649,7 +649,7 @@ fn add_manual_lib_nonzero_load0_vaddr() {
     unsafe { libc::munmap(base as *mut libc::c_void, TOTAL) };
 }
 
-/// Finding #4 (elf_util.c 155-165): without a PT_DYNAMIC phdr elfutil_init
+/// Finding #4: without a PT_DYNAMIC phdr elfutil_init
 /// logs "Failed to find dynamic section or bias address in ELF header" and
 /// returns false, so the library is not added.
 #[test]
@@ -679,7 +679,7 @@ fn add_manual_lib_rejects_missing_pt_dynamic() {
     unsafe { libc::munmap(base as *mut libc::c_void, total) };
 }
 
-/// Finding #4 (set_by_offset gate, elf_util.c 99-113 + 176-177): DT_STRTAB = 0
+/// Finding #4 (set_by_offset gate): DT_STRTAB = 0
 /// is below load0.p_vaddr (0x1000), so bias + 0 < base and elfutil_init
 /// fails instead of accepting an out-of-window pointer.
 #[test]
@@ -709,7 +709,7 @@ fn add_manual_lib_rejects_out_of_window_dyn_ptr() {
     unsafe { libc::munmap(base as *mut libc::c_void, TOTAL) };
 }
 
-/// Finding #4 (APS2 magic check, elf_util.c 265-272): DT_ANDROID_RELA/RELASZ
+/// Finding #4 (APS2 magic check): DT_ANDROID_RELA/RELASZ
 /// pointing at the strtab (size 4, first byte '\0' ≠ 'A') must fail
 /// elfutil_init.
 #[test]
@@ -739,7 +739,7 @@ fn add_manual_lib_rejects_bad_aps2_magic() {
     unsafe { libc::munmap(base as *mut libc::c_void, total) };
 }
 
-/// Finding #6b (elf_util.c 148-159): the bias scan has no `break` — with two
+/// Finding #6b: the bias scan has no `break` — with two
 /// PT_LOADs both at p_offset == 0 (vaddrs 0 and 0x1000) the LAST match wins,
 /// so bias_addr_for must return base - 0x1000, not base.
 #[test]
@@ -753,7 +753,7 @@ fn bias_addr_for_last_load0_wins() {
     assert_eq!(bias_addr_for(&img, BASE), BASE - 0x1000);
 }
 
-/// Finding #6c (elf_util.c 618-638): get_vma_boundaries returns false when
+/// Finding #6c: get_vma_boundaries returns false when
 /// the page-aligned start is 0 (`return vma_start && *vma_start != 0`) —
 /// an address inside a LOAD whose aligned start is 0 (build_so's R LOAD with
 /// bias 0) yields None even though the segment bounds are valid.

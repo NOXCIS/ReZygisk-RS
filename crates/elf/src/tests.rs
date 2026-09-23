@@ -204,7 +204,7 @@ fn build_elf64() -> Vec<u8> {
     // 1 reloc, one group: initial r_offset=0, size=1, flags=HAS_ADDEND,
     // offset delta=0x800, r_info=RELATIVE, addend=0x4000
     sleb_push(1, &mut packed);
-    sleb_push(0, &mut packed); // ABSOLUTE initial r_offset (linker.c 1843-1845)
+    sleb_push(0, &mut packed); // ABSOLUTE initial r_offset (linker.c)
     sleb_push(1, &mut packed);
     sleb_push(8, &mut packed); // RELOCATION_GROUP_HAS_ADDEND_FLAG
     sleb_push(0x800, &mut packed);
@@ -433,7 +433,7 @@ fn relr_word32_and_packed_rel() {
         }
     };
     push(2, &mut packed); // 2 relocs
-    push(0x3e0, &mut packed); // ABSOLUTE initial r_offset (linker.c 1843-1845)
+    push(0x3e0, &mut packed); // ABSOLUTE initial r_offset (linker.c)
     push(2, &mut packed); // group size
     push(2, &mut packed); // flags: GROUPED_BY_OFFSET_DELTA only
     push(0x10, &mut packed); // offset delta
@@ -452,7 +452,7 @@ fn relr_word32_and_packed_rel() {
 #[test]
 fn android_packed_consumes_absolute_initial_offset() {
     // Regression (audit P0 #1): the initial post-count value is the ABSOLUTE
-    // r_offset (linker.c 1843-1845), not the first group header. A nonzero
+    // r_offset, not the first group header. A nonzero
     // initial offset desynced the whole stream before the fix.
     let mut t = b"APS2".to_vec();
     push_sleb(&mut t, 2); // num_relocs
@@ -474,7 +474,7 @@ fn android_packed_consumes_absolute_initial_offset() {
     assert!(!relocs[1].has_addend);
 
     // RELA variant: per-reloc addends with a negative first delta exercise
-    // the sleb sign extension feeding the accumulator (linker.c 1903-1904).
+    // the sleb sign extension feeding the accumulator.
     let mut t = b"APS2".to_vec();
     push_sleb(&mut t, 2); // num_relocs
     push_sleb(&mut t, 0x200); // ABSOLUTE initial r_offset

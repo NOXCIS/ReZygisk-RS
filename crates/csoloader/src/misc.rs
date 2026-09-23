@@ -1,9 +1,9 @@
 //! Ports of `loader/src/external/csoloader`:
 //! - `src/carray.c` (+ `include/carray.h`): the `struct carray` string array
-//!   used by `linker_link` (linker.c:2046-2205) to queue DT_NEEDED
+//!   used by `linker_link` to queue DT_NEEDED
 //!   dependencies.
 //! - `src/sleb128.c` (+ `include/sleb128.h`): the signed LEB128 decoder used
-//!   by the Android packed-relocation path (linker.c:1838-1904).
+//!   by the Android packed-relocation path.
 //! - `src/backtrace-support.c`: a documented minimal subset — see the
 //!   "backtrace subset" section below.
 //!
@@ -14,7 +14,7 @@
 //!   `void` but the implementation returns `bool`; following the impl, there
 //!   is nothing to return here).
 //! - `carray_add` does NOT dedupe (C parity); call sites dedupe via
-//!   `carray_exists` first (linker.c:2186-2190).
+//!   `carray_exists` first.
 //! - `sleb128_decode` is redundant for the linker fan-out: `rz_elf`'s
 //!   `RelocTables.android` already returns fully decoded relocs via
 //!   `decode_android_packed`, so `linker_reloc` consumes pre-decoded tables.
@@ -160,42 +160,42 @@ pub fn sleb128_decode(bytes: &[u8], index: &mut usize) -> i64 {
 //
 // Ported (pure, byte-level or rz_elf-derivable pieces the linker's custom-lib
 // registry needs):
-// - `read_uleb128` (backtrace-support.c:43-62): ULEB128 reader used by the
+// - `read_uleb128` (backtrace-support.c): ULEB128 reader used by the
 //   `.eh_frame_hdr` decode. Overrun stops silently and returns the partial
 //   value, exactly like the C.
-// - `read_u16` / `read_u32` / `read_u64` (:80-120): bounds-checked
+// - `read_u16` / `read_u32` / `read_u64`: bounds-checked
 //   little-endian readers; the C's `-1` overrun return maps to `None`.
 // - `addr_in_load_segments`: the PT_LOAD range scan from `custom_dladdr`
-//   (:357-377) over rz_elf-derived segments, per the audit: CsoElf does not
+//   over rz_elf-derived segments, per the audit: CsoElf does not
 //   expose raw program headers, so derive them from `ElfImage::all_segments()`
 //   on the file bytes.
 //
 // OMITTED and why:
-// - `custom_dl_iterate_phdr` (:284-317) / `custom_dladdr` (:329-407): both
+// - `custom_dl_iterate_phdr` / `custom_dladdr`: both
 //   resolve the real libdl.so symbols via `csoloader_elf_symb_address` and
 //   chain over the custom-lib registry. linker.c consumes them only as raw
-//   addresses for the libc PLT redirection table (linker.c:1371,1379), which
+//   addresses for the libc PLT redirection table, which
 //   belongs to the linker port. The symbol half of `custom_dladdr` reuses the
 //   already-present `CsoElf::get_symbol_at`; its segment scan is ported here
 //   as `addr_in_load_segments`.
-// - `register_custom_library_for_backtrace` / `unregister_...` (:434-516):
+// - `register_custom_library_for_backtrace` / `unregister_...`:
 //   the MAX_CUSTOM_LIBS slot table + pthread mutex + `copy_program_headers`.
-//   Call sites (linker.c:2289-2302) are in the linker port. When ported, the
+//   Call sites are in the linker port. When ported, the
 //   `dl_phdr_info` phdr copies must come from `rz_elf::ElfImage::all_segments()`
 //   over the file bytes (raw phdrs are not exposed on `CsoElf`).
-// - `register_eh_frame_for_library` / `unregister_...` (:518-579): weak
+// - `register_eh_frame_for_library` / `unregister_...`: weak
 //   `__register_frame`/`__deregister_frame` + the registry. The address
-//   computation half (`locate_eh_frame_ptr`, :207-281) is already ported as
+//   computation half (`locate_eh_frame_ptr`) is already ported as
 //   `CsoElf::locate_eh_frame` + `decode_eh_frame_ptr` in image.rs.
-// - `decode_eh_value` (:122-205): its DW_EH_PE_indirect case dereferences a
+// - `decode_eh_value`: its DW_EH_PE_indirect case dereferences a
 //   pointer-sized word at a *runtime* address, which a file-byte/slice API
 //   cannot represent; the runtime C-parity version is image.rs
 //   `decode_eh_frame_ptr`. Its slice-level primitives are ported below.
-// - `copy_program_headers` (:419-432): superseded by `ElfImage::all_segments()`.
+// - `copy_program_headers`: superseded by `ElfImage::all_segments()`.
 
 const PT_LOAD: u32 = 1;
 
-/// backtrace-support.c:43 `read_uleb128`.
+/// backtrace-support.c `read_uleb128`.
 pub fn read_uleb128(bytes: &[u8], p: &mut usize) -> u64 {
     let mut r: u64 = 0;
     let mut shift: u32 = 0;
@@ -214,7 +214,7 @@ pub fn read_uleb128(bytes: &[u8], p: &mut usize) -> u64 {
     r
 }
 
-/// backtrace-support.c:80 `read_u16` (C returns -1 on overrun → `None`).
+/// backtrace-support.c `read_u16` (C returns -1 on overrun → `None`).
 pub fn read_u16(bytes: &[u8], p: &mut usize) -> Option<u16> {
     let end = *p + 2;
     if end > bytes.len() {
@@ -225,7 +225,7 @@ pub fn read_u16(bytes: &[u8], p: &mut usize) -> Option<u16> {
     Some(v)
 }
 
-/// backtrace-support.c:94 `read_u32` (C returns -1 on overrun → `None`).
+/// backtrace-support.c `read_u32` (C returns -1 on overrun → `None`).
 pub fn read_u32(bytes: &[u8], p: &mut usize) -> Option<u32> {
     let end = *p + 4;
     if end > bytes.len() {
@@ -236,7 +236,7 @@ pub fn read_u32(bytes: &[u8], p: &mut usize) -> Option<u32> {
     Some(v)
 }
 
-/// backtrace-support.c:108 `read_u64` (C returns -1 on overrun → `None`).
+/// backtrace-support.c `read_u64` (C returns -1 on overrun → `None`).
 pub fn read_u64(bytes: &[u8], p: &mut usize) -> Option<u64> {
     let end = *p + 8;
     if end > bytes.len() {
@@ -248,7 +248,7 @@ pub fn read_u64(bytes: &[u8], p: &mut usize) -> Option<u64> {
     Some(u64::from_le_bytes(b))
 }
 
-/// The PT_LOAD scan of `custom_dladdr` (backtrace-support.c:357-377): does
+/// The PT_LOAD scan of `custom_dladdr` (backtrace-support.c): does
 /// `addr` fall inside any PT_LOAD segment of a library loaded at
 /// `dlpi_addr`? Non-PT_LOAD entries in `segments` are skipped, as in C.
 ///

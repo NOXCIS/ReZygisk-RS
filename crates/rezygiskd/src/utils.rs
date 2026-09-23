@@ -48,7 +48,6 @@ pub fn peer_creds(fd: RawFd) -> Option<(i32, u32, u32)> {
     Some((cred.pid, cred.uid, cred.gid))
 }
 
-/// utils.c `switch_mount_namespace`.
 pub fn switch_mount_namespace(pid: i32) -> bool {
     let path = std::ffi::CString::new(format!("/proc/{pid}/ns/mnt")).unwrap();
     let nsfd = unsafe { libc::open(path.as_ptr(), libc::O_RDONLY | libc::O_CLOEXEC) };
@@ -67,7 +66,7 @@ pub fn switch_mount_namespace(pid: i32) -> bool {
     true
 }
 
-/// utils.c `get_property` via __system_property_get.
+/// Backed by `__system_property_get`.
 pub fn get_property(name: &str) -> Option<String> {
     #[cfg(target_os = "android")]
     unsafe {
@@ -90,7 +89,6 @@ pub fn get_property(name: &str) -> Option<String> {
     }
 }
 
-/// utils.c `set_socket_create_context`.
 pub fn set_socket_create_context(context: &str) {
     let write_to = |path: &std::ffi::CString| -> bool {
         let fd = unsafe { libc::open(path.as_ptr(), libc::O_WRONLY) };
@@ -125,7 +123,7 @@ fn get_current_attr() -> Option<String> {
     if trimmed.is_empty() { None } else { Some(trimmed) }
 }
 
-/// utils.c `unix_datagram_sendto`: keeps the socket in the daemon's own
+/// Keeps the socket in the daemon's own
 /// context by re-writing sockcreate before/after (the L2 fork dropped the
 /// sock_file/chcon approach for filesystem sockets, keeping this dance).
 pub fn unix_datagram_sendto(path: &str, buf: &[u8]) {
@@ -154,7 +152,7 @@ pub fn unix_datagram_sendto(path: &str, buf: &[u8]) {
     }
 }
 
-/// utils.c `exec_command`: run `file` with `argv`, capture stdout into a
+/// Run `file` with `argv`, capture stdout into a
 /// bounded string (last byte truncated like C's `buf[nbytes - 1] = '\0'`).
 pub fn exec_command(file: &str, argv: &[&str]) -> Option<String> {
     let mut fds = [0 as libc::c_int; 2];
@@ -223,7 +221,7 @@ pub fn exec_command(file: &str, argv: &[&str]) -> Option<String> {
     }
 }
 
-/// utils.c `check_unix_socket`: poll(2) POLLIN with 0ms (non-block) or
+/// poll(2) POLLIN with 0ms (non-block) or
 /// infinite (block) timeout; false when error events are pending.
 pub fn check_unix_socket(fd: RawFd, block: bool) -> bool {
     let mut pfd = libc::pollfd {
@@ -246,7 +244,7 @@ pub fn check_unix_socket(fd: RawFd, block: bool) -> bool {
 #[derive(Debug, Default, Clone)]
 #[allow(
     dead_code,
-    reason = "parsed from the full mountinfo line (utils.c layout); only \
+    reason = "parsed from the full mountinfo line; only \
               source/target/root are consumed by umount_root today"
 )]
 pub struct MountInfo {
@@ -264,7 +262,6 @@ pub struct MountInfo {
     pub fs_option: String,
 }
 
-/// utils.c `parse_mountinfo`.
 pub fn parse_mountinfo(pid: &str) -> Option<Vec<MountInfo>> {
     let content = std::fs::read_to_string(format!("/proc/{pid}/mountinfo")).ok()?;
 
@@ -318,7 +315,7 @@ pub fn parse_mountinfo(pid: &str) -> Option<Vec<MountInfo>> {
     Some(mounts)
 }
 
-/// utils.c `umount_root`: unmount everything the current root implementation
+/// Unmount everything the current root implementation
 /// mounted into this (already-switched) mount namespace.
 pub fn umount_root(kind: rz_ipc::RootImplKind) -> bool {
     let Some(mounts) = parse_mountinfo("self") else {
@@ -375,10 +372,10 @@ struct NsFdCache {
 
 static NS_FD_CACHE: Mutex<NsFdCache> = Mutex::new(NsFdCache { clean: -1, mounted: -1 });
 
-/// utils.c `save_mns_fd`: return a cached fd referring to a clean/mounted
+/// Return a cached fd referring to a clean/mounted
 /// mount namespace derived from `pid`, creating it in a forked child if
 /// needed. `state` is the raw wire byte (Clean=0 / Mounted=1); any other
-/// value behaves exactly like the C enum cast in utils.c 773-901: no
+/// value behaves exactly like the C enum cast: no
 /// unshare, no caching.
 pub fn save_mns_fd(pid: i32, state: u8, kind: rz_ipc::RootImplKind) -> RawFd {
     let clean = rz_ipc::MountNamespaceState::Clean as u8;
@@ -386,7 +383,6 @@ pub fn save_mns_fd(pid: i32, state: u8, kind: rz_ipc::RootImplKind) -> RawFd {
 
     {
         let cache = NS_FD_CACHE.lock().unwrap();
-        // utils.c 777-778
         if state == clean && cache.clean != -1 {
             return cache.clean;
         }
@@ -480,7 +476,7 @@ pub fn save_mns_fd(pid: i32, state: u8, kind: rz_ipc::RootImplKind) -> RawFd {
         }
 
         libc::close(parent_sock);
-        // utils.c 892-896: C treats a failed waitpid as failure (and leaks
+        // C: a failed waitpid is failure (and leaks
         // ns_fd); close it here instead.
         if libc::waitpid(fork_pid, std::ptr::null_mut(), 0) == -1 {
             dloge!("waitpid: {}", io::Error::last_os_error());

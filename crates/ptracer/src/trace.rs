@@ -135,7 +135,7 @@ mod tango {
 
             // mprotect(lib_base, lib_size, RWX); entry(lib_base, lib_size, 1);
             // getpid(); kill(getpid(), SIGTRAP). See ptracer.c for the encoding.
-            // ptracer.c:83-104: the C array carries a trailing 0 placeholder
+            // The C array carries a trailing 0 placeholder
             // word, so sizeof(code) is 48 bytes — the trampoline reservation
             // must cover the tail-call stub written at tramp+32..tramp+48.
             let code: [u32; 12] = [
@@ -682,7 +682,7 @@ pub fn trace_zygote(pid: i32, tango_flag: bool) -> bool {
                     libc::ptrace(libc::PTRACE_DETACH, pid, 0, libc::SIGCONT);
                 }
             } else {
-                // ptracer.c:574-588: when the expected SIGCONT delivery never
+                // C: when the expected SIGCONT delivery never
                 // arrives, C returns success WITHOUT detaching — tracer exit
                 // then triggers PTRACE_O_EXITKILL, killing the zygote so init
                 // restarts it and the monitor re-injects (fail-closed).

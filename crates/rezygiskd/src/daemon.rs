@@ -51,7 +51,7 @@ fn free_modules(context: &Context) {
 fn load_modules() -> Context {
     let mut modules: Vec<Module> = Vec::new();
 
-    // zygiskd.c 56-63: the modules directory handle is opened first; when
+    // C: the modules directory handle is opened first; when
     // that fails the context stays empty (the built-in truman module is
     // skipped too).
     let Ok(dir) = std::fs::read_dir(PATH_MODULES_DIR) else {
@@ -142,7 +142,7 @@ fn spawn_companion(argv0: &str, name: &str, lib_fd: RawFd) -> RawFd {
         unsafe { libc::close(companion_fd) };
 
         let mut status = 0;
-        // zygiskd.c 223-224: waitpid's return value is not checked; a
+        // C: waitpid's return value is not checked; a
         // failure leaves status 0, which reads as "exited 0" and proceeds.
         unsafe { libc::waitpid(pid, &mut status, 0) };
         if !libc_wifexited(status) || libc_wexitstatus(status) != 0 {
@@ -252,7 +252,7 @@ enum ClientError {
 }
 
 fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::RootImpl, first_process: &mut bool) -> Result<(), ClientError> {
-    // C (zygiskd.c 389-400): a failure reading the action byte — transport
+    // C: a failure reading the action byte — transport
     // error or client disconnect before sending anything — breaks the
     // accept loop. Mid-frame failures only drop this client (safe_read's
     // `return` / ASSURE_SIZE_*'s `break`), so they map to ClientError::MidFrame.
@@ -323,7 +323,7 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
 
             for module in &context.modules {
                 write_string(client_fd, &module.so_path).map_err(|_| ClientError::MidFrame)?;
-                // zygiskd.c 544-550: the pre-opened lib fd is only attached
+                // C: the pre-opened lib fd is only attached
                 // when it is open; attach it so the zygote can load via
                 // /proc/self/fd/N (no path walk).
                 if module.lib_fd >= 0 {
@@ -405,7 +405,7 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
 
             write_u32(client_fd, unsafe { libc::getpid() } as u32).map_err(|_| ClientError::MidFrame)?;
 
-            // zygiskd.c 665-666: building the clean ns also needs the mounted
+            // C: building the clean ns also needs the mounted
             // ns fd. The raw byte is compared (not enum-validated) exactly
             // like the C cast: any non-zero value skips the warm-up.
             if mns_state == MountNamespaceState::Clean as u8 {
@@ -540,7 +540,7 @@ pub fn zygiskd_start(argv0: &str) -> ! {
             plog!(TAG, "listen_abstract: {e}");
             free_modules(&context);
             root_impl::root_impl_cleanup();
-            // zygiskd.c 366-373: C cleans up and returns; main.c 62 then
+            // C: cleans up and returns; main then
             // exits with status 0.
             std::process::exit(0);
         }

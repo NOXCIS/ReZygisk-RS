@@ -1,5 +1,4 @@
-//! hook.c fd sanitization: `mark_fds_allowed` (861-874) + `rz_sanitize_fds`
-//! (875-928).
+//! hook.c fd sanitization: `mark_fds_allowed` + `rz_sanitize_fds`.
 //!
 //! The C calls `rz_sanitize_fds` from `rz_nativeSpecializeAppProcess_pre`
 //! (after `rz_run_modules_pre`) and from `rz_app_specialize_pre` (after
@@ -26,9 +25,10 @@
 //! - `NewIntArray` returning NULL maps to the jni crate's `Err` and skips the
 //!   `if (newArray) { ... }` body, falling through to the pid check like the
 //!   C.
-//! - `parse_int` is `misc_port::parse_int(&str)` (common/misc.c 20-33, the
+//! - `parse_int` is `misc_port::parse_int(&str)` (common/misc.c, the
 //!   documented home for this call site). The C stops at the NUL terminator;
-//!   the Rust port rejects an interior-NUL/non-UTF-8 `d_name` as "" -> 0.
+//!   the Rust port reads the `d_name` as a lossy-owned copy, so an interior
+//!   NUL truncates and non-UTF-8 bytes become U+FFFD -> parse_int -1 -> skip.
 //!   Kernel dirent names never contain NUL or non-ASCII bytes, so behavior
 //!   is identical here (noted in misc_port.rs).
 //! - `PLOGE`/`LOGW` use the `rz_common` `plog!`/`logw!` macros (the port-wide
@@ -40,7 +40,7 @@
 //! Audit note (F5, verified — no code change needed): an earlier hypothesis
 //! that `allowed_fds` arrives all-zero on the system_server path (closing
 //! every zygote fd right after the fork) does NOT hold.
-//! `fork_prepost::rz_fork_pre` (hook.c `rz_fork_pre` 824-860 parity) forks
+//! `fork_prepost::rz_fork_pre` (hook.c `rz_fork_pre` parity) forks
 //! before any third-party code runs and seeds `ctx.allowed_fds` from
 //! `/proc/self/fd` inside the child (`fork_prepost.rs` 71-103, its own
 //! dirfd excluded), so only fds opened AFTER that snapshot — i.e. module
@@ -51,21 +51,20 @@
 //! without passing through `rz_fork_pre` would sanitize against an
 //! unseeded (all-zero) allowlist.
 
-use std::ffi::CStr;
-
 use jni::objects::{JIntArray, ReleaseMode};
 use jni::JNIEnv;
 
 use crate::context::{
     flag_get, flag_set, ZygiskContext, APP_FORK_AND_SPECIALIZE, MAX_FD_SIZE, SKIP_FD_SANITIZATION,
 };
+use crate::jni_utils::cstr_to_owned;
 use rz_common::{logw, plog};
 
 /// Module-local log tag (C `LOG_TAG` in logging.h; the loader port uses
 /// `"zygisk"`).
 const TAG: &str = rz_common::LOG_TAG;
 
-/// hook.c `mark_fds_allowed` (861-874): mark every fd in `fds_array` as
+/// hook.c `mark_fds_allowed`: mark every fd in `fds_array` as
 /// allowed so the later sanitization keeps it open.
 pub fn mark_fds_allowed(
     ctx: &mut ZygiskContext,
@@ -104,7 +103,7 @@ pub fn mark_fds_allowed(
     drop(elems);
 }
 
-/// hook.c `rz_sanitize_fds` (875-928): close every fd the zygote child should
+/// hook.c `rz_sanitize_fds`: close every fd the zygote child should
 /// not keep, honoring the app's `fds_to_ignore` and the module-exempted fds.
 pub fn sanitize_fds(ctx: &mut ZygiskContext) {
     if flag_get(ctx, SKIP_FD_SANITIZATION) {
@@ -194,8 +193,10 @@ pub fn sanitize_fds(ctx: &mut ZygiskContext) {
             break;
         }
 
-        let name = unsafe { CStr::from_ptr((*entry).d_name.as_ptr()) };
-        let fd = crate::misc_port::parse_int(name.to_str().unwrap_or_default());
+        // SAFETY: readdir returned a non-NULL entry; `d_name` is a
+        // NUL-terminated array inside the struct dirent.
+        let name = cstr_to_owned(unsafe { (*entry).d_name.as_ptr() }).unwrap_or_default();
+        let fd = crate::misc_port::parse_int(&name);
         if fd < 0 || fd as usize >= MAX_FD_SIZE || fd == dfd || ctx.allowed_fds[fd as usize] != 0 {
             continue;
         }

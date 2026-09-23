@@ -1,5 +1,5 @@
-//! hook.c module loading: `load_modules_only` (934-999) and
-//! `rz_run_modules_pre` (1001-1008) / `rz_run_modules_post` (1010-1039).
+//! hook.c module loading: `load_modules_only` and
+//! `rz_run_modules_pre` / `rz_run_modules_post`.
 //!
 //! Reads the module list from ReZygiskd, loads each lib with csoloader,
 //! resolves `zygisk_module_entry`, and installs the api vtable pointer +
@@ -19,6 +19,7 @@ use crate::context::{
     flag_get, flag_set, module_snapshot, with_module_table, ZygiskContext, APP_SPECIALIZE,
     POST_SPECIALIZE, SERVER_FORK_AND_SPECIALIZE,
 };
+use crate::jni_utils::cstr_to_owned;
 
 const TAG: &str = rz_common::LOG_TAG;
 
@@ -62,7 +63,7 @@ fn check_module_exception(
     );
 }
 
-/// hook.c `load_modules_only` (934-999).
+/// hook.c `load_modules_only`.
 pub unsafe fn load_modules_only() -> bool {
     let mut ms = crate::daemon_client::ZygiskModules {
         modules: Vec::new(),
@@ -78,7 +79,7 @@ pub unsafe fn load_modules_only() -> bool {
         return false;
     }
 
-    /* hook.c 942-949: mirror the C malloc + failure path; `try_reserve`
+    /* hook.c: mirror the C malloc + failure path; `try_reserve`
        fails (instead of aborting) on OOM so the error branch stays reachable. */
     if with_module_table(|m| m.try_reserve(ms.modules.len())).is_err() {
         loge!(TAG, "Failed to allocate memory for modules");
@@ -93,7 +94,7 @@ pub unsafe fn load_modules_only() -> bool {
     let mut removed: usize = 0;
 
     for i in 0..ms.modules.len() {
-        /* hook.c 952: the C writes into the slot at zygisk_module_length and
+        /* hook.c: the C writes into the slot at zygisk_module_length and
            only increments on success. A Vec that pushes on success only is
            observably identical (failed slots are never counted). */
         let lib_path = ms.modules[i].clone();
@@ -114,8 +115,10 @@ pub unsafe fn load_modules_only() -> bool {
                 removed += 1;
             }
         } else {
-            let entry =
-                rz_csoloader::runtime::csoloader_get_symbol(&m.lib, "zygisk_module_entry");
+            // SAFETY: m.lib was just successfully loaded by csoloader_load above.
+            let entry = unsafe {
+                rz_csoloader::runtime::csoloader_get_symbol(&m.lib, "zygisk_module_entry")
+            };
             if entry.is_null() {
                 loge!(TAG, "Failed to find entry point in module [{}]", lib_path);
 
@@ -162,7 +165,7 @@ pub unsafe fn load_modules_only() -> bool {
     true
 }
 
-/// hook.c `rz_run_modules_pre` (1001-1008).
+/// hook.c `rz_run_modules_pre`.
 pub unsafe fn run_modules_pre(ctx: &mut ZygiskContext) {
     // Snapshot (base, len) and release the table lock BEFORE any module code
     // runs: module entries re-enter the loader (`register_module`) and must
@@ -196,7 +199,7 @@ pub unsafe fn run_modules_pre(ctx: &mut ZygiskContext) {
     }
 }
 
-/// hook.c `rz_run_modules_post` (1010-1039).
+/// hook.c `rz_run_modules_post`.
 pub unsafe fn run_modules_post(ctx: &mut ZygiskContext) {
     flag_set(ctx, POST_SPECIALIZE);
 
@@ -239,13 +242,7 @@ pub unsafe fn run_modules_post(ctx: &mut ZygiskContext) {
         // post-dlclose verification can look for surviving mappings.
         let lib_path = {
             let p = unsafe { std::ptr::addr_of!((*m).lib.lib_path).read() };
-            if p.is_null() {
-                String::new()
-            } else {
-                unsafe { std::ffi::CStr::from_ptr(p) }
-                    .to_string_lossy()
-                    .into_owned()
-            }
+            cstr_to_owned(p).unwrap_or_default()
         };
 
         // dlclose inside linker_destroy can run module destructors; the

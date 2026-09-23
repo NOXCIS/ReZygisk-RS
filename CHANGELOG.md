@@ -9,6 +9,9 @@
 - Self-unmap trampoline and PLT-restore invariant documented as RS design
 - Crate roots and hook-file banners state RS-owned behavior; stale C
   line-number references and `rz_`-prefixed internals dropped
+- Safe FFI wrappers (`jni_utils::{JniStringGuard, cstr_to_owned}`,
+  `ModuleSnapshot::{get,get_mut,iter,iter_mut}`) replace ~37 raw `unsafe`
+  blocks with audited, behavior-identical helpers
 - CI: workspace tests + cross-arch check; clippy `-D warnings` clean
 
 ## v1.0.0-rs-trumanrs (515)

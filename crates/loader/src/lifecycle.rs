@@ -34,17 +34,18 @@
 //!   `free(jni_hook_list)` all become Rust drops (`Vec::clear()` /
 //!   `Option = None`).
 
-use std::ffi::{c_void, CStr};
+use std::ffi::c_void;
 
 use jni::JNIEnv;
 
 use crate::context::{self, ZygiskArgs, ZygiskContext, MAX_EXEMPTED_FDS, MAX_FD_SIZE};
+use crate::jni_utils::cstr_to_owned;
 
 /// Module-local logcat tag (the whole library logs as "zygisk" in the C).
 const TAG: &str = rz_common::LOG_TAG;
 
 // ---------------------------------------------------------------------------
-// hook.c `rz_init` (1217-1227)
+// hook.c `rz_init`
 // ---------------------------------------------------------------------------
 
 pub unsafe fn init(ctx: &mut ZygiskContext, env: *mut jni::sys::JNIEnv, args: *mut c_void) {
@@ -71,14 +72,16 @@ pub unsafe fn init(ctx: &mut ZygiskContext, env: *mut jni::sys::JNIEnv, args: *m
     ctx.env = env;
     ctx.args.ptr = args;
     ctx.pid = -1;
-    libc::pthread_mutex_init(&mut ctx.hook_info_lock, std::ptr::null());
+    // SAFETY: hook_info_lock was just zeroed (PTHREAD_MUTEX_INITIALIZER equivalent);
+    // pthread_mutex_init with NULL attr is always safe on a zeroed mutex.
+    unsafe { libc::pthread_mutex_init(&mut ctx.hook_info_lock, std::ptr::null()) };
 
     // C: g_ctx = ctx;
     context::set_ctx(ctx as *mut ZygiskContext);
 }
 
 // ---------------------------------------------------------------------------
-// hook.c `rz_cleanup` (1228-1290)
+// hook.c `rz_cleanup`
 // ---------------------------------------------------------------------------
 
 pub unsafe fn cleanup(ctx: &mut ZygiskContext) {
@@ -109,14 +112,8 @@ pub unsafe fn cleanup(ctx: &mut ZygiskContext) {
                         .methods
                         .iter()
                         .map(|m| jni::NativeMethod {
-                            name: unsafe { CStr::from_ptr(m.name) }
-                                .to_string_lossy()
-                                .into_owned()
-                                .into(),
-                            sig: unsafe { CStr::from_ptr(m.signature) }
-                                .to_string_lossy()
-                                .into_owned()
-                                .into(),
+                            name: cstr_to_owned(m.name).unwrap_or_default().into(),
+                            sig: cstr_to_owned(m.signature).unwrap_or_default().into(),
                             fn_ptr: m.fn_ptr,
                         })
                         .collect();
@@ -159,17 +156,17 @@ pub unsafe fn cleanup(ctx: &mut ZygiskContext) {
     context::with_plt_hook_list(|list| list.clear());
 
     // C: /* INFO: Strip out all API function pointers */
-    // Snapshot + raw writes (F1 discipline): keep the table lock free while
-    // touching elements; no module code runs here, so the short snapshots
-    // are purely to avoid reintroducing the &mut Vec aliasing shape.
-    let modules = context::module_snapshot();
-    for i in 0..modules.len {
+    // Snapshot + writes: no module code runs here, so we can use the safe
+    // accessor instead of raw pointer arithmetic.
+    let mut modules = context::module_snapshot();
+    for m in modules.iter_mut() {
         // C: memset(&zygisk_modules[i], 0, sizeof(zygisk_modules[i])). Use
         // Default instead of mem::zeroed for sound Rust access.
-        unsafe { *modules.base.add(i) = crate::abi::ReZygiskModule::default() };
+        *m = crate::abi::ReZygiskModule::default();
     }
 
     context::ENABLE_UNLOADER.store(true, std::sync::atomic::Ordering::Relaxed);
 
-    libc::pthread_mutex_destroy(&mut ctx.hook_info_lock);
+    // SAFETY: ctx is valid and hook_info_lock was initialized by init().
+    unsafe { libc::pthread_mutex_destroy(&mut ctx.hook_info_lock) };
 }

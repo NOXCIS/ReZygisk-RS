@@ -20,7 +20,7 @@ fn main() {
                     dlogi!("Usage: zygiskd companion <fd>");
                     std::process::exit(1);
                 }
-                // main.c 21: C parses the fd with atoi, which yields 0 for
+                // main.c: C parses the fd with atoi, which yields 0 for
                 // a non-numeric argument.
                 let fd: i32 = args[2].parse().unwrap_or(0);
                 companion::companion_entry(fd);

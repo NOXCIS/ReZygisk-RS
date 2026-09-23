@@ -199,7 +199,7 @@ const ET_EXEC: u16 = 2;
 const ET_DYN: u16 = 3;
 
 // PT_DYNAMIC / DT_* tags for the elfutil_init gates in `add_manual_lib`
-// (elf_util.c 99-113, 148-159, 161-165, 265-272; libc doesn't export them).
+// (elf_util.c elfutil_init gates; libc doesn't export them).
 const PT_DYNAMIC: u32 = 2;
 const DT_STRTAB: u64 = 5;
 const DT_SYMTAB: u64 = 6;
@@ -258,7 +258,7 @@ unsafe fn mremap_relocate(
 // ---------------------------------------------------------------------------
 
 /// `elfutil_init`: bias = base_addr - p_vaddr of the **last** PT_LOAD with
-/// p_offset == 0 that the base can reach. elf_util.c 148-159 scans every
+/// p_offset == 0 that the base can reach. The C scans every
 /// phdr without breaking, so a later matching LOAD overwrites earlier ones;
 /// when nothing matches, `base_addr` is returned (bias 0 relative to the
 /// image start). Must agree with [`read_mapped_image`]'s bias computation.
@@ -362,7 +362,7 @@ pub fn get_vma_boundaries(img: &rz_elf::ElfImage, bias_addr: usize, addr: usize)
         }
     }
 
-    // elf_util.c 618-638: the C fails the lookup when the matched segment's
+    // elf_util.c: the C fails the lookup when the matched segment's
     // page-aligned start is 0 (`return (vma_start && *vma_start != 0);`).
     // The check applies to the final written value — a later PT_LOAD match
     // may overwrite an earlier zero before the RELRO break.
@@ -385,7 +385,7 @@ fn collect_relocs(
     out: &mut Vec<usize>,
     ) {        for rel in table {
             let matches = if let Some(prefix) = match_by_prefix {
-                // elf_util.c 523-531: prefix matching skips st_name == 0
+                // elf_util.c: prefix matching skips st_name == 0
                 // symbols outright, then strncmp's `prefix_len` bytes. An
                 // empty prefix therefore matches every *named* symbol.
                 img.symbol_at(rel.sym_idx as usize)
@@ -550,7 +550,7 @@ const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_386;
 #[cfg(target_arch = "arm")]
 const TARGET_ELF_MACHINE: u16 = rz_elf::arch::EM_ARM;
 
-/// `elfutil_init`'s acquisition half (elf_util.c 115-159): validate the ELF
+/// `elfutil_init`'s acquisition half: validate the ELF
 /// header at `base_addr` and snapshot the mapped image as a sparse,
 /// per-PT_LOAD window, returning `(window, bias)`.
 ///
@@ -608,7 +608,7 @@ unsafe fn read_mapped_image_abi(base_addr: usize, elf_class: u8, machine: u16) -
     let ehdr_size: usize = if elf_class == 2 { 64 } else { 52 };
     let hdr = unsafe { std::slice::from_raw_parts(base_addr as *const u8, ehdr_size) }.to_vec();
 
-    // elf_util.c 121-137: magic, class, endianness, ident version, type and
+    // elf_util.c: magic, class, endianness, ident version, type and
     // machine all gate silently except the late version check.
     if hdr[0..4] != [0x7f, b'E', b'L', b'F'] {
         return None;
@@ -657,7 +657,7 @@ unsafe fn read_mapped_image_abi(base_addr: usize, elf_class: u8, machine: u16) -
         unsafe { std::slice::from_raw_parts((base_addr + e_phoff) as *const u8, phdr_len) }
             .to_vec();
 
-    // elf_util.c 147-159: bias from the last p_offset == 0 PT_LOAD the base
+    // elf_util.c: bias from the last p_offset == 0 PT_LOAD the base
     // can reach (the C's branch has no break, so later matches overwrite
     // earlier ones). B is that LOAD's p_vaddr; the snapshot window starts at
     // base_addr = bias + B, so window[k] holds the mapped byte at
@@ -839,7 +839,7 @@ impl Plti {
             }
         };
 
-        // elf_util.c 155-165: `dynamic_` holds the LAST PT_DYNAMIC phdr's
+        // elf_util.c: `dynamic_` holds the LAST PT_DYNAMIC phdr's
         // p_vaddr (the scan has no break) and init fails when that value is
         // 0 — a zero-vaddr PT_DYNAMIC is not saved by an earlier one, and a
         // later PT_DYNAMIC with p_vaddr != 0 wins over an earlier zero.
@@ -854,7 +854,7 @@ impl Plti {
             return false;
         }
 
-        // elf_util.c 99-113 (`set_by_offset`) parity: every tag the C turns
+        // elf_util.c `set_by_offset` parity: every tag the C turns
         // into a runtime pointer must satisfy `bias + value >= base` (the
         // C's wrap-around ElfW(Addr) arithmetic, reproduced exactly). Only
         // tags actually present in the dynamic table are checked, exactly
@@ -879,7 +879,7 @@ impl Plti {
             }
         }
 
-        // elf_util.c 219-236 + 265-272: `rel_android_` is the LAST
+        // elf_util.c: `rel_android_` is the LAST
         // DT_ANDROID_REL/DT_ANDROID_RELA occurrence and `rel_android_size_`
         // the last of the two size tags — the C's flat assignments pair the
         // two fields independently, so the winning pair can cross tags. A
@@ -1241,7 +1241,7 @@ impl Plti {
                     )
                 };
 
-                // plti.c 556-560: the C's `if (!mremap(...))` negates the
+                // plti.c: the C's `if (!mremap(...))` negates the
                 // MAP_FAILED sentinel, so the branch is dead code and every
                 // restore is silently accepted. The port keeps the intended
                 // failure handling (log + free the backup) but, like the C's
@@ -1258,7 +1258,7 @@ impl Plti {
         self.elf_infos.clear();
         self.hooks.clear();
 
-        // plti.c 580: plti_deinit returns true unconditionally.
+        // plti.c: plti_deinit returns true unconditionally.
         true
     }
 }

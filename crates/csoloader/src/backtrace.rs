@@ -1,4 +1,4 @@
-//! Port of csoloader `backtrace-support.c` registry half (lines 419-570):
+//! Port of csoloader `backtrace-support.c` registry half:
 //! `g_custom_libs[]`, `copy_program_headers`,
 //! `register/unregister_custom_library_for_backtrace` and
 //! `register/unregister_eh_frame_for_library`.
@@ -205,7 +205,7 @@ pub(crate) fn unregister_custom_library_for_backtrace(img: &CsoElf) -> bool {
             if let Some(deregister_frame) = resolve_deregister_frame() {
                 unsafe { deregister_frame(lib_info.eh_frame_registered) };
             }
-            // C: LOGD("Deregistered .eh_frame for %s") (backtrace-support.c 498)
+            // C: LOGD("Deregistered .eh_frame for %s") (backtrace-support.c)
             // between the deregister call and the NULL reset.
             dlogd!("Deregistered .eh_frame for {}", img.path());
             lib_info.eh_frame_registered = std::ptr::null_mut();
@@ -226,7 +226,7 @@ pub(crate) fn unregister_custom_library_for_backtrace(img: &CsoElf) -> bool {
     false
 }
 
-/// backtrace-support.c `register_eh_frame_for_library` (518).
+/// backtrace-support.c `register_eh_frame_for_library`.
 pub(crate) fn register_eh_frame_for_library(img: &CsoElf) {
     // C #ifdef __arm__: EHABI has no .eh_frame to register.
     #[cfg(target_arch = "arm")]
@@ -243,7 +243,7 @@ pub(crate) fn register_eh_frame_for_library(img: &CsoElf) {
             return;
         };
 
-        // C order (backtrace-support.c 534-542): log, then the weak
+        // C order (backtrace-support.c): log, then the weak
         // `__register_frame` check (dlsym here), then call + log.
         dlogd!(
             "Registering .eh_frame at {:p} (size ~{eh_frame_size}) for {}",

@@ -1,5 +1,5 @@
 //! hook.c PLT hook commit (v3 api): `api_plt_hook_register`,
-//! `api_plt_hook_exclude`, `api_plt_hook_commit` — hook.c lines 521-614.
+//! `api_plt_hook_exclude`, `api_plt_hook_commit`.
 //!
 //! C-parity notes:
 //! - `regcomp(regex, REG_NOSUB)` becomes `regex::Regex::new`; a compile
@@ -13,17 +13,18 @@
 //!   `rz_plti::Plti::add_hook` per (map, symbol) and full cleanup of both
 //!   lists (dropping `Regex` == `regfree`, dropping `String` == `free`).
 
-use std::ffi::{c_char, c_void, CStr};
+use std::ffi::{c_char, c_void};
 
 use regex::Regex;
 
 use crate::context::{
     ctx_mut, with_plti, IgnoreInfo, RegisterInfo, MAX_IGNORE_INFO, MAX_REGISTER_INFO,
 };
+use crate::jni_utils::cstr_to_owned;
 
 const TAG: &str = rz_common::LOG_TAG;
 
-/// hook.c `api_plt_hook_register` (521-537): queue a PLT hook for a
+/// hook.c `api_plt_hook_register`: queue a PLT hook for a
 /// regex-matched library path.
 pub unsafe extern "C" fn api_plt_hook_register(
     regex: *const c_char,
@@ -41,7 +42,9 @@ pub unsafe extern "C" fn api_plt_hook_register(
 
     // hook.c regcomp(&re, regex, REG_NOSUB): compile before locking, and a
     // failure returns silently.
-    let regex_str = unsafe { CStr::from_ptr(regex) }.to_string_lossy();
+    let Some(regex_str) = cstr_to_owned(regex) else {
+        return;
+    };
     let Ok(re) = Regex::new(&regex_str) else { return };
 
     unsafe {
@@ -49,7 +52,7 @@ pub unsafe extern "C" fn api_plt_hook_register(
     }
 
     // hook.c strdup(symbol): take ownership of the module's copy.
-    let symbol = unsafe { CStr::from_ptr(symbol) }.to_string_lossy().into_owned();
+    let symbol = cstr_to_owned(symbol).unwrap_or_default();
 
     ctx.register_info.push(RegisterInfo {
         regex: re,
@@ -63,7 +66,7 @@ pub unsafe extern "C" fn api_plt_hook_register(
     }
 }
 
-/// hook.c `api_plt_hook_exclude` (538-552): queue a PLT hook exclusion;
+/// hook.c `api_plt_hook_exclude`: queue a PLT hook exclusion;
 /// `symbol == NULL` excludes every symbol in the regex-matched library.
 pub unsafe extern "C" fn api_plt_hook_exclude(regex: *const c_char, symbol: *const c_char) {
     let Some(ctx) = ctx_mut() else { return };
@@ -76,15 +79,13 @@ pub unsafe extern "C" fn api_plt_hook_exclude(regex: *const c_char, symbol: *con
 
     // hook.c regcomp(&re, regex, REG_NOSUB): compile before locking, and a
     // failure returns silently.
-    let regex_str = unsafe { CStr::from_ptr(regex) }.to_string_lossy();
+    let Some(regex_str) = cstr_to_owned(regex) else {
+        return;
+    };
     let Ok(re) = Regex::new(&regex_str) else { return };
 
     // hook.c `symbol ? strdup(symbol) : NULL`.
-    let symbol = if symbol.is_null() {
-        None
-    } else {
-        Some(unsafe { CStr::from_ptr(symbol) }.to_string_lossy().into_owned())
-    };
+    let symbol = cstr_to_owned(symbol);
 
     unsafe {
         libc::pthread_mutex_lock(&mut ctx.hook_info_lock);
@@ -97,7 +98,7 @@ pub unsafe extern "C" fn api_plt_hook_exclude(regex: *const c_char, symbol: *con
     }
 }
 
-/// hook.c `api_plt_hook_commit` (553-614): scan /proc/self/maps and apply
+/// hook.c `api_plt_hook_commit`: scan /proc/self/maps and apply
 /// every queued register/ignore pair.
 pub unsafe extern "C" fn api_plt_hook_commit() -> bool {
     let Some(ctx) = ctx_mut() else { return false };
