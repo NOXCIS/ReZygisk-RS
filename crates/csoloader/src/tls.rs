@@ -49,6 +49,11 @@ impl TlsKey {
     /// Set the value for this key in the current thread.
     ///
     /// Returns true on success.
+    ///
+    /// The `value` pointer is stored by pthread opaquely and handed back by
+    /// `get`/destructors; this function never dereferences it, so the
+    /// conservative `not_unsafe_ptr_arg_deref` deny does not apply.
+    #[allow(clippy::not_unsafe_ptr_arg_deref)]
     pub fn set(&self, value: *mut libc::c_void) -> bool {
         unsafe { libc::pthread_setspecific(self.key, value) == 0 }
     }
