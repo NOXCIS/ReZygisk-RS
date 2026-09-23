@@ -1,13 +1,13 @@
-//! Port of hook.c lines 1217-1290: `rz_init` (1217-1227) and `rz_cleanup`
+//! Port of hook.c lines 1217-1290: `init` (1217-1227) and `cleanup`
 //! (1228-1290).
 //!
-//! `rz_init` is deliberately small — exactly like the C it only memsets the
+//! `init` is deliberately small — exactly like the C it only memsets the
 //! context, fills env/args.ptr/pid, initializes the hook_info_lock mutex and
 //! publishes the context into `g_ctx`. The big init sequence (daemon flags,
 //! update_mnt_ns, module pre-calls, fd sanitization) lives in the
 //! specialize/pre functions that CALL rz_init, not here.
 //!
-//! `rz_cleanup` runs after the original JNI call returns (every wrapper in
+//! `cleanup` runs after the original JNI call returns (every wrapper in
 //! jni_tables.rs calls it): it unhooks the JNI methods recorded in
 //! `context::JNI_HOOK_LIST`, releases the register/ignore/plt lists, strips
 //! the API function pointers out of every loaded module, arms the unloader
@@ -49,7 +49,7 @@ const TAG: &str = rz_common::LOG_TAG;
 // hook.c `rz_init` (1217-1227)
 // ---------------------------------------------------------------------------
 
-pub unsafe fn rz_init(ctx: &mut ZygiskContext, env: *mut jni::sys::JNIEnv, args: *mut c_void) {
+pub unsafe fn init(ctx: &mut ZygiskContext, env: *mut jni::sys::JNIEnv, args: *mut c_void) {
     // C: memset(ctx, 0, sizeof(struct zygisk_context)) — every field gets
     // its memset-equivalent zero value (the process string is empty, like
     // the C's zeroed char *).
@@ -83,7 +83,7 @@ pub unsafe fn rz_init(ctx: &mut ZygiskContext, env: *mut jni::sys::JNIEnv, args:
 // hook.c `rz_cleanup` (1228-1290)
 // ---------------------------------------------------------------------------
 
-pub unsafe fn rz_cleanup(ctx: &mut ZygiskContext) {
+pub unsafe fn cleanup(ctx: &mut ZygiskContext) {
     // C: g_ctx = NULL;
     context::set_ctx(std::ptr::null_mut());
 

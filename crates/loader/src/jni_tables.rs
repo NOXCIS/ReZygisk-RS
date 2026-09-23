@@ -131,7 +131,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_l(
     args.app_data_dir = &mut app_data_dir;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_l(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -179,7 +179,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_o(
     args.fds_to_ignore = &mut fds_to_ignore;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_o(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -229,7 +229,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_p(
     args.is_child_zygote = &mut is_child_zygote;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -241,7 +241,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_p(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -282,7 +282,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_q_alt(
     args.is_top_app = &mut is_top_app;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_q_alt(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -343,7 +343,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_r(
     args.mount_storage_dirs = &mut mount_storage_dirs;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -356,7 +356,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_r(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -407,7 +407,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_u(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -420,7 +420,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_u(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -475,7 +475,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_v(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -489,7 +489,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_v(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -526,7 +526,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_m(
     args.app_data_dir = &mut app_data_dir;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_m(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -575,7 +575,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_n(
     args.app_data_dir = &mut app_data_dir;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -586,7 +586,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_n(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -625,7 +625,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_o(
     args.fds_to_ignore = &mut fds_to_ignore;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -636,7 +636,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_o(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -677,7 +677,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_p(
     args.is_child_zygote = &mut is_child_zygote;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -689,7 +689,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_p(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -741,7 +741,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_b(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -755,7 +755,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_samsung_b(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -807,7 +807,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_grapheneos_u(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeForkAndSpecialize_pre(&mut ctx);
     let orig: NativeForkAndSpecializeFn = unsafe { transmute(nativeForkAndSpecialize_orig.load(Ordering::Relaxed)) };
     let pid = unsafe {
@@ -821,7 +821,7 @@ pub unsafe extern "C" fn nativeForkAndSpecialize_grapheneos_u(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkAndSpecialize_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -861,7 +861,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_q(
     args.is_child_zygote = &mut is_child_zygote;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -871,7 +871,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_q(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -908,7 +908,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_q_alt(
     args.is_top_app = &mut is_top_app;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -918,7 +918,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_q_alt(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -963,7 +963,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_r(
     args.mount_storage_dirs = &mut mount_storage_dirs;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -975,7 +975,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_r(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -1022,7 +1022,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_u(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -1034,7 +1034,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_u(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -1071,7 +1071,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_samsung_q(
     args.is_child_zygote = &mut is_child_zygote;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -1081,7 +1081,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_samsung_q(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 #[cfg_attr(target_os = "android", unsafe(no_mangle))]
@@ -1129,7 +1129,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_grapheneos_u(
     args.mount_sysprop_overrides = &mut mount_sysprop_overrides;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
+    crate::lifecycle::init(&mut ctx, env, &mut args as *mut AppSpecializeArgsV5 as *mut c_void);
     crate::native_specialize::rz_nativeSpecializeAppProcess_pre(&mut ctx);
     let orig: NativeSpecializeAppProcessFn = unsafe { transmute(nativeSpecializeAppProcess_orig.load(Ordering::Relaxed)) };
     unsafe {
@@ -1141,7 +1141,7 @@ pub unsafe extern "C" fn nativeSpecializeAppProcess_grapheneos_u(
         );
     }
     crate::native_specialize::rz_nativeSpecializeAppProcess_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
 }
 
 // ---------------------------------------------------------------------------
@@ -1172,7 +1172,7 @@ pub unsafe extern "C" fn nativeForkSystemServer_l(
     args.effective_capabilities = &mut effective_capabilities;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(
+    crate::lifecycle::init(
         &mut ctx,
         env,
         &mut args as *mut ServerSpecializeArgsV1 as *mut c_void,
@@ -1187,7 +1187,7 @@ pub unsafe extern "C" fn nativeForkSystemServer_l(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkSystemServer_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 
@@ -1217,7 +1217,7 @@ pub unsafe extern "C" fn nativeForkSystemServer_samsung_q(
     args.effective_capabilities = &mut effective_capabilities;
 
     let mut ctx = new_zygisk_context();
-    crate::lifecycle::rz_init(
+    crate::lifecycle::init(
         &mut ctx,
         env,
         &mut args as *mut ServerSpecializeArgsV1 as *mut c_void,
@@ -1232,7 +1232,7 @@ pub unsafe extern "C" fn nativeForkSystemServer_samsung_q(
     };
     ctx.pid = pid;
     crate::native_specialize::rz_nativeForkSystemServer_post(&mut ctx);
-    crate::lifecycle::rz_cleanup(&mut ctx);
+    crate::lifecycle::cleanup(&mut ctx);
     pid
 }
 

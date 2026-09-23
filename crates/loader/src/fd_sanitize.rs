@@ -106,7 +106,7 @@ pub fn mark_fds_allowed(
 
 /// hook.c `rz_sanitize_fds` (875-928): close every fd the zygote child should
 /// not keep, honoring the app's `fds_to_ignore` and the module-exempted fds.
-pub fn rz_sanitize_fds(ctx: &mut ZygiskContext) {
+pub fn sanitize_fds(ctx: &mut ZygiskContext) {
     if flag_get(ctx, SKIP_FD_SANITIZATION) {
         return;
     }

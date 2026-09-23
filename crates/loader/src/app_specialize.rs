@@ -60,7 +60,7 @@ unsafe fn release_string_utf_chars(
 }
 
 /// hook.c `rz_app_specialize_pre` (1041-1151).
-pub unsafe fn rz_app_specialize_pre(ctx: &mut ZygiskContext) {
+pub unsafe fn app_specialize_pre(ctx: &mut ZygiskContext) {
     flag_set(ctx, APP_SPECIALIZE);
 
     // INFO: Isolated services have different UIDs than the main apps. Because
@@ -171,7 +171,7 @@ pub unsafe fn rz_app_specialize_pre(ctx: &mut ZygiskContext) {
 
     // INFO: Executed after setns to ensure a module can update the mounts of an
     //         application without worrying about it being overwritten by setns.
-    crate::load_modules::rz_run_modules_pre(ctx);
+    crate::load_modules::run_modules_pre(ctx);
 
     // INFO: The modules may request that although the process is NOT in
     //         the DenyList, it has its mount namespace switched to the clean
@@ -186,8 +186,8 @@ pub unsafe fn rz_app_specialize_pre(ctx: &mut ZygiskContext) {
 }
 
 /// hook.c `rz_app_specialize_post` (1153-1160).
-pub unsafe fn rz_app_specialize_post(ctx: &mut ZygiskContext) {
-    crate::load_modules::rz_run_modules_post(ctx);
+pub unsafe fn app_specialize_post(ctx: &mut ZygiskContext) {
+    crate::load_modules::run_modules_post(ctx);
 
     // INFO: Allow the process name string to be released
     let nice_name = unsafe { (*ctx.args.app).nice_name };

@@ -69,13 +69,13 @@ pub unsafe fn rz_nativeSpecializeAppProcess_pre(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "pre specialize [{}]", ctx.process);
 
     flag_set(ctx, SKIP_FD_SANITIZATION);
-    crate::app_specialize::rz_app_specialize_pre(ctx);
+    crate::app_specialize::app_specialize_pre(ctx);
 }
 
 /// hook.c `rz_nativeSpecializeAppProcess_post` (1169-1172).
 pub unsafe fn rz_nativeSpecializeAppProcess_post(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "post specialize [{}]", ctx.process);
-    crate::app_specialize::rz_app_specialize_post(ctx);
+    crate::app_specialize::app_specialize_post(ctx);
 }
 
 /// hook.c `rz_nativeForkSystemServer_pre` (1174-1184).
@@ -83,14 +83,14 @@ pub unsafe fn rz_nativeForkSystemServer_pre(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "pre forkSystemServer");
     flag_set(ctx, SERVER_FORK_AND_SPECIALIZE);
 
-    crate::fork_prepost::rz_fork_pre(ctx);
+    crate::fork_prepost::fork_pre(ctx);
     if !is_zygote_child(ctx) {
         return;
     }
 
-    crate::load_modules::rz_run_modules_pre(ctx);
+    crate::load_modules::run_modules_pre(ctx);
 
-    crate::fd_sanitize::rz_sanitize_fds(ctx);
+    crate::fd_sanitize::sanitize_fds(ctx);
 }
 
 /// hook.c `rz_nativeForkSystemServer_post` (1186-1194).
@@ -98,10 +98,10 @@ pub unsafe fn rz_nativeForkSystemServer_post(ctx: &mut ZygiskContext) {
     if ctx.pid == 0 {
         rz_common::logv!(TAG, "post forkSystemServer");
 
-        crate::load_modules::rz_run_modules_post(ctx);
+        crate::load_modules::run_modules_post(ctx);
     }
 
-    crate::fork_prepost::rz_fork_post(ctx);
+    crate::fork_prepost::fork_post(ctx);
 }
 
 /// hook.c `rz_nativeForkAndSpecialize_pre` (1196-1206).
@@ -110,13 +110,13 @@ pub unsafe fn rz_nativeForkAndSpecialize_pre(ctx: &mut ZygiskContext) {
     rz_common::logv!(TAG, "pre forkAndSpecialize [{}]", ctx.process);
     flag_set(ctx, APP_FORK_AND_SPECIALIZE);
 
-    crate::fork_prepost::rz_fork_pre(ctx);
+    crate::fork_prepost::fork_pre(ctx);
     if !is_zygote_child(ctx) {
         return;
     }
 
-    crate::app_specialize::rz_app_specialize_pre(ctx);
-    crate::fd_sanitize::rz_sanitize_fds(ctx);
+    crate::app_specialize::app_specialize_pre(ctx);
+    crate::fd_sanitize::sanitize_fds(ctx);
 }
 
 /// hook.c `rz_nativeForkAndSpecialize_post` (1208-1215).
@@ -125,8 +125,8 @@ pub unsafe fn rz_nativeForkAndSpecialize_post(ctx: &mut ZygiskContext) {
         rz_common::logv!(TAG, "post forkAndSpecialize [{}]", ctx.process);
         // SAFETY: called from the hooked zygote after a successful fork,
         // with the child context in `ctx` (hook.c 1208-1215).
-        unsafe { crate::app_specialize::rz_app_specialize_post(ctx) };
+        unsafe { crate::app_specialize::app_specialize_post(ctx) };
     }
 
-    crate::fork_prepost::rz_fork_post(ctx);
+    crate::fork_prepost::fork_post(ctx);
 }

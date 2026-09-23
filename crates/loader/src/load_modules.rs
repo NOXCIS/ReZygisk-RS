@@ -163,7 +163,7 @@ pub unsafe fn load_modules_only() -> bool {
 }
 
 /// hook.c `rz_run_modules_pre` (1001-1008).
-pub unsafe fn rz_run_modules_pre(ctx: &mut ZygiskContext) {
+pub unsafe fn run_modules_pre(ctx: &mut ZygiskContext) {
     // Snapshot (base, len) and release the table lock BEFORE any module code
     // runs: module entries re-enter the loader (`register_module`) and must
     // be able to take the lock (audit F1). All element access below is
@@ -176,20 +176,20 @@ pub unsafe fn rz_run_modules_pre(ctx: &mut ZygiskContext) {
 
         let pending_before = exception_pending(ctx.env);
         unsafe {
-            crate::module_calls::rz_module_call_on_load(m, ctx.env.cast());
+            crate::module_calls::module_on_load(m, ctx.env.cast());
         }
         check_module_exception(ctx.env, i, "on_load", pending_before);
 
         if flag_get(ctx, APP_SPECIALIZE) {
             let pending_before = exception_pending(ctx.env);
             unsafe {
-                crate::module_calls::rz_module_call_pre_app_specialize(m, ctx.args.app);
+                crate::module_calls::module_pre_app_specialize(m, ctx.args.app);
             }
             check_module_exception(ctx.env, i, "pre_app_specialize", pending_before);
         } else if flag_get(ctx, SERVER_FORK_AND_SPECIALIZE) {
             let pending_before = exception_pending(ctx.env);
             unsafe {
-                crate::module_calls::rz_module_call_pre_server_specialize(m, ctx.args.server);
+                crate::module_calls::module_pre_server_specialize(m, ctx.args.server);
             }
             check_module_exception(ctx.env, i, "pre_server_specialize", pending_before);
         }
@@ -197,7 +197,7 @@ pub unsafe fn rz_run_modules_pre(ctx: &mut ZygiskContext) {
 }
 
 /// hook.c `rz_run_modules_post` (1010-1039).
-pub unsafe fn rz_run_modules_post(ctx: &mut ZygiskContext) {
+pub unsafe fn run_modules_post(ctx: &mut ZygiskContext) {
     flag_set(ctx, POST_SPECIALIZE);
 
     // Same snapshot discipline as rz_run_modules_pre: the lock is released
@@ -213,13 +213,13 @@ pub unsafe fn rz_run_modules_post(ctx: &mut ZygiskContext) {
         if flag_get(ctx, APP_SPECIALIZE) {
             let pending_before = exception_pending(ctx.env);
             unsafe {
-                crate::module_calls::rz_module_call_post_app_specialize(m, ctx.args.app);
+                crate::module_calls::module_post_app_specialize(m, ctx.args.app);
             }
             check_module_exception(ctx.env, i, "post_app_specialize", pending_before);
         } else if flag_get(ctx, SERVER_FORK_AND_SPECIALIZE) {
             let pending_before = exception_pending(ctx.env);
             unsafe {
-                crate::module_calls::rz_module_call_post_server_specialize(m, ctx.args.server);
+                crate::module_calls::module_post_server_specialize(m, ctx.args.server);
             }
             check_module_exception(ctx.env, i, "post_server_specialize", pending_before);
         }

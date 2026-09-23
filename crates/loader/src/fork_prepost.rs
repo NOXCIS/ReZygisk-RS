@@ -59,7 +59,7 @@ pub fn sigmask(how: i32, signum: i32) -> i32 {
 /// hook.c `rz_fork_pre` (824-860). Do our own fork before loading any 3rd
 /// party code: block SIGCHLD, fork, and in the child record all currently
 /// open fds into `allowed_fds` so the later sanitization keeps them.
-pub fn rz_fork_pre(ctx: &mut ZygiskContext) {
+pub fn fork_pre(ctx: &mut ZygiskContext) {
     // INFO: Do our own fork before loading any 3rd party code.
     //         First block SIGCHLD, unblock after original fork is done.
     sigmask(libc::SIG_BLOCK, libc::SIGCHLD);
@@ -105,7 +105,7 @@ pub fn rz_fork_pre(ctx: &mut ZygiskContext) {
 
 /// hook.c `rz_fork_post` (929-933): unblock SIGCHLD and drop the current
 /// context (`g_ctx = NULL`). The C marks `ctx` unused here too.
-pub fn rz_fork_post(_ctx: &mut ZygiskContext) {
+pub fn fork_post(_ctx: &mut ZygiskContext) {
     sigmask(libc::SIG_UNBLOCK, libc::SIGCHLD);
     set_ctx(std::ptr::null_mut());
 }

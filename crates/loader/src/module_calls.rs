@@ -47,7 +47,7 @@ unsafe fn img_path(m: *const ReZygiskModule) -> &'static str {
 ///
 /// # Safety
 /// `m` must point at a live table slot with a valid `zygisk_module_entry`.
-pub unsafe fn rz_module_call_on_load(m: *mut ReZygiskModule, env: *mut c_void) {
+pub unsafe fn module_on_load(m: *mut ReZygiskModule, env: *mut c_void) {
     // C calls the entry with no null check (a NULL entry crashes the zygote).
     let entry = unsafe { ptr::addr_of!((*m).zygisk_module_entry).read() };
     // hook.c: zygisk_module_entry(&m->api, env) — the module registers itself
@@ -62,7 +62,7 @@ pub unsafe fn rz_module_call_on_load(m: *mut ReZygiskModule, env: *mut c_void) {
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid v5 args struct.
-pub unsafe fn rz_module_call_pre_app_specialize(
+pub unsafe fn module_pre_app_specialize(
     m: *mut ReZygiskModule,
     args: *mut AppSpecializeArgsV5,
 ) {
@@ -148,7 +148,7 @@ pub unsafe fn rz_module_call_pre_app_specialize(
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid v5 args struct.
-pub unsafe fn rz_module_call_post_app_specialize(
+pub unsafe fn module_post_app_specialize(
     m: *mut ReZygiskModule,
     args: *const AppSpecializeArgsV5,
 ) {
@@ -234,7 +234,7 @@ pub unsafe fn rz_module_call_post_app_specialize(
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid args struct.
-pub unsafe fn rz_module_call_pre_server_specialize(
+pub unsafe fn module_pre_server_specialize(
     m: *mut ReZygiskModule,
     args: *mut ServerSpecializeArgsV1,
 ) {
@@ -259,7 +259,7 @@ pub unsafe fn rz_module_call_pre_server_specialize(
 ///
 /// # Safety
 /// `m` must point at a live table slot; `args` at a valid args struct.
-pub unsafe fn rz_module_call_post_server_specialize(
+pub unsafe fn module_post_server_specialize(
     m: *mut ReZygiskModule,
     args: *const ServerSpecializeArgsV1,
 ) {
