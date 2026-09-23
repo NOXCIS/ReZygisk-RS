@@ -51,9 +51,6 @@ macro_rules! dlogi {
 /// Threads currently inside a hooked entry point / specialize wrapper.
 pub(crate) static IN_LOADER: std::sync::atomic::AtomicUsize =
     std::sync::atomic::AtomicUsize::new(0);
-/// Set while the unloader is between its final decision and the munmap jump.
-pub(crate) static UNLOADING: std::sync::atomic::AtomicBool =
-    std::sync::atomic::AtomicBool::new(false);
 
 /// Enables the in-process self-unmap via naked trampoline.
 /// The trampoline tears down its frame and branches to `munmap` with the app's
@@ -185,7 +182,6 @@ pub unsafe extern "C" fn fork() -> c_int {
         // exactly this thread's guard or the F4 gate would keep the library
         // mapped forever in this child.
         IN_LOADER.store(1, Ordering::Relaxed);
-        UNLOADING.store(false, Ordering::Relaxed);
     }
     pid
 }
@@ -388,7 +384,6 @@ pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
                 dlogw!(
                     "loader code in flight on another thread — keeping libzygisk.so mapped"
                 );
-                UNLOADING.store(false, Ordering::Relaxed);
                 crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
                 return res;
             }
@@ -416,7 +411,6 @@ pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
         // back, so nothing branches into it any more — and it costs stealth
         // only, where a wrong unmap kills the process.
         dlogi!("self-unmap disabled — keeping libzygisk.so mapped");
-        UNLOADING.store(false, Ordering::Relaxed);
         crate::context::ENABLE_UNLOADER.store(false, Ordering::Relaxed);
     }
 

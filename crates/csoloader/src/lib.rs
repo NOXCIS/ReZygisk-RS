@@ -10,8 +10,7 @@
 //!   against (`page_size`, `handle_indirect_symbol`).
 
 // The C keeps `g_custom_libs`/its mutex as file-scope globals; the Rust port
-// mirrors that with `static mut` (see `backtrace.rs`).
-#![allow(static_mut_refs)]
+// uses `static Mutex<[T; N]>` for sound interior mutability (see `backtrace.rs`).
 
 pub const TAG: &str = rz_common::LOG_TAG;
 

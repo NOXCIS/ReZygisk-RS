@@ -12,11 +12,11 @@
 //! 3. returns `ctx.pid` (fork wrappers only; the specialize wrappers return
 //!    void).
 //!
-//! C-parity notes:
+//! ABI notes:
 //! - The C orig backups (`static void *nativeForkAndSpecialize_orig`, ...)
-//!   are `#[cfg_attr(target_os = "android", unsafe(no_mangle))] pub static mut` here with the EXACT C symbol
-//!   names so the hook installer can reach them; in the C they are file-scope
-//!   statics, no_mangle exports them (port contract).
+//!   are exported as `#[no_mangle] pub static AtomicUsize` here with the EXACT
+//!   C symbol names so the hook installer can reach them; in the C they were
+//!   file-scope statics, `no_mangle` exports them (ABI contract).
 //! - The C wrappers are `static`; here they are `#[cfg_attr(target_os = "android", unsafe(no_mangle))] pub` so
 //!   the table below and the hook installer can take their addresses by
 //!   symbol (port contract).
