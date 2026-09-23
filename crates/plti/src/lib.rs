@@ -85,7 +85,7 @@ impl MappedElf {
     ///
     /// Returns None if offset + size would exceed the mapped region.
     pub fn ptr_at(&self, offset: usize, size: usize) -> Option<*const u8> {
-        if offset.checked_add(size).map_or(false, |end| end <= self.len) {
+        if offset.checked_add(size).is_some_and(|end| end <= self.len) {
             Some(unsafe { self.base.as_ptr().add(offset) })
         } else {
             None
@@ -491,9 +491,6 @@ struct StashedVma {
     original_addr: usize,
     backup_addr: usize,
     len: usize,
-    /// Protection to restore when the VMA is moved back (kept from the C).
-    #[allow(dead_code)]
-    original_prot: i32,
 }
 
 pub struct ElfInfo {
@@ -734,7 +731,7 @@ unsafe fn read_mapped_image_abi(base_addr: usize, elf_class: u8, machine: u16) -
         }
 
         let copy_len = p_memsz.min(window_len - p_offset);
-        let src = bias.wrapping_add(p_vaddr as usize);
+        let src = bias.wrapping_add(p_vaddr);
         unsafe {
             std::ptr::copy_nonoverlapping(
                 src as *const u8,
@@ -923,7 +920,7 @@ impl Plti {
                     dloge!("Invalid Android packed reloc table");
                     return false;
                 };
-                let Some(bytes) = img.raw().get(start..start.checked_add(size).unwrap_or(usize::MAX))
+                let Some(bytes) = img.raw().get(start..start.saturating_add(size))
                 else {
                     dloge!("Invalid Android packed reloc table");
                     return false;
@@ -1010,8 +1007,7 @@ impl Plti {
             return false;
         };
 
-        let ok = self.add_manual_lib(&name, ehdr_addr);
-        ok
+        self.add_manual_lib(&name, ehdr_addr)
     }
 
     /// `plti_internal_set_got_entry`.
@@ -1070,7 +1066,6 @@ impl Plti {
             original_addr: vma_start,
             backup_addr,
             len: vma_len,
-            original_prot: restore_prot,
         });
 
         apply_hook(got_addr, new_val, restore_prot)

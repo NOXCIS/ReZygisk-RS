@@ -18,7 +18,6 @@
 //! Cross-module contracts (parallel ports, signatures are fixed):
 //! - `crate::linker_load::{linker_load_library_manually, linker_find_library_path}`
 //! - `crate::linker_reloc::linker_process_relocations`
-//! - `crate::linker_sym::linker_find_symbol_in_linker_scope`
 //! - `crate::tls::{register_tls_segment, unregister_tls_segment, deinit}`
 
 use std::ffi::{c_char, c_int, c_void};
@@ -731,9 +730,9 @@ fn restore_protections(image: &CsoElf) {
     }
 
     // Restore protections for all pages in the range.
-    for i in 0..num_pages {
+    // page_protections was sized to num_pages above.
+    for (i, &final_prot) in page_protections.iter().enumerate() {
         let current_page = start_page_addr + i * page_size();
-        let final_prot = page_protections[i];
 
         if final_prot != 0
             && unsafe { libc::mprotect(current_page as *mut c_void, page_size(), final_prot) } != 0
@@ -1078,13 +1077,17 @@ pub fn linker_link(linker: &mut Linker) -> bool {
 
         call_manual_constructors(linker, i, &mut constructor_state);
     }
-    for i in 0..linker.dep_count as usize {
-        if !linker.dependencies[i].is_manual_load || constructor_state[i] == 2 {
+    for (i, state) in constructor_state
+        .iter_mut()
+        .enumerate()
+        .take(linker.dep_count as usize)
+    {
+        if !linker.dependencies[i].is_manual_load || *state == 2 {
             continue;
         }
 
         call_constructors(unsafe { &*linker.dependencies[i].img });
-        constructor_state[i] = 2;
+        *state = 2;
     }
     call_constructors(unsafe { &*linker.img });
 

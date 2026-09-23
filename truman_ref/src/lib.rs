@@ -173,6 +173,13 @@ pub unsafe extern "C" fn zygisk_companion_entry(fd: i32) {
     }
 }
 
+/// # Safety
+///
+/// Called by the loader after `dlopen`/injection: `api` must point at a live
+/// `ReZygiskApi` table published by the daemon for this process, and `env`
+/// must be the JNI env of the thread making the `nativeForkAndSpecialize` /
+/// `nativeSpecializeAppProcess` call. Both are used for the lifetime of the
+/// process (the module keeps `api` for later `pre/post` callbacks).
 #[no_mangle]
 pub unsafe extern "C" fn zygisk_module_entry(api: *mut ReZygiskApi, env: *mut jni::sys::JNIEnv) {
     tlog!("module entry (Phase 7 reflection spoof)");
@@ -203,9 +210,10 @@ unsafe fn request_self_unload(state: &ModuleState) {
     if api.is_null() {
         return;
     }
-    match (*api).set_option {
-        Some(set_option) => set_option((*api).impl_, DLCLOSE_MODULE_LIBRARY),
-        None => tlog!("set_option unavailable — library stays mapped"),
+    if let Some(set_option) = (*api).set_option {
+        set_option((*api).impl_, DLCLOSE_MODULE_LIBRARY);
+    } else {
+        tlog!("set_option unavailable — library stays mapped");
     }
 }
 

@@ -234,7 +234,7 @@ pub fn redirect_stdio_to_log(tag: &str) {
             format_args!("cannot open {TMP_PATH}/verbose.log, stdio diagnostics fall back to /dev/null: {}", std::io::Error::last_os_error()),
         );
         let null_fd = unsafe {
-            libc::open(b"/dev/null\0".as_ptr() as *const libc::c_char, libc::O_WRONLY)
+            libc::open(c"/dev/null".as_ptr(), libc::O_WRONLY)
         };
         if null_fd >= 0 {
             unsafe {

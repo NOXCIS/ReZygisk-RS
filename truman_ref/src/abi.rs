@@ -7,11 +7,6 @@ use std::os::raw::{c_long, c_void};
 pub const REZYGISK_API_VERSION: c_long = 5;
 
 /// `enum rezygiskd_flags` bits the module may need (subset; see module.h).
-#[allow(dead_code)]
-pub const PROCESS_GRANTED_ROOT: u32 = 1 << 0;
-#[allow(dead_code)]
-pub const PROCESS_ON_DENYLIST: u32 = 1 << 1;
-
 /// `enum rezygisk_options` (module.h) — only the value truman needs.
 pub const DLCLOSE_MODULE_LIBRARY: u32 = 1;
 

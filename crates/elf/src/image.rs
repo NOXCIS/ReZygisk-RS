@@ -319,7 +319,7 @@ impl<'a> ElfImage<'a> {
             ph.p_type == PT_LOAD && symtab >= ph.p_vaddr && symtab < ph.p_vaddr + ph.p_filesz
         })?;
         let available = (seg.p_vaddr + seg.p_filesz).saturating_sub(symtab) as usize;
-        return Some((symtab_off, entsize, available / entsize));
+        Some((symtab_off, entsize, available / entsize))
     }
 
     pub fn dynsym_count(&self) -> usize {

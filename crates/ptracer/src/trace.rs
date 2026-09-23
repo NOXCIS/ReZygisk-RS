@@ -15,6 +15,11 @@ use crate::utils::{
 };
 
 /// Errors that can occur during injection operations.
+#[allow(
+    dead_code,
+    reason = "reserved error surface for the injector; the current call sites \
+              log and return sentinel values instead"
+)]
 #[derive(Debug, Error)]
 pub enum InjectError {
     #[error("failed to parse remote maps")]

@@ -64,7 +64,7 @@ pub fn parse_maps_line(line: &str) -> Option<MapEntry> {
         return None;
     }
     let mut perms_bit = 0u8;
-    if perms_bytes.get(0) == Some(&b'r') { perms_bit |= MapPerms::READ; }
+    if perms_bytes.first() == Some(&b'r') { perms_bit |= MapPerms::READ; }
     if perms_bytes.get(1) == Some(&b'w') { perms_bit |= MapPerms::WRITE; }
     if perms_bytes.get(2) == Some(&b'x') { perms_bit |= MapPerms::EXEC; }
 

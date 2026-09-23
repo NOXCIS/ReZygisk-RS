@@ -53,12 +53,12 @@ pub fn generation_line(role: &str) -> String {
 /// Where `stage` wrote the manifest: the module root derived from the running
 /// image (`<mod>/bin/...` or `<mod>/lib64/...`), else the fixed module path.
 pub fn manifest_path() -> PathBuf {
-    if let Ok(exe) = std::fs::read_link("/proc/self/exe") {
-        if let Some(root) = exe.parent().and_then(Path::parent) {
-            let candidate = root.join(MANIFEST_FILE);
-            if candidate.is_file() {
-                return candidate;
-            }
+    if let Ok(exe) = std::fs::read_link("/proc/self/exe")
+        && let Some(root) = exe.parent().and_then(Path::parent)
+    {
+        let candidate = root.join(MANIFEST_FILE);
+        if candidate.is_file() {
+            return candidate;
         }
     }
 

@@ -225,7 +225,7 @@ fn spawn_companion(argv0: &str, name: &str, lib_fd: RawFd) -> RawFd {
             .collect();
             let mut argp: Vec<*const libc::c_char> = cargs.iter().map(|c| c.as_ptr()).collect();
             argp.push(std::ptr::null());
-            libc::execv(cfile.as_ptr(), argp.as_ptr() as *const *const libc::c_char);
+            libc::execv(cfile.as_ptr(), argp.as_ptr());
 
             libc::_exit(1);
         }

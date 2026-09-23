@@ -19,9 +19,12 @@ const ZKSU_VERSION: &str = env!("CARGO_PKG_VERSION");
 /// monitor.h `enum rezygiskd_command` — datagram command codes. Values 4–9
 /// arrive as raw bytes from the daemons (see the byte-level match in
 /// `rezygiskd_listener_callback`), so they're never constructed directly.
+#[allow(
+    dead_code,
+    reason = "values 4-9 are decoded from incoming datagrams, never constructed"
+)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-#[allow(dead_code)]
 pub enum RezygiskdCommand {
     Start = 1,
     Stop = 2,
@@ -355,7 +358,7 @@ impl Monitor {
             let nfds = unsafe { libc::epoll_wait(self.epfd, events.as_mut_ptr(), 2, 2000) };
             if nfds == 0 {
                 idle_ticks = idle_ticks.saturating_add(1);
-                if idle_ticks % 15 == 0 {
+                if idle_ticks.is_multiple_of(15) {
                     // Liveness heartbeat: a wedged monitor produces silence;
                     // this line proves the loop is turning (and how much is
                     // pending) when nothing else logs.
@@ -452,11 +455,7 @@ impl Monitor {
     }
 
     fn rezygiskd_listener_callback(&mut self) {
-        loop {
-            let Some((cmd, payload)) = recv_control_datagram(self.sock_fd) else {
-                break;
-            };
-
+        while let Some((cmd, payload)) = recv_control_datagram(self.sock_fd) {
             match cmd {
                 6 | 7 => self.handle_set_info(cmd, &payload),
                 8 | 9 => self.handle_set_error_info(cmd, &payload),
@@ -586,8 +585,6 @@ impl Monitor {
             Ok(ForkResult::Child) => {
                 let daemon_name = if is_64bit { "./bin/zygiskd64" } else { "./bin/zygiskd32" };
                 execv_or_die(daemon_name, &[daemon_name], None);
-                // execv_or_die doesn't return, but make the type checker happy
-                unreachable!()
             }
             Ok(ForkResult::Parent { child }) => child.as_raw(),
             Err(_) => {
@@ -656,10 +653,10 @@ impl Monitor {
             return false;
         };
 
-        match stat[close + 1..].split_whitespace().next() {
-            Some("T") | Some("t") => true,
-            _ => false,
-        }
+        matches!(
+            stat[close + 1..].split_whitespace().next(),
+            Some("T") | Some("t")
+        )
     }
 
     /// Fires on every idle epoll tick. If init was seized by us and left in a
@@ -922,11 +919,11 @@ impl Monitor {
                 dlogw!("not handing off {pid}: app_process exec without --zygote (cmdline: \"{cmdline}\")");
                 return;
             }
-            if let Some(ppid) = utils::get_ppid(pid) {
-                if ppid != 1 {
-                    dlogw!("not handing off {pid}: parent is {ppid}, not init (program={program})");
-                    return;
-                }
+            if let Some(ppid) = utils::get_ppid(pid)
+                && ppid != 1
+            {
+                dlogw!("not handing off {pid}: parent is {ppid}, not init (program={program})");
+                return;
             }
         }
 

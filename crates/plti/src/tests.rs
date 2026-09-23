@@ -28,23 +28,6 @@ struct Builder {
     data: Vec<u8>,
 }
 
-/// One ELF64 section header. `link` is sh_link, `entsize` sh_entsize.
-fn shdr64(name: u32, stype: u32, off: u64, vaddr: u64, size: u64, link: u32, entsize: u64) -> Vec<u8> {
-    let mut s = Vec::new();
-    s.extend(le_u32(name));
-    s.extend(le_u32(stype));
-    s.extend(le_u64(0)); // sh_flags
-    s.extend(le_u64(vaddr));
-    s.extend(le_u64(off));
-    s.extend(le_u64(size));
-    s.extend(le_u32(link));
-    s.extend(le_u32(0)); // sh_info
-    s.extend(le_u64(1)); // sh_addralign
-    s.extend(le_u64(entsize));
-    assert_eq!(s.len(), 64);
-    s
-}
-
 impl Builder {
     fn new() -> Self {
         // ehdr (0x40) + 4 phdrs (0xe0) must fit before content starts.
@@ -149,7 +132,6 @@ fn build_so_spec(spec: SoSpec) -> Vec<u8> {
     let _ = b.append_align(8);
     let dynsym_off = b.data.len() as u64;
     let dynsym_vaddr = spec.load0_vaddr + dynsym_off;
-    let dynsym_size = 4 * 24u64; // 4 symbols × Elf64_Sym
     let mut sym = |info: u8, shndx: u16, name_off: u64, value: u64, size: u64| {
         let mut e = Vec::new();
         e.extend(le_u32(name_off as u32));

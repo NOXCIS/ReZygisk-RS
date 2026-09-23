@@ -1292,7 +1292,7 @@ pub fn find_func_addr(
             return 0;
         }
 
-        (impl_local as i64 - local_base as i64) as i64
+        impl_local as i64 - local_base as i64
     } else {
         sym.value as i64 - img.bias()
     };
@@ -1365,45 +1365,6 @@ pub fn ptrace_poke_u32(pid: i32, addr: u64, value: u32) -> bool {
     }
 
     true
-}
-
-/// utils.c `find_arm32_ret_gadget`: scan 32-bit guest regions for a Thumb
-/// `BX LR` (returns the address WITH the Thumb bit, like the C).
-/// Unused in the C reference as well; kept for parity.
-#[allow(dead_code)]
-pub fn find_arm32_ret_gadget(pid: i32, remote_map: &[rz_common::MapEntry]) -> u64 {
-    let bx_lr: [u8; 2] = 0x4770u16.to_ne_bytes();
-
-    for m in remote_map {
-        if !m.perms.exec() || m.start as u64 >= 0x1_0000_0000 {
-            continue;
-        }
-
-        let region_size = (m.end - m.start).min(0x10000);
-
-        let mut buf = vec![0u8; region_size];
-        if read_proc(pid, m.start, &mut buf) as usize != region_size {
-            continue;
-        }
-
-        let mut j = 0;
-        while j + 2 <= region_size {
-            if buf[j..j + 2] == bx_lr {
-                let addr = m.start as u64 + j as u64 + 1;
-                dlogd!(
-                    "found arm32 ret gadget (BX LR) at {:#x} in {}",
-                    addr - 1,
-                    if m.path.is_empty() { "<anon>" } else { m.path.as_str() }
-                );
-                return addr;
-            }
-            j += 2;
-        }
-    }
-
-    dloge!("Failed to find arm32 ret gadget in 32-bit guest regions");
-
-    0
 }
 
 /// utils.c `find_tramp_padding`: find `needed` bytes of zero padding at the

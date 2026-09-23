@@ -3,7 +3,7 @@
 //! missing class/field or a pending exception is logged and skipped, never
 //! fatal (the zygote child must survive).
 
-use jni::objects::{JObject, JValue};
+use jni::objects::JValue;
 use jni::signature::JavaType;
 use jni::{JNIEnv, objects::JString};
 
@@ -33,6 +33,8 @@ pub fn apply_entry(env: &mut JNIEnv, entry: &SpoofEntry) -> Result<(), String> {
             .ok()
             .and_then(|v| v.l().ok());
         if let Some(old) = old {
+            // Wrapper only — the local ref from our GetStaticObjectField is
+            // released with this JNI frame; the wrapper owns nothing.
             let old = unsafe { JString::from_raw(old.as_raw()) };
             if let Ok(s) = env.get_string(&old) {
                 tlog!(
@@ -40,9 +42,8 @@ pub fn apply_entry(env: &mut JNIEnv, entry: &SpoofEntry) -> Result<(), String> {
                     entry.class, entry.field, s.to_str().unwrap_or("?"), entry.value
                 );
             }
-            // The local ref was created by OUR GetStaticObjectField — dropping
-            // the wrapper here is correct. `forget` would leak it.
-            drop(old);
+            // The local ref was created by OUR GetStaticObjectField — it is
+            // released with this JNI frame; the wrapper owns nothing.
         }
     }
 
@@ -57,15 +58,17 @@ pub fn apply_entry(env: &mut JNIEnv, entry: &SpoofEntry) -> Result<(), String> {
     // mismatch is fail-soft (Err → caller logs in dev builds) but never
     // leaves us assuming a rewrite that ART silently dropped.
     let written = match env
-        .get_static_field_unchecked(&class, &field_id, JavaType::Object(STRING_SIG.into()))
+        .get_static_field_unchecked(&class, field_id, JavaType::Object(STRING_SIG.into()))
         .ok()
         .and_then(|v| v.l().ok())
     {
         Some(v) => {
+            // Wrapper only: no Drop, so no DeleteLocalRef happens here. The
+            // local ref belongs to this JNI frame and dies with it.
             let jstr = unsafe { JString::from_raw(v.as_raw()) };
-            let out = env.get_string(&jstr).ok().map(|s| s.to_str().unwrap_or("").to_string());
-            drop(jstr);
-            out
+            env.get_string(&jstr)
+                .ok()
+                .map(|s| s.to_str().unwrap_or("").to_string())
         }
         None => None,
     };
@@ -99,14 +102,9 @@ pub unsafe fn borrow_jstring(env: &mut JNIEnv, raw: *mut jni::sys::_jobject) -> 
         return None;
     }
     let s = JString::from_raw(raw);
-    let out = env
-        .get_string(&s)
+    // Borrowed ref — never DeleteLocalRef it. The wrapper has no Drop, so
+    // there is nothing to forget; the ref outlives this call by design.
+    env.get_string(&s)
         .ok()
-        .map(|j| j.to_str().unwrap_or("").to_string());
-    std::mem::forget(s); // borrowed ref — never DeleteLocalRef it
-    out
+        .map(|j| j.to_str().unwrap_or("").to_string())
 }
-
-/// Keep `JObject::from_raw` importable without an unused-import warning.
-#[allow(dead_code)]
-fn _unused(_: JObject) {}

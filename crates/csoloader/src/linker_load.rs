@@ -106,7 +106,7 @@ const SEARCH_PATHS: &[&str] = &["/lib/", "/usr/lib/", "/lib/i386-linux-gnu/"];
 /// written NUL-terminated into `full_path` (`char full_path[PATH_MAX]` in
 /// the C); on failure it is emptied and the C error is logged.
 pub fn linker_find_library_path(lib_name: &str, full_path: &mut [u8]) -> bool {
-    let search_paths = SEARCH_PATHS.iter().copied().chain(["/usr/local/lib/"].into_iter());
+    let search_paths = SEARCH_PATHS.iter().copied().chain(["/usr/local/lib/"]);
 
     // TODO: Read ldconfig
 

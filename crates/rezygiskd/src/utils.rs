@@ -185,7 +185,7 @@ pub fn exec_command(file: &str, argv: &[&str]) -> Option<String> {
             let mut argp: Vec<*const libc::c_char> =
                 cargs.iter().map(|c| c.as_ptr()).collect();
             argp.push(std::ptr::null());
-            libc::execv(cfile.as_ptr(), argp.as_ptr() as *const *const libc::c_char);
+            libc::execv(cfile.as_ptr(), argp.as_ptr());
 
             dloge!("execv failed: {}", io::Error::last_os_error());
             libc::_exit(1);
@@ -239,49 +239,16 @@ pub fn check_unix_socket(fd: RawFd, block: bool) -> bool {
     pfd.revents & !libc::POLLIN == 0
 }
 
-/// utils.c `non_blocking_execv`: fork+exec with stdout redirected into a
-/// pipe whose read end is returned.
-#[allow(dead_code)]
-pub fn non_blocking_execv(file: &str, argv: &[&str]) -> Option<RawFd> {
-    let mut fds = [0 as libc::c_int; 2];
-    if unsafe { libc::pipe(fds.as_mut_ptr()) } == -1 {
-        plog!(TAG, "pipe");
-        return None;
-    }
-
-    let pid = unsafe { libc::fork() };
-    if pid == -1 {
-        plog!(TAG, "fork");
-        return None;
-    }
-
-    if pid == 0 {
-        unsafe {
-            libc::dup2(fds[1], libc::STDOUT_FILENO);
-            libc::close(fds[0]);
-            libc::close(fds[1]);
-
-            let cfile = std::ffi::CString::new(file).unwrap();
-            let cargs: Vec<std::ffi::CString> =
-                argv.iter().map(|s| std::ffi::CString::new(*s).unwrap()).collect();
-            let mut argp: Vec<*const libc::c_char> =
-                cargs.iter().map(|c| c.as_ptr()).collect();
-            argp.push(std::ptr::null());
-            libc::execv(cfile.as_ptr(), argp.as_ptr() as *const *const libc::c_char);
-            libc::_exit(1);
-        }
-    }
-
-    unsafe { libc::close(fds[1]) };
-    Some(fds[0])
-}
-
 // ---------------------------------------------------------------------------
 // mountinfo parsing + denylist umount
 // ---------------------------------------------------------------------------
 
 #[derive(Debug, Default, Clone)]
-#[allow(dead_code)]
+#[allow(
+    dead_code,
+    reason = "parsed from the full mountinfo line (utils.c layout); only \
+              source/target/root are consumed by umount_root today"
+)]
 pub struct MountInfo {
     pub id: u32,
     pub parent: u32,
@@ -532,10 +499,4 @@ pub fn save_mns_fd(pid: i32, state: u8, kind: rz_ipc::RootImplKind) -> RawFd {
 
         ns_fd
     }
-}
-
-/// main.c: switch to pid 1's mount namespace before starting.
-#[allow(dead_code)]
-pub fn init_mount_namespace() -> bool {
-    switch_mount_namespace(1)
 }

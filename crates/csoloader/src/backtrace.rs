@@ -98,7 +98,7 @@ fn copy_program_headers(img: &CsoElf) -> *mut c_void {
         return std::ptr::null_mut();
     }
 
-    let ptr = unsafe { libc::malloc(phdrs.len()) as *mut c_void };
+    let ptr = unsafe { libc::malloc(phdrs.len()) };
     if ptr.is_null() {
         dloge!("Failed to allocate memory for program header copy");
         return std::ptr::null_mut();
@@ -197,7 +197,7 @@ pub(crate) fn unregister_custom_library_for_backtrace(img: &CsoElf) -> bool {
 
     for i in 0..MAX_CUSTOM_LIBS {
         let lib_info = &mut libs[i];
-        if !lib_info.in_use || lib_info.img != img as *const CsoElf {
+        if !lib_info.in_use || !std::ptr::eq(lib_info.img, img as *const CsoElf) {
             continue;
         }
 
@@ -269,7 +269,7 @@ pub(crate) fn register_eh_frame_for_library(img: &CsoElf) {
         let mut libs = G_CUSTOM_LIBS.lock().unwrap();
         for i in 0..MAX_CUSTOM_LIBS {
             let lib_info = &mut libs[i];
-            if !lib_info.in_use || lib_info.img != img as *const CsoElf {
+            if !lib_info.in_use || !std::ptr::eq(lib_info.img, img as *const CsoElf) {
                 continue;
             }
             lib_info.eh_frame_registered = eh_frame_ptr as *mut c_void;
@@ -293,7 +293,7 @@ pub(crate) fn unregister_eh_frame_for_library(img: &CsoElf) {
         for i in 0..MAX_CUSTOM_LIBS {
             let lib_info = &mut libs[i];
             if !lib_info.in_use
-                || lib_info.img != img as *const CsoElf
+                || !std::ptr::eq(lib_info.img, img as *const CsoElf)
                 || lib_info.eh_frame_registered.is_null()
             {
                 continue;

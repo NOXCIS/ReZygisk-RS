@@ -1007,10 +1007,10 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
 
     // Dynamic scan (linker.c 1702-1738); only the DT_ANDROID_RELRENT check
     // has an observable effect beyond collecting the table locations.
-    if let Some(rent) = elf.dynamic_find(DT_ANDROID_RELRENT) {
-        if rent != word_size as u64 {
-            dloge!("Unsupported DT_ANDROID_RELRENT size {} in {}", rent, path);
-        }
+    if let Some(rent) = elf.dynamic_find(DT_ANDROID_RELRENT)
+        && rent != word_size as u64
+    {
+        dloge!("Unsupported DT_ANDROID_RELRENT size {} in {}", rent, path);
     }
 
     if elf.dynamic_find(DT_SYMTAB).is_none() || elf.dynamic_find(DT_STRTAB).is_none() {
@@ -1027,7 +1027,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
             .dynamic_find(DT_RELRSZ)
             .or_else(|| elf.dynamic_find(DT_ANDROID_RELRSZ))
             .unwrap_or(0) as usize;
-        let relr_bytes = table_bytes(&elf, relr_vaddr, relr_sz as u64).unwrap_or(&[]);
+        let relr_bytes = table_bytes(elf, relr_vaddr, relr_sz as u64).unwrap_or(&[]);
 
         dlogd!("Processing RELR relocations for {}", path);
         for (reloc_offset, direct) in decode_relr_entries(relr_bytes, word_size) {
@@ -1055,7 +1055,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         if rela_ent == 0 {
             rela_ent = if is_64 { 24 } else { 12 };
         }
-        let bytes = table_bytes(&elf, rela_vaddr, rela_sz).unwrap_or(&[]);
+        let bytes = table_bytes(elf, rela_vaddr, rela_sz).unwrap_or(&[]);
         let entsize = if is_64 { 24 } else { 12 };
 
         for i in 0..(rela_sz / rela_ent) {
@@ -1084,7 +1084,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         if rel_ent == 0 {
             rel_ent = if is_64 { 16 } else { 8 };
         }
-        let bytes = table_bytes(&elf, rel_vaddr, rel_sz).unwrap_or(&[]);
+        let bytes = table_bytes(elf, rel_vaddr, rel_sz).unwrap_or(&[]);
         let entsize = if is_64 { 16 } else { 8 };
 
         for i in 0..(rel_sz / rel_ent) {
@@ -1119,7 +1119,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
             elf.dynamic_find(DT_ANDROID_RELSZ)
         }
         .unwrap_or(0) as usize;
-        let table = table_bytes(&elf, android_vaddr, android_sz as u64).unwrap_or(&[]);
+        let table = table_bytes(elf, android_vaddr, android_sz as u64).unwrap_or(&[]);
 
         dlogd!(
             "Processing Android {} relocations for {}",
@@ -1159,7 +1159,7 @@ pub fn linker_process_relocations(linker: &mut Linker, dep: &mut LoadedDep) -> b
         } else {
             if is_64 { 16 } else { 8 }
         };
-        let bytes = table_bytes(&elf, jmprel_vaddr, jmprel_sz).unwrap_or(&[]);
+        let bytes = table_bytes(elf, jmprel_vaddr, jmprel_sz).unwrap_or(&[]);
         let count = (jmprel_sz / entsize as u64) as usize;
 
         for i in 0..count {

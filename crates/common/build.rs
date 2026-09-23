@@ -78,10 +78,9 @@ fn worktree_digest(root: &Path, input_status: &str) -> Option<String> {
     if let Some(list) = git(root, &paths_args(&["ls-files", "--others", "--exclude-standard"])) {
         for rel in list.lines().filter(|l| !l.is_empty()) {
             feed.extend_from_slice(rel.as_bytes());
-            if let Ok(bytes) = std::fs::read(root.join(rel)) {
-                if bytes.len() <= MAX_DIGESTED_FILE {
-                    feed.extend_from_slice(&bytes);
-                }
+            match std::fs::read(root.join(rel)) {
+                Ok(bytes) if bytes.len() <= MAX_DIGESTED_FILE => feed.extend_from_slice(&bytes),
+                _ => {}
             }
         }
     }

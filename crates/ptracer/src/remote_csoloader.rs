@@ -193,6 +193,11 @@ pub struct RemoteLoadResult {
     /// segment is file-backed from it — maps shows `/memfd:core (deleted)`
     /// rather than unnamed executable mappings, which canary detectors flag
     /// as injection artifacts. None: fell back to anonymous mappings.
+    #[allow(
+        dead_code,
+        reason = "callers derive the staging path from the log line; kept so a \
+                  future caller can branch on which staging ran"
+    )]
     pub memfd_fd: Option<i64>,
 }
 
@@ -620,8 +625,6 @@ pub fn remote_csoloader_load_and_resolve_entry(
             munmap_reserve(regs);
             return None;
         }
-        let seg_map = seg_map as usize;
-
         if memfd_fd.is_none() {
             // Anonymous memory is zero-filled, so the BSS tail needs no
             // clearing; only the file image must be copied in.

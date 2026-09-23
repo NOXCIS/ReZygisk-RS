@@ -47,7 +47,7 @@ pub fn send_fd_with_payload(fd: RawFd, payload: &[u8], sendfd: RawFd) -> io::Res
     unsafe {
         let cmsg = libc::CMSG_FIRSTHDR(&msg);
         if cmsg.is_null() {
-            return Err(io::Error::new(io::ErrorKind::Other, "CMSG_FIRSTHDR failed"));
+            return Err(io::Error::other("CMSG_FIRSTHDR failed"));
         }
         (*cmsg).cmsg_len = libc::CMSG_LEN(size_of::<libc::c_int>() as libc::c_uint) as usize;
         (*cmsg).cmsg_level = libc::SOL_SOCKET;

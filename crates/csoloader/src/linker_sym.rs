@@ -307,28 +307,6 @@ pub(crate) fn find_symbol_in_linker_scope_info(
     }
 }
 
-/// Address-only view of `_linker_find_symbol_in_linker_scope` for callers that
-/// do not need the owning image / `tls_indices`. Weak-symbol handling stays
-/// at the relocation call sites (linker.c 1345-1361): an unresolved weak is
-/// this returning `None` plus the caller's `STB_WEAK` fallback value.
-///
-/// No current call site needs it (relocations use
-/// `find_symbol_in_linker_scope_info` directly, matching the C), but it
-/// mirrors the C helper surface for future callers.
-#[allow(dead_code)]
-pub fn linker_find_symbol_in_linker_scope(
-    linker: &Linker,
-    requester: &CsoElf,
-    sym_name: &str,
-) -> Option<usize> {
-    let info = find_symbol_in_linker_scope_info(linker, requester, sym_name);
-    if info.addr != 0 {
-        Some(info.addr)
-    } else {
-        None
-    }
-}
-
 // ---------------------------------------------------------------------------
 // TLS index bookkeeping — linker.c `_track_tls_index` (1152-1171),
 // `allocate_tls_index_for_symbol` (1173-1191) and the `tls_indices` teardown

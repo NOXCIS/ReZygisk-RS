@@ -9,73 +9,6 @@ use crate::image::CsoElf;
 
 pub const MAX_TLS_MODULES: usize = 128;
 
-// ---------------------------------------------------------------------------
-// TlsKey: RAII wrapper for pthread_key lifecycle
-// ---------------------------------------------------------------------------
-
-/// RAII wrapper for pthread_key_t that deletes the key on drop.
-///
-/// Encapsulates pthread_key_create/pthread_key_delete lifecycle to prevent
-/// key leaks on error paths.
-#[allow(dead_code)]
-pub struct TlsKey {
-    key: libc::pthread_key_t,
-}
-
-#[allow(dead_code)]
-impl TlsKey {
-    /// Create a new TLS key with an optional destructor.
-    ///
-    /// The destructor is called for each thread when the thread exits
-    /// (if the thread's value for this key is non-null).
-    pub fn new(destructor: Option<unsafe extern "C" fn(*mut libc::c_void)>) -> Option<Self> {
-        let mut key: libc::pthread_key_t = 0;
-        if unsafe { libc::pthread_key_create(&mut key, destructor) } != 0 {
-            return None;
-        }
-        Some(Self { key })
-    }
-
-    /// Get the raw pthread_key_t value.
-    pub fn as_raw(&self) -> libc::pthread_key_t {
-        self.key
-    }
-
-    /// Get the value for this key in the current thread.
-    pub fn get(&self) -> *mut libc::c_void {
-        unsafe { libc::pthread_getspecific(self.key) }
-    }
-
-    /// Set the value for this key in the current thread.
-    ///
-    /// Returns true on success.
-    ///
-    /// The `value` pointer is stored by pthread opaquely and handed back by
-    /// `get`/destructors; this function never dereferences it, so the
-    /// conservative `not_unsafe_ptr_arg_deref` deny does not apply.
-    #[allow(clippy::not_unsafe_ptr_arg_deref)]
-    pub fn set(&self, value: *mut libc::c_void) -> bool {
-        unsafe { libc::pthread_setspecific(self.key, value) == 0 }
-    }
-
-    /// Consume the TlsKey and return the raw key without deleting it.
-    ///
-    /// The caller is responsible for calling pthread_key_delete.
-    pub fn into_raw(self) -> libc::pthread_key_t {
-        let key = self.key;
-        std::mem::forget(self);
-        key
-    }
-}
-
-impl Drop for TlsKey {
-    fn drop(&mut self) {
-        unsafe {
-            libc::pthread_key_delete(self.key);
-        }
-    }
-}
-
 pub const TAG: &str = crate::TAG;
 
 macro_rules! dlogd {
@@ -358,8 +291,8 @@ unsafe fn sync_thread_tls_locked(ttls: *mut ThreadTls, modules: &[TlsModule; MAX
             return;
         }
 
-        for i in 1..MAX_TLS_MODULES {
-            if modules[i].module_id == 0 && !tt.modules[i].is_null() {
+        for (i, module) in modules.iter().enumerate().skip(1) {
+            if module.module_id == 0 && !tt.modules[i].is_null() {
                 if tt.fallback & (1 << i) == 0 {
                     libc::free(tt.modules[i] as *mut libc::c_void);
                 }
@@ -467,15 +400,14 @@ pub fn unregister_tls_segment(img: &CsoElf) {
     // C (linker.c 1127-1135): only clear the slot when this image still owns
     // it — the slot may have been re-registered by another image — and only
     // then reset the stale caller's tls_mod_id.
-    if let Ok(mut modules) = TLS_MODULES.lock() {
-        if mod_id < MAX_TLS_MODULES
-            && modules[mod_id].owner == img as *const CsoElf as usize
-        {
-            modules[mod_id] = TlsModule::default();
-            TLS_GENERATION.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-            dlogd!("Unregistering TLS module {mod_id} for {}", img.path());
-            img.set_tls_mod_id(0);
-        }
+    if let Ok(mut modules) = TLS_MODULES.lock()
+        && mod_id < MAX_TLS_MODULES
+        && modules[mod_id].owner == img as *const CsoElf as usize
+    {
+        modules[mod_id] = TlsModule::default();
+        TLS_GENERATION.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        dlogd!("Unregistering TLS module {mod_id} for {}", img.path());
+        img.set_tls_mod_id(0);
     }
 }
 

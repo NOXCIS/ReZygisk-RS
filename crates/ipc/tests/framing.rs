@@ -14,9 +14,9 @@ use std::os::unix::net::UnixDatagram;
 use std::time::Instant;
 
 use rz_ipc::{
-    build_set_info_message, connect_abstract, controller_code, datagram_sendto, listen_abstract,
-    parse_set_info, read_string, read_string_bounded, read_u32, read_u8, read_usize, write_string,
-    write_u32, write_u8, write_usize, ControllerCode, DaemonSocketAction, WriteFrame,
+    build_set_info_message, connect_abstract, datagram_sendto, listen_abstract, parse_set_info,
+    read_string, read_string_bounded, read_u32, read_u8, read_usize, write_string, write_u32,
+    write_u8, write_usize, DaemonSocketAction, WriteFrame,
 };
 
 fn socketpair() -> (i32, i32) {
