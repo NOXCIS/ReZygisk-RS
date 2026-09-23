@@ -1,11 +1,10 @@
-//! Port of hook.c lines 1217-1290: `init` (1217-1227) and `cleanup`
-//! (1228-1290).
+//! Module lifecycle: `init` and `cleanup`.
 //!
-//! `init` is deliberately small — exactly like the C it only memsets the
-//! context, fills env/args.ptr/pid, initializes the hook_info_lock mutex and
-//! publishes the context into `g_ctx`. The big init sequence (daemon flags,
-//! update_mnt_ns, module pre-calls, fd sanitization) lives in the
-//! specialize/pre functions that CALL rz_init, not here.
+//! `init` is deliberately small: it zeroes the context, fills
+//! env/args.ptr/pid, initializes the hook_info_lock mutex and publishes the
+//! context into `g_ctx`. The big init sequence (daemon flags, update_mnt_ns,
+//! module pre-calls, fd sanitization) lives in the specialize/pre functions
+//! that CALL `init`, not here.
 //!
 //! `cleanup` runs after the original JNI call returns (every wrapper in
 //! jni_tables.rs calls it): it unhooks the JNI methods recorded in
@@ -13,17 +12,16 @@
 //! the API function pointers out of every loaded module, arms the unloader
 //! and destroys the hook_info_lock. In the zygote itself (not a child —
 //! `is_zygote_child` false) it returns right after clearing `g_ctx`, leaving
-//! the hooks installed for the next fork pass — the C does exactly this.
+//! the hooks installed for the next fork pass.
 //!
 //! Sibling contract: crate::jni_tables calls these with the signatures below.
 //!
-//! C-parity notes:
-//! - `memset(ctx, 0, sizeof(struct zygisk_context))` is an explicit
-//!   all-fields-zero assignment: Rust cannot hold uninitialized
-//!   `Vec`/`String`/`pthread_mutex_t`, so every field gets its
-//!   memset-equivalent zero value (empty strings/vecs, zeroed arrays, an
+//! Behavior notes:
+//! - The context zeroing is an explicit all-fields-zero assignment: Rust
+//!   cannot hold uninitialized `Vec`/`String`/`pthread_mutex_t`, so every
+//!   field gets its zero value (empty strings/vecs, zeroed arrays, an
 //!   all-zero mutex — `PTHREAD_MUTEX_INITIALIZER` is all-zero on
-//!   bionic/glibc) and `pthread_mutex_init` runs afterwards, as in the C.
+//!   bionic/glibc) and `pthread_mutex_init` runs afterwards.
 //! - The JNI unhook loop wraps `ctx.env` with `JNIEnv::from_raw` like the
 //!   rest of the crate. A NULL env would crash the C; here the JNI calls
 //!   are skipped but the lists are still released (closest well-defined

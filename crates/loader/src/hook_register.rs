@@ -1,21 +1,18 @@
-//! hook.c hook installation/teardown: `hook_register`, `hook_unregister`,
-//! `hook_functions`, `hook_unloader`, `unhook_functions` (hook.c 1291-1362).
+//! PLT hook installation and teardown: `hook_register`, `hook_unregister`,
+//! `hook_functions`, `hook_unloader`, `unhook_functions`.
 //!
 //! Sibling contract (fork_hooks): the hook bodies and the `OLD_*` backup
-//! statics live in fork_hooks (the C's `new_*`/`old_*` file statics), and
-//! registration goes straight to PLTI through [`hook_register`] — the exact
-//! expansion of the C's `PLT_HOOK_REGISTER` macros. The loader's own hooks
-//! never touch `context::PLT_HOOK_LIST`, which stays the module-only v4
-//! queue (hook.c 128-129 semantics).
+//! statics live in fork_hooks, and registration goes straight to PLTI through
+//! [`hook_register`]. The loader's own hooks never touch
+//! `context::PLT_HOOK_LIST`, which stays the module-only v4 queue.
 //!
-//! Deviations vs the C, by design:
+//! Behavior notes:
 //! - JNI native-method hooking happens only in `do_hook_zygote` (triggered
 //!   by the strdup hook via `initialize_jni_hook`); that path owns the
 //!   `_orig` backups and the unhook list.
-//! - The `[[clang::musttail]] return munmap(...)` self-unload is re-emitted
-//!   as a per-arch asm tail jump (`fork_hooks::tail_call_munmap`), called
-//!   directly from the pthread_attr_setstacksize hook body together with the
-//!   rest of the hook.c 313-338 teardown.
+//! - The self-unload is the per-arch naked trampoline in `fork_hooks`, called
+//!   from the pthread_attr_setstacksize hook body together with the rest of
+//!   the teardown.
 
 use std::ffi::c_void;
 

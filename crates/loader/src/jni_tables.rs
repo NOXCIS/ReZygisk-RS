@@ -1,33 +1,30 @@
-//! jni_hooks.h port — the generated per-overload JNI wrapper functions plus
-//! the static JNI hook table `initialize_jni_hook`/`do_hook_zygote` consume.
+//! Zygote JNI overload wrappers (Android/ART contract) plus the static hook
+//! table `initialize_jni_hook`/`do_hook_zygote` consume.
 //!
-//! The C header is emitted by gen_jni_hooks.py: for every
-//! `nativeForkAndSpecialize` / `nativeSpecializeAppProcess` /
+//! For every `nativeForkAndSpecialize` / `nativeSpecializeAppProcess` /
 //! `nativeForkSystemServer` overload there is one
 //! `__attribute__((no_stack_protector))` wrapper that
-//! 1. snapshots the values into an `app_specialize_args_v5` /
-//!    `server_specialize_args_v1` on the stack exactly like the C designated
-//!    initializers (only the fields the C sets; the rest stay zeroed),
-//! 2. runs `rz_init` / pre-hook / original / post-hook / `rz_cleanup`, and
+//! 1. snapshots the values into an `AppSpecializeArgsV5` /
+//!    `ServerSpecializeArgsV1` on the stack (only the fields the wrapper
+//!    receives; the rest stay zeroed),
+//! 2. runs `init` / pre-hook / original / post-hook / `cleanup`, and
 //! 3. returns `ctx.pid` (fork wrappers only; the specialize wrappers return
 //!    void).
 //!
 //! ABI notes:
-//! - The C orig backups (`static void *nativeForkAndSpecialize_orig`, ...)
-//!   are exported as `#[no_mangle] pub static AtomicUsize` here with the EXACT
-//!   C symbol names so the hook installer can reach them; in the C they were
-//!   file-scope statics, `no_mangle` exports them (ABI contract).
-//! - The C wrappers are `static`; here they are `#[cfg_attr(target_os = "android", unsafe(no_mangle))] pub` so
+//! - The orig backups (`static void *nativeForkAndSpecialize_orig`, ...) are
+//!   exported as `#[no_mangle] pub static AtomicUsize` with the EXACT ART
+//!   symbol names so the hook installer can reach them (ABI contract).
+//! - The wrappers are `#[cfg_attr(target_os = "android", unsafe(no_mangle))] pub` so
 //!   the table below and the hook installer can take their addresses by
-//!   symbol (port contract).
-//! - C default argument promotions: at the variadic call of the original,
-//!   `jboolean` (unsigned char) args are widened to `jint` exactly as the C
-//!   compiler promotes them through `...`.
-//! - The C declares `struct zygisk_context ctx;` uninitialized and rz_init's
-//!   memset zeroes it; Rust cannot hold an uninitialized `Vec`/`String`, so
-//!   [`new_zygisk_context`] materializes the memset-equivalent zero state.
+//!   symbol (ABI contract).
+//! - Default argument promotions: at the variadic call of the original,
+//!   `jboolean` (unsigned char) args are widened to `jint` as the C ABI
+//!   requires through `...`.
+//! - Rust cannot hold an uninitialized `Vec`/`String`, so
+//!   [`new_zygisk_context`] materializes the zeroed state `init` expects.
 //!
-//! Sibling contracts: crate::lifecycle::{rz_init, rz_cleanup},
+//! Sibling contracts: crate::lifecycle::{init, cleanup},
 //! crate::native_specialize::rz_native*_pre/post. This header has no
 //! app_specialize wrappers — `rz_app_specialize_pre/post` are called from
 //! within the `rz_native*_pre/post` ports, not from here.
@@ -71,11 +68,9 @@ type NativeSpecializeAppProcessFn =
 type NativeForkSystemServerFn =
     unsafe extern "C" fn(env: *mut jni::sys::JNIEnv, clazz: jclass, ...) -> jint;
 
-/// `struct zygisk_context ctx;` + rz_init's memset in the C wrappers. The C
-/// declares the struct uninitialized and rz_init zeroes it before filling;
-/// Rust cannot hold an uninitialized `Vec`/`String`, so the wrapper builds
-/// the memset-equivalent zero state (exactly what the C sees right after the
-/// memset) and rz_init re-fills it as usual.
+/// Zeroed `ZygiskContext` for the wrappers below: `init` zeroes the context
+/// before filling it, and Rust cannot hold an uninitialized `Vec`/`String`,
+/// so the wrapper builds the zero state directly and `init` fills it as usual.
 #[inline]
 fn new_zygisk_context() -> ZygiskContext {
     ZygiskContext {

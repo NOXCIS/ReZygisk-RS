@@ -1,26 +1,22 @@
-//! Client side of the ReZygiskd cp socket protocol — port of
-//! loader/src/common/daemon.c and its `include/daemon.h`.
+//! Daemon IPC client: the `rezygisk-cp` control socket protocol.
 //!
-//! Wire format (daemon.c is authoritative): every call opens a fresh
-//! connection to the abstract-namespace socket
+//! Wire: every call opens a fresh connection to the abstract-namespace socket
 //! `rz_common::cp_socket_abstract_name()` ("rezygisk-cp32"/"rezygisk-cp64"),
 //! writes one `DaemonSocketAction` byte, then per-action frames. Integers are
-//! native-endian fixed-size (socket_utils.c), strings are a `size_t` length
-//! prefix + raw bytes without NUL, and fds travel as SCM_RIGHTS on a
-//! 1-byte payload (`rz_common::recv_fd`).
+//! native-endian fixed-size, strings are a `size_t` length prefix + raw bytes
+//! without NUL, and fds travel as SCM_RIGHTS on a 1-byte payload
+//! (`rz_common::recv_fd`).
 //!
-//! C-parity notes:
-//! - `rezygiskd_connect(retry)` performs exactly `retry` attempts (the C's
-//!   `retry++; while (--retry)` loop). After a failed attempt it logs
-//!   "retrying..." and sleeps 1s only when another attempt remains (the C's
-//!   `if (retry)` guard — daemon.c 45-49), so the final failure is silent and
-//!   returns immediately. It does NOT use rz_ipc::connect_abstract, which
-//!   performs exactly `retry` attempts with a 1s sleep only between
-//!   attempts but does not emit the "retrying..." log (callers log instead).
+//! Behavior notes:
+//! - `rezygiskd_connect(retry)` performs exactly `retry` attempts. After a
+//!   failed attempt it logs "retrying..." and sleeps 1s only when another
+//!   attempt remains, so the final failure is silent and returns immediately.
+//!   It does NOT use rz_ipc::connect_abstract: that helper sleeps between
+//!   attempts but emits no "retrying..." line, so this keeps its own loop and
+//!   callers log the failure.
 //! - `PLOGE` sites use the workspace `plog!` macro, reading
-//!   `io::Error::last_os_error()` exactly where the C reads the errno
-//!   global (the macro emits the C's one "msg failed with %d: %s" line as
-//!   two log lines — the established RS convention).
+//!   `io::Error::last_os_error()`; the macro emits one "msg failed with %d:
+//!   %s" line as two log lines (the established RS convention).
 
 use rz_common::{logd, loge, logi, plog};
 use rz_ipc::{

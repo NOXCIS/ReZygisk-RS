@@ -1,12 +1,11 @@
-//! hook.c DCL_HOOK_FUNC hooks (lines 237-380): `fork`,
+//! PLT hooks and the self-unmap trampoline: `fork`,
 //! `FileDescriptorInfo::ReopenOrDetach` (`_ZNK18FileDescriptorInfo14ReopenOrDetach`),
 //! `pthread_attr_setstacksize`, `strdup`, `property_get`.
 //!
-//! Each hook keeps its own `OLD_*` static (the C `old_##func` file-scope
-//! pointer, exported with C linkage and resolved through the PLT hooker).
-//! The statics are `pub(crate)` so `hook_register::hook_functions` can hand
-//! their addresses to PLTI as the backup slots — in C they live in the same
-//! translation unit, here the two module slices share the crate.
+//! Each hook keeps its own `OLD_*` backup static, exported with C linkage and
+//! filled by PLTI on registration. The statics are `pub(crate)` so
+//! `hook_register::hook_functions` can hand their addresses to PLTI as the
+//! backup slots.
 //!
 //! These use AtomicPtr for soundness under Rust's aliasing model. PLTI writes
 //! through the raw pointer (via as_ptr()), and hooks read via load().

@@ -1,13 +1,13 @@
-//! Zygote-side global state — hook.c lines 29–190 (globals, flag indices,
-//! `struct zygisk_context`, hook lists) and the `is_zygote_child` helper.
+//! Zygote-side global state: flags, [`ZygiskContext`], hook lists, and the
+//! `is_zygote_child` helper.
 //!
-//! Shared spine: port slices MUST use these globals/types and not redefine
-//! them. Notes on Rust-idiomatic patterns:
+//! Shared spine: every module in this crate uses these globals/types instead
+//! of redefining them. Rust-idiomatic notes:
 //! - Primitive globals use atomics (`AtomicUsize`, `AtomicBool`, `AtomicPtr`)
 //!   instead of `static mut` to be sound under Rust's aliasing model.
 //! - Container globals use `Mutex<Option<T>>` to allow take() semantics while
 //!   remaining sound.
-//! - POSIX `regcomp(REG_NOSUB)` patterns become `regex::Regex`. The regex
+//! - Module `exclude`/`include` patterns are `regex::Regex`. The regex
 //!   crate's syntax covers every pattern module authors use in practice
 //!   (BRE vs Rust-regex differ only on constructs nobody ships: backrefs).
 
@@ -202,6 +202,13 @@ static JNI_HOOK_LIST: Mutex<Option<Vec<JniHookEntry>>> = Mutex::new(None);
 /// - Single-threaded during hook execution (the C relies on the same
 ///   property; a forked child is single-threaded by definition), so the
 ///   brief locks never contend in practice.
+///
+/// The `UnsafeCell` stays: the mutex-guarded aliasing discipline above is
+/// sound and covered by the loader test suite, so this is not a bug to
+/// rewrite. A future alternative, if the accessors ever grow a hot path or
+/// the lock ordering gets harder to audit, is an epoch-style table (publish
+/// a generation, retire the old table when no reader holds it) — noted as a
+/// possible design, not pending work.
 struct ModuleTable {
     lock: Mutex<()>,
     data: std::cell::UnsafeCell<Option<Vec<crate::abi::ReZygiskModule>>>,

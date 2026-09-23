@@ -68,4 +68,9 @@ Any change to a frozen surface requires:
    unmapped in app processes, no zygote crash loop, quiet logcat).
 3. C module compatibility check, if the module ABI was touched.
 4. For the trampoline: qemu ABI tests (`trampoline_test.rs`) on both
-   aarch64 and armv7 must pass before any device run.
+   aarch64 and armv7 must pass before any device run:
+   `QEMU_LD_PREFIX=/usr/aarch64-linux-gnu cargo test -p rz-loader
+   --target aarch64-unknown-linux-gnu -- --test-threads=1` (armv7:
+   `QEMU_LD_PREFIX=/usr/arm-linux-gnueabihf`, target
+   `armv7-unknown-linux-gnueabihf`). Without `QEMU_LD_PREFIX` qemu cannot
+   find the cross sysroot's loader and the suite aborts before running.
