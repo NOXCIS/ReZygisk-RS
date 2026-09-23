@@ -21,3 +21,14 @@ linker = "/home/nemo/MIX_4_ODIN/out/ReZygisk-RS/scripts/link-i686"
 
 [target.'cfg(target_os = "android")']
 rustflags = ["-C", "panic=abort"]
+
+# Off-device ABI tests (crates/loader/src/trampoline_test.rs) run under
+# qemu-user against Debian's cross toolchains. Without these entries cargo falls
+# back to the host `cc`, which either links ARM objects as x86-64 (armv7) or
+# hands rust-lld the aarch64-only --fix-cortex-a53-843419 flag it rejects
+# (aarch64) — the tests then never run.
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc"

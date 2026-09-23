@@ -22,6 +22,9 @@
 //!     cargo test -p rz-loader --target armv7-unknown-linux-gnueabihf -- --test-threads=1
 //! ```
 //!
+//! The cross linkers come from `.cargo/config.toml` (`aarch64-linux-gnu-gcc` /
+//! `arm-linux-gnueabihf-gcc`); without them the link fails before a test runs.
+//!
 //! `--test-threads=1` matters: the unmap path is gated on nothing here, but the
 //! assertions below assume no other test is holding loader code.
 
