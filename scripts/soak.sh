@@ -146,6 +146,10 @@ FULL_LOG="$OUT/logcat_full.txt"
 adb_dev logcat -d >"$FULL_LOG" 2>/dev/null
 CRASH_LOG="$OUT/logcat_crash.txt"
 adb_dev logcat -d -b crash >"$CRASH_LOG" 2>/dev/null
+# A quiet build keeps app-process loader lines at ERROR, so their absence is
+# expected there and only the mapping is evidence. Counted once here so the
+# report and the verdict agree on which mode this run was in.
+LOUD_APP_LINES="$(grep -acE '[[:space:]][0-9]+[[:space:]]+[0-9]+[[:space:]]+[A-Z][[:space:]]+zygisk' "$FULL_LOG")"
 
 report="$OUT/SUMMARY.txt"
 {
@@ -157,6 +161,7 @@ report="$OUT/SUMMARY.txt"
     echo
     echo "--- app starts (module callbacks per fresh process) ---"
     cat "$OUT/app_starts.tsv"
+    echo "    app-process loader lines in logcat: $LOUD_APP_LINES (0 => quiet build: log-based evidence not applicable, the mapping is the evidence)"
     echo
     echo "--- forbidden lines seen during soak ---"
     grep -aE \
@@ -192,16 +197,22 @@ tomb_end="$(root 'ls /data/tombstones 2>/dev/null | wc -l' | tr -d '\r')"
 # 5. forbidden lines
 fl="$(fail_lines)"
 [[ "${fl:-0}" != "0" ]] && fail "$fl forbidden line(s) in logcat"
-# 6. every app start produced loader + module evidence in the fresh process
+# 6. every app start: module evidence when the build logs it, and no loader
+#    left mapped in a process that finished VM bring-up.
+#    A quiet build keeps app-process loader lines at ERROR, so a uniformly
+#    silent run is expected there and the mapping is the ground truth; an app
+#    that is silent while other processes logged is a real failure.
 while IFS=$'\t' read -r el app pid loaded reg maps_lib marker; do
     [[ "$pid" == "not-installed" || "$pid" == "no-pid" ]] && continue
-    if [[ "${loaded:-0}" -lt 1 && "${reg:-0}" -lt 1 ]]; then
-        fail "app start at ${el}s ($app pid $pid) showed no module evidence (loads=$loaded register=$reg)"
+    if [[ "${loaded:-0}" -lt 1 && "${reg:-0}" -lt 1 && "$LOUD_APP_LINES" -gt 0 ]]; then
+        fail "app start at ${el}s ($app pid $pid) showed no module evidence while other processes did (loads=$loaded register=$reg)"
     fi
     if [[ "$maps_lib" == "0" ]]; then
         :
     elif [[ "$maps_lib" == "?" || -z "$maps_lib" ]]; then
         fail "app start at ${el}s ($app pid $pid): could not read the mapping (maps_lib=$maps_lib)"
+    elif [[ "$LOUD_APP_LINES" -eq 0 ]]; then
+        fail "app start at ${el}s ($app pid $pid): libzygisk.so still mapped in a quiet build — no log reason is visible, re-run with a loud-loader build to see the gate"
     elif ! grep -aq 'keeping libzygisk.so mapped' "$OUT"/applog_*.txt 2>/dev/null; then
         fail "app start at ${el}s ($app pid $pid): libzygisk.so still mapped with no keep-mapped reason logged"
     fi
