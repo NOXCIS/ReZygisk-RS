@@ -1,36 +1,39 @@
-//! Zygisk loader injected into the zygote (libzygisk.so).
+//! Zygisk loader injected into the zygote (`libzygisk.so`).
 //!
-//! Port of loader/src/injector/* (hook.c, entry.c, module.h, jni_hooks.h,
-//! art_method.h, cpp_strings.c, ptrace_clear.c) plus the in-process
-//! CSOLoader client (loader/src/common/daemon.c).
+//! # Frozen contracts (do not break)
+//! - `entry(addr, size, tango_flag)` — ptracer calls this after injection
+//! - `abi.rs` — `repr(C)` module API (REZYGISK_API_VERSION 5)
+//! - `jni_tables.rs` — zygote JNI overload hooks (Android/ART surface)
+//! - PLT hook symbols: `fork`, `strdup`, `pthread_attr_setstacksize`,
+//!   `property_get`, `ReopenOrDetach`
 //!
-//! Layout:
-//! - `abi.rs` / `context.rs`: the shared spine (`repr(C)` module ABI mirrors
-//!   and the zygote-side global state). Every other module writes against
-//!   these — do not redefine the types.
-//! - one module per C source/function group, mirroring hook.c's layout.
-//! - `entry` owns the `#[no_mangle] entry` export the ptracer calls.
-//! - `ifunc_shim` (arm32-only) provides the hidden mem*/str* shims for
-//!   Tango; `exports.map` localizes them like the C `-fvisibility=hidden`.
+//! See `docs/CONTRACTS.md` for the full list and the verification rules.
+//!
+//! # Layout
+//! - `abi.rs` / `context.rs`: shared spine (module ABI + zygote-side state)
+//! - `entry.rs`: `#[no_mangle] entry` export
+//! - `fork_hooks.rs`: PLT hooks + self-unmap trampoline
+//! - `jni_tables.rs` / `jni_hooks.rs`: JNI overload wrappers
+//! - `ifunc_shim.rs` (arm32): hidden mem*/str* for Tango
 
-#![allow(static_mut_refs)]
-// C-parity allowances:
-// - the whole live graph hangs off the extern `entry` (the ptracer calls it
-//   by scanning `.dynsym`; PLTI/modules call the hook tables by pointer), so
-//   rustc sees most of the crate as unreachable — `dead_code`.
-// - C identifiers (`nativeForkAndSpecialize_l`, `OLD_...`, ...) keep their
-//   upstream names for diff-ability — `non_snake_case`/`non_upper_case_globals`.
-// - the `unsafe fn` bodies are line-by-line transcriptions of C functions;
-//   wrapping every raw-pointer op in an `unsafe {}` block would bury the
-//   diff against hook.c — `unsafe_op_in_unsafe_fn`.
-// - JNI wrapper / hook addresses are stored as `usize` in the C-parity
-//   tables (`JNINativeMethod.fn_ptr`, PLTI registrations) —
-//   `function_casts_as_integer`.
-
+// Required allows — reasons:
+// - `dead_code`: the live graph hangs off the extern `entry` (the ptracer
+//   calls it by scanning `.dynsym`; PLTI and modules call hook tables by
+//   pointer), so rustc sees most of the crate as unreachable
+// - `non_snake_case` / `non_upper_case_globals`: JNI symbols (`nativeForkAndSpecialize_l`,
+//   `OLD_...`) are the Android contract; their spelling is not ours to change
+// - `unsafe_op_in_unsafe_fn`: hot paths; per-op unsafe blocks would obscure
+//   control flow without adding safety the signatures don't already state
+// - `static_mut_refs`: context.rs / jni_tables.rs globals (migration to
+//   atomics/Mutex planned)
+// - `function_casts_as_integer`: `JNINativeMethod.fn_ptr` and the PLTI
+//   backup slots store addresses as `usize` — the storage types are fixed
+//   by the module ABI / PLTI interface
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 #![allow(unsafe_op_in_unsafe_fn)]
+#![allow(static_mut_refs)]
 #![allow(function_casts_as_integer)]
 
 pub mod abi;

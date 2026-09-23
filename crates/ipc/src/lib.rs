@@ -1,19 +1,14 @@
-//! Wire protocol shared by libzygisk.so, zygiskd and zygisk-ptrace.
+//! Wire protocol shared by libzygisk.so, rezygiskd, and zygisk-ptrace.
 //!
-//! Everything here must stay byte-compatible with the C fork:
-//! - action enum + flags: [out/ReZygisk/zygiskd/src/constants.h](../../../out/ReZygisk/zygiskd/src/constants.h)
-//! - client frames: [out/ReZygisk/loader/src/common/daemon.c](../../../out/ReZygisk/loader/src/common/daemon.c)
-//! - server frames: [out/ReZygisk/zygiskd/src/zygiskd.c](../../../out/ReZygisk/zygiskd/src/zygiskd.c)
-//! - socket helpers: loader/src/common/socket_utils.c and zygiskd/src/utils.c
+//! # RS-canonical wire
+//! The types in this crate define the protocol. Deliberate divergences from
+//! the original C:
+//! - Daemon reports use one datagram per message (not per-field writes) —
+//!   documented in `action.rs`
+//! - Mount-ns fd passed from the daemon instead of `/proc` access — see the
+//!   loader's `misc_port::update_mnt_ns`
 //!
-//! One deliberate exception: the daemon→monitor reports (`DaemonSetInfo` /
-//! `DaemonSetErrorInfo`) are **one datagram per message** here instead of the
-//! C's one `write()` per field. The C can afford per-field writes because each
-//! daemon owns its own *stream* connection; this port reports over a single
-//! shared `SOCK_DGRAM` socket, where two daemons reporting at once (boot)
-//! interleave their datagrams and desync the reader — which once dispatched a
-//! module-count field as a `Stop` command. See `action.rs` for the layout and
-//! the monitor's `rezygiskd_listener_callback` for the read side.
+//! See `docs/CONTRACTS.md` for frozen surfaces.
 
 pub mod action;
 pub mod socket;
