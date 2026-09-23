@@ -47,7 +47,12 @@ z64_start="$(adb_dev shell pidof zygote64 | tr -d '\r')"
 # sibling is "zygote64"); "app_process32" only appears in its argv.
 z32_start="$(adb_dev shell pidof zygote | tr -d '\r')"
 tomb_start="$(root 'ls /data/tombstones 2>/dev/null | wc -l' | tr -d '\r')"
-echo "start: zygote64=$z64_start zygote32=$z32_start tombstones=$tomb_start"
+# The crash buffer is cumulative since boot and nothing clears it (the boot
+# window is evidence), so the verdict must compare against this baseline
+# instead of failing on crashes that predate the soak.
+crash_start="$(adb_dev logcat -d -b crash 2>/dev/null | grep -ac 'Fatal signal' | tr -d '\r')"
+crash_start="${crash_start:-0}"
+echo "start: zygote64=$z64_start zygote32=$z32_start tombstones=$tomb_start crashes=$crash_start"
 
 printf 'elapsed_s\tstate\tstate_reason\tmods64\tmods32\tzygote64\tzygote32\tcrash_lines\ttombstones\n' >>"$OUT/samples.tsv"
 
@@ -147,14 +152,21 @@ adb_dev logcat -d >"$FULL_LOG" 2>/dev/null
 CRASH_LOG="$OUT/logcat_crash.txt"
 adb_dev logcat -d -b crash >"$CRASH_LOG" 2>/dev/null
 # A quiet build keeps app-process loader lines at ERROR, so their absence is
-# expected there and only the mapping is evidence. Counted once here so the
-# report and the verdict agree on which mode this run was in.
-LOUD_APP_LINES="$(grep -acE '[[:space:]][0-9]+[[:space:]]+[0-9]+[[:space:]]+[A-Z][[:space:]]+zygisk' "$FULL_LOG")"
+# expected there and only the mapping is evidence. Scoped to the app pids this
+# run started: the unscoped form of this grep counted the daemons' own
+# `zygiskd64:` / `zygiskd32:` tags as loader lines (same prefix), which made a
+# quiet build look loud and produced false "no module evidence" failures.
+LOUD_APP_LINES=0
+while IFS=$'\t' read -r _el _app pid _loaded _reg _maps _marker; do
+    [[ "$pid" =~ ^[0-9]+$ ]] || continue
+    n="$(grep -acE "[[:space:]]${pid}[[:space:]]+[0-9]+[[:space:]]+[A-Z][[:space:]]+zygisk:" "$FULL_LOG")"
+    LOUD_APP_LINES=$((LOUD_APP_LINES + n))
+done <"$OUT/app_starts.tsv"
 
 report="$OUT/SUMMARY.txt"
 {
     echo "=== ReZygisk-RS soak: ${MINUTES}m, device $SERIAL, out $OUT ==="
-    echo "start zygote64=$z64_start zygote32=$z32_start tombstones=$tomb_start"
+    echo "start zygote64=$z64_start zygote32=$z32_start tombstones=$tomb_start crashes=$crash_start"
     echo
     echo "--- samples.tsv ---"
     cat "$OUT/samples.tsv"
@@ -173,7 +185,9 @@ report="$OUT/SUMMARY.txt"
     root "cat $SCOPE/verbose.log" 2>/dev/null | grep -a 'status updated' | tail -10
     echo
     echo "--- crash buffer ---"
-    grep -a 'Fatal signal' "$CRASH_LOG" | tail -5
+    echo "baseline at soak start: $crash_start 'Fatal signal' line(s); total now: $(grep -ac 'Fatal signal' "$CRASH_LOG")"
+    echo "new since start:"
+    grep -a 'Fatal signal' "$CRASH_LOG" | tail -n +"$((crash_start + 1))" | tail -5
     echo "(end)"
 } >>"$report" 2>&1
 
@@ -189,8 +203,18 @@ z64_end="$(adb_dev shell pidof zygote64 | tr -d '\r')"
 z32_end="$(adb_dev shell pidof zygote | tr -d '\r')"
 [[ "$z64_end" != "$z64_start" ]] && fail "zygote64 restarted ($z64_start -> $z64_end)"
 [[ "$z32_end" != "$z32_start" ]] && fail "zygote32 restarted ($z32_start -> $z32_end)"
-# 3. crash buffer empty
-grep -aq 'Fatal signal' "$CRASH_LOG" && fail "crash buffer is not empty"
+# 3. no new crashes inside the injection domain. Only lines past the soak's
+#    starting count are this run's, and only crashes of processes ReZygisk can
+#    reach (zygote descendants) are ours: an init-launched vendor HAL that
+#    crash-loops on its own (PPID 1, e.g. android.hardwar / *-service) is
+#    outside the injection domain and must not decide the verdict.
+NATIVE_SVC_RE='pid [0-9]+ \((android\.hardwar[^)]*|[^)]*-service[^)]*|vendor\.[^)]*|hwservicemanager[^)]*)\)'
+new_crashes="$(grep -a 'Fatal signal' "$CRASH_LOG" | tail -n +"$((crash_start + 1))")"
+out_domain="$(grep -aE "$NATIVE_SVC_RE" <<<"$new_crashes")"
+in_domain="$(grep -avE "$NATIVE_SVC_RE" <<<"$new_crashes")"
+OUT_DOMAIN_N="$(grep -ac . <<<"${out_domain:-}")"
+[[ -n "$out_domain" ]] && echo "note: $OUT_DOMAIN_N new crash line(s) from init-launched native services (outside the injection domain, e.g. $(head -1 <<<"$out_domain" | tr -s ' '))"
+[[ -n "$in_domain" ]] && fail "new crash(es) in the injection domain: $(grep -ac . <<<"$in_domain") line(s), first: $(head -1 <<<"$in_domain" | tr -s ' ')"
 # 4. no new tombstones
 tomb_end="$(root 'ls /data/tombstones 2>/dev/null | wc -l' | tr -d '\r')"
 [[ "${tomb_end:-0}" -gt "${tomb_start:-0}" ]] && fail "new tombstones ($tomb_start -> $tomb_end)"

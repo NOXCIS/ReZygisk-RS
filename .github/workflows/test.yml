@@ -36,6 +36,11 @@ jobs:
       - name: Run tests
         run: cargo test --workspace
 
+      # Informational by decision: the workspace is not clippy-clean yet
+      # (`rz-loader` / `rz-ptracer` carry a pre-existing lint tail), and there
+      # is deliberately no mass `cargo fmt` commit — reformatting the tree
+      # would bury real history in one whitespace diff. Promote this step to
+      # `-D warnings` (and drop the `|| true`) only when the tree is opted in.
       - name: Clippy (informational)
         run: cargo clippy --workspace 2>&1 || true
         continue-on-error: true

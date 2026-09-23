@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.1-rs (unreleased)
+
+- RS owns its behavior: device evidence (fast_repro / soak / duck detector)
+  is the correctness oracle, not parity with the original C implementation
+- `docs/CONTRACTS.md`: frozen surfaces (ptracer entry, module ABI v5, zygote
+  JNI overloads, PLT hook symbols, daemon wire) plus their verification rules
+- Self-unmap trampoline and PLT-restore invariant documented as RS design
+- Crate roots and hook-file banners state RS-owned behavior; stale C
+  line-number references and `rz_`-prefixed internals dropped
+- CI: workspace tests + cross-arch check; clippy `-D warnings` clean
+
 ## v1.0.0-rs-trumanrs (515)
 
 - Standalone Rust ReZygisk loader + daemon packaging
