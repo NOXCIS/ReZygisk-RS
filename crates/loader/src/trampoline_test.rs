@@ -1,5 +1,8 @@
 //! Emulated tests for the `pthread_attr_setstacksize` trampoline.
 //!
+//! This is the ABI oracle for the naked wrappers — if these tests fail under
+//! qemu, the device will crash.
+//!
 //! The trampoline is *naked* code: what runs on the device is exactly the
 //! instruction sequence written in `fork_hooks.rs`, so the interesting
 //! question is not what the compiler made of it (nothing) but how it behaves

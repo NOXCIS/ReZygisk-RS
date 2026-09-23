@@ -35,18 +35,17 @@ macro_rules! dlogi {
 }
 
 // ---------------------------------------------------------------------------
-// Self-unload quiescence (audit F4)
+// Self-unmap quiescence
 // ---------------------------------------------------------------------------
 //
 // The tail-called munmap races with any other thread still executing loader
 // code: unmapping libzygisk.so under such a thread arms a deferred SIGSEGV
-// in it. The C accepts this; these counters only narrow the window — an
-// in-process self-unmap cannot be made fully race-free (a thread can enter
-// between the last check and the jump), which is why ENABLE_UNLOADER stays
-// opt-in exactly as in the C.
+// in it. These counters narrow that window — an in-process self-unmap cannot
+// be made fully race-free (a thread can enter between the last check and the
+// jump), which is why ENABLE_UNLOADER stays opt-in.
 //
-// Relaxed ordering is sufficient: a stale low count can only unmap in the
-// same window the C always had; a stale high count conservatively keeps the
+// Relaxed ordering is sufficient: a stale low count can only unmap inside
+// that irreducible window; a stale high count conservatively keeps the
 // library mapped.
 
 /// Threads currently inside a hooked entry point / specialize wrapper.
@@ -56,15 +55,14 @@ pub(crate) static IN_LOADER: std::sync::atomic::AtomicUsize =
 pub(crate) static UNLOADING: std::sync::atomic::AtomicBool =
     std::sync::atomic::AtomicBool::new(false);
 
-/// Enables the in-process self-unmap (`[[clang::musttail]] return munmap(...)`
-/// in hook.c, reached from the `pthread_attr_setstacksize` hook).
+/// Enables the in-process self-unmap via naked trampoline.
+/// The trampoline tears down its frame and branches to `munmap` with the app's
+/// return address in LR, so nothing of this library executes after unmap.
 ///
-/// It is **off** because the tail call is not real yet, and a not-real one
-/// kills the process: `tail_call_munmap` below jumps to `munmap` without
-/// running an epilogue, so x30 still holds a return address *inside*
-/// libzygisk.so. `munmap` then returns into the region it just unmapped.
-/// Observed on device (system_server child, 5 restarts, then the monitor's
-/// restart guard disabled injection):
+/// That frame discipline is the whole design: a plain call to `munmap` from
+/// inside the hook would return into the region it just unmapped. Observed on
+/// device before the trampoline existed (system_server child, 5 restarts,
+/// then the monitor's restart guard disabled injection):
 ///
 /// ```text
 /// signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x00000001000affb4
@@ -74,14 +72,13 @@ pub(crate) static UNLOADING: std::sync::atomic::AtomicBool =
 /// lr  00000001000affb4   pc 00000001000affb4  <- pc == lr: `ret` to a stale LR
 /// ```
 ///
-/// C gets this right because `[[clang::musttail]]` makes the compiler emit the
-/// full epilogue (restore callee-saved registers, sp, and x30 = the app's
-/// return address) before branching. Rust has no `musttail`, so the hook is
-/// exported as a **naked wrapper** (`pthread_attr_setstacksize`) whose only job
-/// is to call the real body and then, on the unmap path, tear its own frame
-/// down and branch straight into `munmap` with x30 (lr) already holding the
-/// app's return address. `munmap` then returns to the app, and no instruction
-/// of this library runs after the mapping is gone.
+/// The exported hook is therefore a **naked wrapper** (`pthread_attr_setstacksize`)
+/// whose only job is to call the real body and then, on the unmap path, tear
+/// its own frame down and branch straight into `munmap` with x30 (lr) already
+/// holding the app's return address. `munmap` then returns to the app, and no
+/// instruction of this library runs after the mapping is gone. Frame
+/// discipline is an ABI contract, verified by `trampoline_test.rs` under
+/// qemu — if those tests fail, the device will crash.
 ///
 /// Enabled on the two ABIs this project tests on hardware (aarch64, arm and
 /// their hooks below). x86/x86_64 keep the fail-closed path: the same wrapper
@@ -381,13 +378,12 @@ pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
             let start_addr = crate::context::START_ADDR.load(Ordering::Relaxed);
             let block_size = crate::context::BLOCK_SIZE.load(Ordering::Relaxed);
 
-            // F4 quiescence gate: every other thread must be outside loader
+            // Quiescence gate: every other thread must be outside loader
             // code (this hook holds the only legitimate in-flight entry, so
             // the count must be exactly 1 — this thread's own guard). Skipping
             // keeps the library mapped and disarms the unloader, the safe
             // direction. It narrows the window but cannot close it: a thread
-            // can still enter loader code between this check and the branch —
-            // the same window the C always had.
+            // can still enter loader code between this check and the branch.
             if IN_LOADER.load(Ordering::Relaxed) != 1 {
                 dlogw!(
                     "loader code in flight on another thread — keeping libzygisk.so mapped"
@@ -440,6 +436,10 @@ pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
 /// `x19`/`x20` are live when the tail branch enters `munmap`, which returns
 /// straight to the app. Nothing of this library runs after the mapping is
 /// gone — that is the whole point of the tail call.
+///
+/// ABI contract: this frame discipline is verified by `trampoline_test.rs`
+/// under qemu (same macro, stub body). If those tests fail, the device will
+/// crash.
 #[cfg(target_arch = "aarch64")]
 macro_rules! aarch64_trampoline {
     ($(#[$meta:meta])* $name:ident, $inner:path) => {
@@ -488,6 +488,11 @@ pub(crate) use aarch64_trampoline;
 /// `r9` — the obvious scratch — is callee-saved on the Android arm ABI (LLVM
 /// saves it in every prologue that touches it), and clobbering it would corrupt
 /// the app's register state on the keep-mapped path.
+///
+/// ABI contract: frame discipline (callee-saved `r4`-`r7`/`lr`, 16-byte stack
+/// alignment, `lr` live on the tail branch) is verified by `trampoline_test.rs`
+/// under qemu (same macro, stub body). If those tests fail, the device will
+/// crash.
 #[cfg(target_arch = "arm")]
 macro_rules! arm_trampoline {
     ($(#[$meta:meta])* $name:ident, $inner:path) => {

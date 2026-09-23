@@ -197,18 +197,21 @@ pub fn hook_unloader() {
     dlogd!("ReZygisk unloader hooked successfully");
 }
 
-/// hook.c `unhook_functions` (1357-1362): restore the four loader hooks the
-/// C unhooks (property_get was already unregistered by `hook_unloader`).
+/// Restores the core PLT hooks (`fork`, `strdup`,
+/// `_ZNK18FileDescriptorInfo14ReopenOrDetach`, `pthread_attr_setstacksize`;
+/// `property_get` was already unregistered by `hook_unloader`).
 ///
-/// The self-unload teardown the C runs right after this call inside the
-/// pthread_attr_setstacksize hook (csoloader_deinit, the defensive
+/// RS safety invariant: returns true only when **all four** slots were
+/// restored. A failed slot still points into libzygisk.so, so unmapping the
+/// library behind it leaves a dangling GOT target that crashes the app on its
+/// next `fork`/`strdup` — itself a detection signal. The self-unmap gate in
+/// `fork_hooks::pthread_attr_setstacksize` refuses to unmap unless this
+/// returns true.
+///
+/// The rest of the self-unmap teardown (csoloader_deinit, the defensive
 /// should_unmap_zygisk re-check, module table free, plti_deinit, and the
 /// tail-called munmap of libzygisk.so) lives in the hook body itself — see
 /// `fork_hooks::pthread_attr_setstacksize`.
-/// Restore every core PLT hook. Returns true only when all four slots were
-/// restored: a failed slot still points into libzygisk.so, so unmapping the
-/// library behind it would leave a dangling GOT target that crashes the app
-/// on its next `fork`/`strdup` — itself a detection signal.
 pub fn unhook_functions() -> bool {
     let mut all_ok = true;
     unsafe {
