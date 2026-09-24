@@ -277,6 +277,18 @@ fn handle_client(client_fd: RawFd, context: &mut Context, impl_: root_impl::Root
                     module.companion = -1;
                 }
             }
+            // The new zygote is a different mount world: a cached clean/mounted
+            // ns fd snapshotted from the old one would hand every subsequently
+            // cleaned app the pre-restart state. Drop it so the next request
+            // re-snapshots.
+            crate::utils::invalidate_ns_cache();
+        }
+        DaemonSocketAction::InvalidateCleanNs => {
+            // Truman extension (`zygisk-ptrace invalidate-ns`, called from
+            // ksud's recapture/arm): post-publish mounts must be
+            // re-snapshotted, not served from the boot-time cache. No reply
+            // — the ctl closes the fd immediately.
+            crate::utils::invalidate_ns_cache();
         }
         DaemonSocketAction::GetProcessFlags => {
             let uid = read_u32(client_fd).map_err(|_| ClientError::MidFrame)?;

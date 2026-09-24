@@ -115,6 +115,12 @@ pub struct Monitor {
     pub(crate) env32: EnvironmentInformation,
     counter64: ZygoteStartCounter,
     counter32: ZygoteStartCounter,
+    /// Daemon crash-loop limiter for respawns: same 5/30s window as the
+    /// zygote counters, so a daemon stuck in a crash loop is left down
+    /// (lazy re-fork on the next zygote restart still applies) instead of
+    /// burning forks forever.
+    daemon_respawn64: ZygoteStartCounter,
+    daemon_respawn32: ZygoteStartCounter,
     /// PIDs handed to tracer exec, waiting for their exec-stop. 0 = free slot.
     tracked: Vec<i32>,
     pub(crate) pre_section: String,
@@ -136,6 +142,8 @@ impl Monitor {
             env32: EnvironmentInformation::default(),
             counter64: ZygoteStartCounter::new(),
             counter32: ZygoteStartCounter::new(),
+            daemon_respawn64: ZygoteStartCounter::new(),
+            daemon_respawn32: ZygoteStartCounter::new(),
             tracked: Vec::new(),
             pre_section: String::new(),
             post_section: String::new(),
@@ -630,11 +638,38 @@ impl Monitor {
                 status_slot.daemon_error_info = Some(status_str);
             }
 
+            // Respawn immediately instead of waiting for the next zygote
+            // restart to stumble into `ensure_daemon_created`: a dead daemon
+            // means every module companion is dead too, and every flags
+            // query returns 0 until it is back. Bounded by the same 5/30s
+            // limiter as the zygote restarts — a daemon in a crash loop is
+            // left down until the window resets (the lazy path still re-forks
+            // it if a zygote shows up first).
+            if self.daemon_respawn_allowed(is_64) {
+                dlogi!("respawning daemon{}", if is_64 { "64" } else { "32" });
+                self.ensure_daemon_created(is_64);
+            } else {
+                dlogw!(
+                    "daemon{} exited too often (limit 5/30s), leaving it down",
+                    if is_64 { "64" } else { "32" }
+                );
+            }
+
             self.update_status(None);
             return true;
         }
 
         false
+    }
+
+    /// True while daemon respawning is still allowed by the crash limiter.
+    fn daemon_respawn_allowed(&mut self, is_64: bool) -> bool {
+        let counter = if is_64 {
+            &mut self.daemon_respawn64
+        } else {
+            &mut self.daemon_respawn32
+        };
+        !counter.should_stop_inject()
     }
 
     // -----------------------------------------------------------------------

@@ -12,7 +12,7 @@
 //!   (BRE vs Rust-regex differ only on constructs nobody ships: backrefs).
 
 use std::ffi::c_void;
-use std::sync::atomic::{AtomicBool, AtomicPtr, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicPtr, AtomicU32, AtomicUsize, Ordering};
 use std::sync::{Mutex, MutexGuard};
 
 use crate::abi::JNINativeMethod;
@@ -29,6 +29,16 @@ pub static BLOCK_SIZE: AtomicUsize = AtomicUsize::new(0);
 // hook.c `should_unmap_zygisk` / `enable_unloader`.
 pub static SHOULD_UNMAP_ZYGISK: AtomicBool = AtomicBool::new(false);
 pub static ENABLE_UNLOADER: AtomicBool = AtomicBool::new(false);
+
+/// Module-table self-heal: the first ReadModules can legitimately report an
+/// empty table when the daemon is still re-reading its module dir
+/// (mid-respawn). `MODULE_TABLE_EMPTY` flags that state; the fork hook
+/// retries the read on subsequent forks, bounded by
+/// `MODULE_TABLE_MAX_RETRIES` so a genuinely module-less boot does not
+/// turn every fork into an IPC round-trip forever.
+pub static MODULE_TABLE_EMPTY: AtomicBool = AtomicBool::new(false);
+pub static MODULE_TABLE_RETRIES: AtomicU32 = AtomicU32::new(0);
+pub const MODULE_TABLE_MAX_RETRIES: u32 = 3;
 
 // ---------------------------------------------------------------------------
 // Flag indices (hook.c `enum { POST_SPECIALIZE, ... }`). `FLAG_SET/GET` shift

@@ -1,7 +1,16 @@
 # Changelog
 
-## v1.0.1-rs (unreleased)
+## v1.0.1-rs (516)
 
+- Mount-ns cache invalidation: drop cached clean/mounted ns fds on
+  ZygoteRestart and via new Truman action `InvalidateCleanNs`
+  (`zygisk-ptrace invalidate-ns`, for ksud recapture/arm after republish)
+- Ptracer monitor respawns a dead daemon immediately (bounded 5/30s),
+  instead of waiting for the next zygote restart
+- Module-table self-heal: empty ReadModules mid-daemon-respawn is retried
+  on subsequent forks (bounded), not cached for the zygote lifetime
+- GetProcessFlags: one short retry covers a daemon mid-restart so a root
+  process is not presented as unmanaged for a whole specialize round
 - RS owns its behavior: device evidence (fast_repro / soak / duck detector)
   is the correctness oracle, not parity with the original C implementation
 - `docs/CONTRACTS.md`: frozen surfaces (ptracer entry, module ABI v5, zygote

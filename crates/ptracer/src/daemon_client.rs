@@ -128,3 +128,21 @@ pub fn rezygiskd_zygote_restart() {
 
     unsafe { libc::close(fd) };
 }
+
+/// Truman extension: drop the daemon's cached clean/mounted mount-namespace
+/// fds so the next UpdateMountNamespace re-snapshots instead of serving the
+/// boot-time snapshot (called from ksud's recapture/arm after republish).
+pub fn rezygiskd_invalidate_clean_ns() -> bool {
+    let Some(fd) = rezygiskd_connect(1) else {
+        return false;
+    };
+
+    let ok = rz_ipc::write_u8(fd, rz_ipc::DaemonSocketAction::InvalidateCleanNs as u8).is_ok();
+    if !ok {
+        logw!(TAG, "Failed to write InvalidateCleanNs action");
+    }
+
+    unsafe { libc::close(fd) };
+
+    ok
+}

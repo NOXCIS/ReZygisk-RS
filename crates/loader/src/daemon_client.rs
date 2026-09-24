@@ -125,18 +125,33 @@ pub fn rezygiskd_zygote_injected() -> bool {    let fd = rezygiskd_connect(5);
 
 /// daemon.c `rezygiskd_get_process_flags`: uid + process name in, flags out.
 pub fn rezygiskd_get_process_flags(uid: u32, process: &str) -> u32 {
+    match get_process_flags_once(uid, process) {
+        Some(flags) => flags,
+        None => {
+            // One short retry covers a daemon mid-restart: returning 0 on
+            // the first try would present a root process as unmanaged for a
+            // whole specialize round. 250ms, once — the zygote must not
+            // stall on a daemon that is genuinely gone.
+            unsafe { libc::usleep(250_000) };
+
+            get_process_flags_once(uid, process).unwrap_or(0)
+        }
+    }
+}
+
+fn get_process_flags_once(uid: u32, process: &str) -> Option<u32> {
     let fd = rezygiskd_connect(1);
     if fd == -1 {
         plog!(TAG, "connection to ReZygiskd");
 
-        return 0;
+        return None;
     }
 
-    safe_write!(fd, write_u8(fd, DaemonSocketAction::GetProcessFlags as u8), "GetProcessFlags action", 0);
-    safe_write!(fd, write_u32(fd, uid), "uid", 0);
-    safe_write!(fd, write_string(fd, process), "process name", 0);
-
-    let res = safe_read!(fd, read_u32(fd), "process flags", 0);
+    let res = write_u8(fd, DaemonSocketAction::GetProcessFlags as u8)
+        .ok()
+        .and_then(|_| write_u32(fd, uid).ok())
+        .and_then(|_| write_string(fd, process).ok())
+        .and_then(|_| read_u32(fd).ok());
 
     unsafe { libc::close(fd) };
 
@@ -146,7 +161,10 @@ pub fn rezygiskd_get_process_flags(uid: u32, process: &str) -> u32 {
 /// daemon.c `rezygiskd_read_modules`: module count + per-module
 /// (path string, SCM_RIGHTS fd); paths are rewritten to /proc/self/fd/N.
 pub fn rezygiskd_read_modules(modules: &mut ZygiskModules) -> bool {
-    let fd = rezygiskd_connect(1);
+    // Bounded retry (3 attempts, 1s apart — rezygiskd_connect's retry loop):
+    // a zygote born while the daemon is being respawned would otherwise
+    // cache a permanently empty module table.
+    let fd = rezygiskd_connect(3);
     if fd == -1 {
         plog!(TAG, "connection to ReZygiskd");
 

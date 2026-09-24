@@ -16,6 +16,12 @@ pub enum DaemonSocketAction {
     ZygoteRestart = 6,
     UpdateMountNamespace = 7,
     RemoveModule = 8,
+    /// Truman extension (not in upstream constants.h): drop the daemon's
+    /// cached clean/mounted ns fds so the next mount-namespace request
+    /// re-snapshots post-publish mounts. Sent by `zygisk-ptrace
+    /// invalidate-ns` and honored by the truman rezygiskd only; upstream
+    /// daemons answer unknown actions by dropping the connection.
+    InvalidateCleanNs = 9,
 }
 
 impl TryFrom<u8> for DaemonSocketAction {
@@ -32,6 +38,7 @@ impl TryFrom<u8> for DaemonSocketAction {
             6 => Self::ZygoteRestart,
             7 => Self::UpdateMountNamespace,
             8 => Self::RemoveModule,
+            9 => Self::InvalidateCleanNs,
             other => return Err(other),
         })
     }
@@ -251,11 +258,13 @@ mod tests {
             (6, DaemonSocketAction::ZygoteRestart),
             (7, DaemonSocketAction::UpdateMountNamespace),
             (8, DaemonSocketAction::RemoveModule),
+            // Truman extension (see the enum doc)
+            (9, DaemonSocketAction::InvalidateCleanNs),
         ] {
             assert_eq!(a as u8, v);
             assert_eq!(DaemonSocketAction::try_from(v).unwrap(), a);
         }
-        assert!(DaemonSocketAction::try_from(9).is_err());
+        assert!(DaemonSocketAction::try_from(10).is_err());
     }
 
     #[test]

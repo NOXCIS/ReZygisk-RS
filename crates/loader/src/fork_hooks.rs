@@ -338,6 +338,25 @@ pub unsafe extern "C" fn pthread_attr_setstacksize_inner(
         return res;
     }
 
+    // Module-table self-heal (context::MODULE_TABLE_EMPTY): the init-time
+    // ReadModules hit a daemon that was still re-reading its module dir and
+    // reported an empty table. Retry the read here — once per fork, bounded
+    // by MODULE_TABLE_MAX_RETRIES, and never once the self-unmap teardown
+    // has been decided (a table loaded now would be freed mid-flight).
+    if crate::context::MODULE_TABLE_EMPTY.load(Ordering::Relaxed)
+        && !crate::context::SHOULD_UNMAP_ZYGISK.load(Ordering::Relaxed)
+        && crate::context::MODULE_TABLE_RETRIES.load(Ordering::Relaxed)
+            < crate::context::MODULE_TABLE_MAX_RETRIES
+    {
+        crate::context::MODULE_TABLE_RETRIES.fetch_add(1, Ordering::Relaxed);
+        crate::context::MODULE_TABLE_EMPTY.store(false, Ordering::Relaxed);
+
+        dlogi!("retrying module read on fork");
+        if unsafe { crate::load_modules::load_modules_only() } {
+            dlogi!("module read retry complete");
+        }
+    }
+
     if crate::context::SHOULD_UNMAP_ZYGISK.load(Ordering::Relaxed) {
         // Any PLT slot that failed to restore still points into
         // libzygisk.so. Munmapping now arms a deferred SIGSEGV in this app

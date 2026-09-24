@@ -372,6 +372,26 @@ struct NsFdCache {
 
 static NS_FD_CACHE: Mutex<NsFdCache> = Mutex::new(NsFdCache { clean: -1, mounted: -1 });
 
+/// Drop the cached mount-namespace fds. The cache deliberately has no TTL —
+/// the daemon lives for the whole boot — but its snapshot can outlive its
+/// assumptions: after a zygote restart, or once truman republishes its
+/// mounts, a stale clean-ns fd would hand new apps the OLD mount state.
+/// Closing + resetting forces the next save_mns_fd to fork a fresh
+/// snapshot. Called on ZygoteRestart and via the InvalidateCleanNs action.
+pub fn invalidate_ns_cache() {
+    let mut cache = NS_FD_CACHE.lock().unwrap();
+    for fd in [cache.clean, cache.mounted] {
+        if fd >= 0 {
+            unsafe { libc::close(fd) };
+        }
+    }
+    if cache.clean != -1 || cache.mounted != -1 {
+        dlogi!("ns fd cache invalidated");
+    }
+    cache.clean = -1;
+    cache.mounted = -1;
+}
+
 /// Return a cached fd referring to a clean/mounted
 /// mount namespace derived from `pid`, creating it in a forked child if
 /// needed. `state` is the raw wire byte (Clean=0 / Mounted=1); any other

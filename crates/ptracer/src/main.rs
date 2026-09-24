@@ -121,6 +121,18 @@ fn main() {
     } else if args.len() >= 2 && args[1] == "version" {
         // Noop
         return;
+    } else if args.len() >= 2 && args[1] == "invalidate-ns" {
+        // Truman extension: drop the daemon's cached clean/mounted ns fds so
+        // post-publish mounts are re-snapshotted (ksud calls this from
+        // truman recapture/arm).
+        if !daemon_client::rezygiskd_invalidate_clean_ns() {
+            eprintln!("[ReZygisk]: Failed to invalidate the ns cache, is the daemon running?");
+            std::process::exit(1);
+        }
+
+        println!("[ReZygisk]: ns cache invalidated");
+
+        return;
     } else if args.len() >= 2 && args[1] == "info" {
         let Some((root_impl, pid, modules)) = daemon_client::rezygiskd_get_info() else {
             std::process::exit(1);
@@ -155,6 +167,7 @@ fn main() {
  - monitor
  - trace <pid> [--restart]
  - ctl <start|stop|exit>
+ - invalidate-ns: Drops the daemon's cached mount-namespace fds (Truman).
  - version: Shows the version of ReZygisk.
  - info: Shows information about the created daemon/injection.
 

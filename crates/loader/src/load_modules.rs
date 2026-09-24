@@ -79,6 +79,18 @@ pub unsafe fn load_modules_only() -> bool {
         return false;
     }
 
+    // A daemon that is still re-reading its module dir (mid-respawn)
+    // legitimately reports an empty table. That is not a load failure —
+    // flag it so the fork hook retries the read on subsequent forks
+    // instead of this zygote staying module-less forever.
+    if ms.modules.is_empty() {
+        crate::context::MODULE_TABLE_EMPTY.store(true, std::sync::atomic::Ordering::Relaxed);
+        logi!(
+            TAG,
+            "ReadModules returned an empty table — will retry on subsequent forks"
+        );
+    }
+
     /* hook.c: mirror the C malloc + failure path; `try_reserve`
        fails (instead of aborting) on OOM so the error branch stays reachable. */
     if with_module_table(|m| m.try_reserve(ms.modules.len())).is_err() {
