@@ -1,6 +1,6 @@
 {
-  "version": "v1.0.0-rs-trumanrs",
-  "versionCode": 515,
-  "zipUrl": "https://github.com/NOXCIS/ReZygisk-RS/releases/download/v1.0.0-rs-trumanrs/ReZygisk-v1.0.0-rs-trumanrs-515-333d423-release.zip",
+  "version": "v1.0.1-rs",
+  "versionCode": 516,
+  "zipUrl": "https://github.com/NOXCIS/ReZygisk-RS/releases/download/v1.0.1-rs/ReZygisk-v1.0.1-rs-516-681551a-release.zip",
   "changelog": "https://raw.githubusercontent.com/NOXCIS/ReZygisk-RS/refs/heads/master/CHANGELOG.md"
 }
